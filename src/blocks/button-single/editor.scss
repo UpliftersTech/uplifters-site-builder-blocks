@@ -1,0 +1,53 @@
+.uplifters-site-builder-blocks-button-single-editor-wrapper {
+	margin-top: 16px;
+	margin-bottom: 16px;
+}
+
+.uplifters-site-builder-blocks-button-single-editor-preview {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border: 0;
+	text-decoration: none !important;
+	line-height: 1.2;
+	font-weight: 600;
+	box-sizing: border-box;
+	cursor: pointer;
+	transition:
+		transform 160ms ease,
+		box-shadow 160ms ease;
+}
+
+.uplifters-site-builder-blocks-button-single-editor-preview:hover {
+	transform: translateY(-1px);
+	box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+}
+
+.uplifters-site-builder-blocks-button-single-device-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	margin-bottom: 12px;
+	padding: 5px 10px;
+	border-radius: 999px;
+	background: #f0f0f1;
+	color: #1e1e1e;
+	font-size: 12px;
+	font-weight: 600;
+}
+
+.uplifters-site-builder-blocks-button-single-control-label {
+	margin-bottom: 8px;
+	font-weight: 600;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.uplifters-site-builder-blocks-button-single-editor-preview {
+		transition: none;
+	}
+
+	.uplifters-site-builder-blocks-button-single-editor-preview:hover {
+		transform: none;
+		box-shadow: none;
+	}
+}

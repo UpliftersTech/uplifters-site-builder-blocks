@@ -1,0 +1,23 @@
+/**
+ * Editor-only styles for the BlockOnBackground block.
+ */
+
+.wp-block-uplifters-site-builder-blocks-block-on-background.uplifters-block-on-background {
+	--uplifters-block-on-background-bg-color: #e5e7eb;
+}
+
+.uplifters-block-on-background__preview {
+	display: block;
+	width: 100%;
+	height: 128px;
+	margin-bottom: 8px;
+	border-radius: 8px;
+	object-fit: cover;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+.uplifters-block-on-background__media-button.components-button {
+	justify-content: center;
+	width: 100%;
+	margin-bottom: 8px;
+}

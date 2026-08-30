@@ -1,0 +1,102 @@
+{
+	"$schema": "https://schemas.wp.org/wp/6.7/block.json",
+	"apiVersion": 3,
+	"name": "uplifters-site-builder-blocks/header-section",
+	"title": "Header Section",
+	"version": "1.0.0",
+	"category": "uplifters-site-builder-blocks-gene",
+	"icon": "smiley",
+	"description": "A section container inside the Header Layout block for arranging responsive header columns.",
+	"example": {
+		"attributes": { "preview": true },
+		"viewportWidth": 700
+	},
+	"textdomain": "uplifters-site-builder-blocks",
+	"editorScript": "file:./index.js",
+	"style": "file:./style-index.css",
+	"editorStyle": "file:./index.css",
+	"viewScript": "file:./view.js",
+	"render": "file:./render.php",
+	
+	"attributes": {
+		"preview": {
+			"type": "boolean",
+			"default": false
+		},
+		"align": {
+			"type": "string",
+			"default": "full"
+		},
+		"columnWidths": {
+			"type": "object",
+			"default": {
+				"desktop": [
+					25,
+					25,
+					25,
+					25
+				],
+				"tablet": [
+					25,
+					25,
+					25,
+					25
+				],
+				"mobile": [
+					25,
+					25,
+					25,
+					25
+				]
+			}
+		},
+		"verticalAlignment": {
+			"type": "object",
+			"default": {
+				"desktop": "center",
+				"tablet": "center",
+				"mobile": "center"
+			}
+		},
+		"height": {
+			"type": "object",
+			"default": {
+				"desktop": "",
+				"tablet": "",
+				"mobile": ""
+			}
+		},
+		"responsiveBlockOrder": {
+			"type": "object",
+			"default": {
+				"desktop": [],
+				"tablet": [],
+				"mobile": []
+			}
+		},
+		"borderRadius": {
+			"type": "object",
+			"default": {
+				"desktop": "",
+				"tablet": "",
+				"mobile": ""
+			}
+		},
+		"backgroundColor": {
+			"type": "object",
+			"default": {
+				"desktop": "",
+				"tablet": "",
+				"mobile": ""
+			}
+		}
+	},
+
+	"supports": {
+		"align": [
+			"full"
+		],
+		"html": false,
+		"inserter": false
+	}
+}

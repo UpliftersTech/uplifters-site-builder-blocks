@@ -1,0 +1,60 @@
+/**
+ * Frontend and editor shared styles for the BlockOnBackground block.
+ */
+
+.wp-block-uplifters-site-builder-blocks-block-on-background,
+.uplifters-block-on-background {
+	--uplifters-block-on-background-height: 400px;
+	--uplifters-block-on-background-width: 1200px;
+	--uplifters-block-on-background-padding-top: 20px;
+	--uplifters-block-on-background-padding-bottom: 20px;
+	--uplifters-block-on-background-padding-left: 20px;
+	--uplifters-block-on-background-padding-right: 20px;
+	--uplifters-block-on-background-bg-color: transparent;
+	--uplifters-block-on-background-bg-image: none;
+	--uplifters-block-on-background-bg-gradient: none;
+	--uplifters-block-on-background-overlay: rgba(0, 0, 0, 0);
+	--uplifters-block-on-background-radius: 12px;
+
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-sizing: border-box;
+	width: 100%;
+	max-width: var(--uplifters-block-on-background-width);
+	margin-right: auto;
+	margin-left: auto;
+	min-height: var(--uplifters-block-on-background-height);
+	padding: var(--uplifters-block-on-background-padding-top)
+		var(--uplifters-block-on-background-padding-right)
+		var(--uplifters-block-on-background-padding-bottom)
+		var(--uplifters-block-on-background-padding-left);
+	overflow: hidden;
+	border-radius: var(--uplifters-block-on-background-radius);
+	background-color: var(--uplifters-block-on-background-bg-color);
+	background-image: var(--uplifters-block-on-background-bg-gradient),
+		var(--uplifters-block-on-background-bg-image);
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: cover;
+
+	.uplifters-block-on-background__overlay {
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		pointer-events: none;
+		background-color: var(
+			--uplifters-block-on-background-overlay,
+			rgba(0, 0, 0, 0)
+		);
+	}
+
+	.uplifters-block-on-background__content {
+		position: relative;
+		z-index: 10;
+		width: 100%;
+	}
+}

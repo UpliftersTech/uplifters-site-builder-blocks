@@ -1,0 +1,169 @@
+{
+  "$schema": "https://schemas.wp.org/wp/6.7/block.json",
+  "apiVersion": 3,
+  "name": "uplifters-site-builder-blocks/countup-auto-animate",
+  "version": "1.0.0",
+  "title": "Countup Animation",
+  "category": "uplifters-site-builder-blocks-gene",
+  "icon": "smiley",
+  "description": "Present multiple statistics with numbers that animate automatically into view.",
+	"example": { "attributes": { "preview": true }, "viewportWidth": 700 },
+  "textdomain": "uplifters-site-builder-blocks",
+  "editorScript": "file:./index.js",
+  "style": "file:./style-index.css",
+  "editorStyle": "file:./index.css",
+  "viewScript": "file:./view.js",
+  "render": "file:./render.php",
+  "supports": {
+    "html": false
+  },
+  "attributes": {
+    "preview": {
+      "type": "boolean",
+      "default": false
+    },
+    "heading": {
+      "type": "string",
+      "default": "Counters"
+    },
+    "headingFontFamily": {
+      "type": "object",
+      "default": {
+        "desktop": "default",
+        "tablet": "default",
+        "mobile": "default"
+      }
+    },
+    "headingColor": {
+      "type": "object",
+      "default": {
+        "desktop": "#000000",
+        "tablet": "#000000",
+        "mobile": "#000000"
+      }
+    },
+    "headingSize": {
+      "type": "object",
+      "default": {
+        "desktop": 24,
+        "tablet": 22,
+        "mobile": 20
+      }
+    },
+    "backgroundColor": {
+      "type": "object",
+      "default": {
+        "desktop": "#ffffff",
+        "tablet": "#ffffff",
+        "mobile": "#ffffff"
+      }
+    },
+    "counters": {
+      "type": "array",
+      "default": [
+        {
+          "title": "Counter 1",
+          "titleFontFamily": {
+            "desktop": "default",
+            "tablet": "default",
+            "mobile": "default"
+          },
+          "titleColor": {
+            "desktop": "#111827",
+            "tablet": "#111827",
+            "mobile": "#111827"
+          },
+          "titleSize": {
+            "desktop": 16,
+            "tablet": 15,
+            "mobile": 14
+          },
+          "value": 100,
+          "numberFontFamily": {
+            "desktop": "default",
+            "tablet": "default",
+            "mobile": "default"
+          },
+          "numberSize": {
+            "desktop": 30,
+            "tablet": 28,
+            "mobile": 26
+          },
+          "color": {
+            "desktop": "#ff0000",
+            "tablet": "#ff0000",
+            "mobile": "#ff0000"
+          }
+        },
+        {
+          "title": "Counter 2",
+          "titleFontFamily": {
+            "desktop": "default",
+            "tablet": "default",
+            "mobile": "default"
+          },
+          "titleColor": {
+            "desktop": "#111827",
+            "tablet": "#111827",
+            "mobile": "#111827"
+          },
+          "titleSize": {
+            "desktop": 16,
+            "tablet": 15,
+            "mobile": 14
+          },
+          "value": 200,
+          "numberFontFamily": {
+            "desktop": "default",
+            "tablet": "default",
+            "mobile": "default"
+          },
+          "numberSize": {
+            "desktop": 30,
+            "tablet": 28,
+            "mobile": 26
+          },
+          "color": {
+            "desktop": "#00ff00",
+            "tablet": "#00ff00",
+            "mobile": "#00ff00"
+          }
+        },
+        {
+          "title": "Counter 3",
+          "titleFontFamily": {
+            "desktop": "default",
+            "tablet": "default",
+            "mobile": "default"
+          },
+          "titleColor": {
+            "desktop": "#111827",
+            "tablet": "#111827",
+            "mobile": "#111827"
+          },
+          "titleSize": {
+            "desktop": 16,
+            "tablet": 15,
+            "mobile": 14
+          },
+          "value": 300,
+          "numberFontFamily": {
+            "desktop": "default",
+            "tablet": "default",
+            "mobile": "default"
+          },
+          "numberSize": {
+            "desktop": 30,
+            "tablet": 28,
+            "mobile": 26
+          },
+          "color": {
+            "desktop": "#0000ff",
+            "tablet": "#0000ff",
+            "mobile": "#0000ff"
+          }
+        }
+      ]
+    }
+  }
+}

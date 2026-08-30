@@ -1,0 +1,107 @@
+
+{
+	"$schema": "https://schemas.wp.org/wp/6.7/block.json",
+	"apiVersion": 3,
+	"name": "uplifters-site-builder-blocks/button-single",
+	"version": "1.0.0",
+	"title": "Button",
+	"category": "uplifters-site-builder-blocks-gene",
+	"icon": "smiley",
+	"description": "Add a responsive button with custom text, link, alignment, colors, and spacing.",
+	"example": { "attributes": { "preview": true }, "viewportWidth": 700 },
+	"textdomain": "uplifters-site-builder-blocks",
+	"editorScript": "file:./index.js",
+	"style": "file:./style-index.css",
+	"editorStyle": "file:./index.css",
+	"viewScript": "file:./view.js",
+	"render": "file:./render.php",
+	"attributes": {
+		"preview": {
+			"type": "boolean",
+			"default": false
+		},
+		"text": {
+			"type": "object",
+			"default": {
+				"desktop": "Click Me",
+				"tablet": "Click Me",
+				"mobile": "Click Me"
+			}
+		},
+		"url": {
+			"type": "string",
+			"default": "#"
+		},
+		"openInNewTab": {
+			"type": "boolean",
+			"default": false
+		},
+		"alignment": {
+			"type": "object",
+			"default": {
+				"desktop": "left",
+				"tablet": "center",
+				"mobile": "center"
+			}
+		},
+		"fontFamily": {
+			"type": "object",
+			"default": {
+				"desktop": "default",
+				"tablet": "default",
+				"mobile": "default"
+			}
+		},
+		"fontSize": {
+			"type": "object",
+			"default": {
+				"desktop": "16px",
+				"tablet": "15px",
+				"mobile": "14px"
+			}
+		},
+		"padding": {
+			"type": "object",
+			"default": {
+				"desktop": "14px 24px",
+				"tablet": "12px 22px",
+				"mobile": "12px 18px"
+			}
+		},
+		"borderRadius": {
+			"type": "object",
+			"default": {
+				"desktop": "8px",
+				"tablet": "8px",
+				"mobile": "8px"
+			}
+		},
+		"backgroundColor": {
+			"type": "object",
+			"default": {
+				"desktop": "#111827",
+				"tablet": "#111827",
+				"mobile": "#111827"
+			}
+		},
+		"textColor": {
+			"type": "object",
+			"default": {
+				"desktop": "#ffffff",
+				"tablet": "#ffffff",
+				"mobile": "#ffffff"
+			}
+		},
+		"width": {
+			"type": "object",
+			"default": {
+				"desktop": "auto",
+				"tablet": "auto",
+				"mobile": "100%"
+			}
+		}
+	},
+	"supports": {
+		"html": false
+	}
+}

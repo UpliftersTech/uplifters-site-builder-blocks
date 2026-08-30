@@ -1,0 +1,51 @@
+.wp-block-uplifters-site-builder-blocks-countdown-with-msg,
+.wp-block-uplifters-site-builder-blocks-countdown-with-msg *,
+.uplifters-site-builder-blocks-countdown-with-msg,
+.uplifters-site-builder-blocks-countdown-with-msg * {
+	box-sizing: border-box;
+}
+
+.wp-block-uplifters-site-builder-blocks-countdown-with-msg,
+.uplifters-site-builder-blocks-countdown-with-msg {
+	width: 100%;
+	max-width: 100%;
+}
+
+.uplifters-site-builder-blocks-countdown-with-msg__units {
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.uplifters-site-builder-blocks-countdown-with-msg__unit {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+
+.uplifters-site-builder-blocks-countdown-with-msg__number {
+	display: block;
+	font-weight: 700;
+	line-height: 1.1;
+	font-variant-numeric: tabular-nums;
+}
+
+.uplifters-site-builder-blocks-countdown-with-msg__label {
+	display: block;
+	margin-top: 6px;
+	font-weight: 500;
+	line-height: 1.3;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+
+.uplifters-site-builder-blocks-countdown-with-msg__expired {
+	margin: 0;
+	text-align: center;
+	font-weight: 600;
+	line-height: 1.5;
+}
+
+.uplifters-site-builder-blocks-countdown-with-msg [hidden] {
+	display: none !important;
+}

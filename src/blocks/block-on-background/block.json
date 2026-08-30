@@ -1,0 +1,71 @@
+{
+	"$schema": "https://schemas.wp.org/wp/6.7/block.json",
+	"apiVersion": 3,
+	"name": "uplifters-site-builder-blocks/block-on-background",
+	"version": "1.0.0",
+	"title": "Block On Background",
+	"category": "uplifters-site-builder-blocks-gene",
+	"icon": "smiley",
+	"description": "Wrap inner blocks in a container with a background image, color, or gradient, plus adjustable dimensions, padding, and a darkening overlay.",
+	"example": { "attributes": { "preview": true }, "viewportWidth": 700 },
+	"textdomain": "uplifters-site-builder-blocks",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css",
+	"viewScript": "file:./view.js",
+	"render": "file:./render.php",
+	"attributes": {
+		"preview": {
+			"type": "boolean",
+			"default": false
+		},
+		"blockHeight": {
+			"type": "number",
+			"default": 400
+		},
+		"blockWidth": {
+			"type": "number",
+			"default": 1200
+		},
+		"paddingTop": {
+			"type": "number",
+			"default": 20
+		},
+		"paddingBottom": {
+			"type": "number",
+			"default": 20
+		},
+		"paddingLeft": {
+			"type": "number",
+			"default": 20
+		},
+		"paddingRight": {
+			"type": "number",
+			"default": 20
+		},
+		"bgImageId": {
+			"type": "number",
+			"default": 0
+		},
+		"bgImageUrl": {
+			"type": "string",
+			"default": ""
+		},
+		"overlayOpacity": {
+			"type": "number",
+			"default": 30
+		},
+		"bgColor": {
+			"type": "string",
+			"default": ""
+		},
+		"bgGradient": {
+			"type": "string",
+			"default": ""
+		}
+	},
+	"supports": {
+		"html": false,
+		"align": ["full", "wide"]
+	}
+}

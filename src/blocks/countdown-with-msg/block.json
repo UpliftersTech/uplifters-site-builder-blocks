@@ -1,0 +1,250 @@
+{
+	"$schema": "https://schemas.wp.org/wp/6.7/block.json",
+	"apiVersion": 3,
+	"name": "uplifters-site-builder-blocks/countdown-with-msg",
+	"version": "1.0.0",
+	"title": "Countdown with Message",
+	"category": "uplifters-site-builder-blocks-gene",
+	"icon": "smiley",
+	"description": "Responsive countdown timer block with global responsive editing support.",
+	"example": {
+		"attributes": { "preview": true },
+		"viewportWidth": 700
+	},
+	"textdomain": "uplifters-site-builder-blocks",
+	"editorScript": "file:./index.js",
+	"style": "file:./style-index.css",
+	"editorStyle": "file:./index.css",
+	"viewScript": "file:./view.js",
+	"render": "file:./render.php",
+	"supports": {
+		"html": false,
+		"anchor": true,
+		"align": [
+			"wide",
+			"full"
+		],
+		"spacing": {
+			"margin": true,
+			"padding": false
+		}
+	},
+	"attributes": {
+		"preview": {
+			"type": "boolean",
+			"default": false
+		},
+		"targetDate": {
+			"type": "string",
+			"default": ""
+		},
+		"showDays": {
+			"type": "boolean",
+			"default": true
+		},
+		"showHours": {
+			"type": "boolean",
+			"default": true
+		},
+		"showMinutes": {
+			"type": "boolean",
+			"default": true
+		},
+		"showSeconds": {
+			"type": "boolean",
+			"default": true
+		},
+		"daysLabel": {
+			"type": "string",
+			"default": "Days"
+		},
+		"hoursLabel": {
+			"type": "string",
+			"default": "Hours"
+		},
+		"minutesLabel": {
+			"type": "string",
+			"default": "Minutes"
+		},
+		"secondsLabel": {
+			"type": "string",
+			"default": "Seconds"
+		},
+		"expiredBehaviour": {
+			"type": "string",
+			"default": "message"
+		},
+		"expiredMessage": {
+			"type": "string",
+			"default": "This offer has ended."
+		},
+		"showMessage": {
+			"type": "boolean",
+			"default": true
+		},
+		"message": {
+			"type": "string",
+			"default": ""
+		},
+		"messageFontSize": {
+			"type": "object",
+			"default": {
+				"desktop": 16,
+				"tablet": 15,
+				"mobile": 14
+			}
+		},
+		"messageColor": {
+			"type": "object",
+			"default": {
+				"desktop": "#475569",
+				"tablet": "#475569",
+				"mobile": "#475569"
+			}
+		},
+		"messageAlignment": {
+			"type": "object",
+			"default": {
+				"desktop": "center",
+				"tablet": "center",
+				"mobile": "center"
+			}
+		},
+		"messageSpacing": {
+			"type": "object",
+			"default": {
+				"desktop": 16,
+				"tablet": 14,
+				"mobile": 12
+			}
+		},
+		"expiredMessageFontSize": {
+			"type": "object",
+			"default": {
+				"desktop": 20,
+				"tablet": 18,
+				"mobile": 16
+			}
+		},
+		"expiredMessageColor": {
+			"type": "object",
+			"default": {
+				"desktop": "#0f172a",
+				"tablet": "#0f172a",
+				"mobile": "#0f172a"
+			}
+		},
+		"expiredMessageAlignment": {
+			"type": "object",
+			"default": {
+				"desktop": "center",
+				"tablet": "center",
+				"mobile": "center"
+			}
+		},
+		"layout": {
+			"type": "object",
+			"default": {
+				"desktop": "row",
+				"tablet": "row",
+				"mobile": "row"
+			}
+		},
+		"alignment": {
+			"type": "object",
+			"default": {
+				"desktop": "center",
+				"tablet": "center",
+				"mobile": "center"
+			}
+		},
+		"gap": {
+			"type": "object",
+			"default": {
+				"desktop": 16,
+				"tablet": 12,
+				"mobile": 8
+			}
+		},
+		"numberFontSize": {
+			"type": "object",
+			"default": {
+				"desktop": 48,
+				"tablet": 40,
+				"mobile": 32
+			}
+		},
+		"numberColor": {
+			"type": "object",
+			"default": {
+				"desktop": "#0f172a",
+				"tablet": "#0f172a",
+				"mobile": "#0f172a"
+			}
+		},
+		"labelFontSize": {
+			"type": "object",
+			"default": {
+				"desktop": 13,
+				"tablet": 12,
+				"mobile": 11
+			}
+		},
+		"labelColor": {
+			"type": "object",
+			"default": {
+				"desktop": "#64748b",
+				"tablet": "#64748b",
+				"mobile": "#64748b"
+			}
+		},
+		"boxBackgroundColor": {
+			"type": "object",
+			"default": {
+				"desktop": "#f1f5f9",
+				"tablet": "#f1f5f9",
+				"mobile": "#f1f5f9"
+			}
+		},
+		"boxPadding": {
+			"type": "object",
+			"default": {
+				"desktop": 20,
+				"tablet": 16,
+				"mobile": 12
+			}
+		},
+		"boxBorderRadius": {
+			"type": "object",
+			"default": {
+				"desktop": 12,
+				"tablet": 12,
+				"mobile": 10
+			}
+		},
+		"boxMinWidth": {
+			"type": "object",
+			"default": {
+				"desktop": 110,
+				"tablet": 96,
+				"mobile": 74
+			}
+		},
+		"backgroundColor": {
+			"type": "object",
+			"default": {
+				"desktop": "transparent",
+				"tablet": "transparent",
+				"mobile": "transparent"
+			}
+		},
+		"spacing": {
+			"type": "object",
+			"default": {
+				"desktop": 32,
+				"tablet": 24,
+				"mobile": 20
+			}
+		}
+	}
+}

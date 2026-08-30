@@ -1,0 +1,15 @@
+body.uplifters-site-builder-blocks-heading-advance-is-selected .block-editor-block-toolbar > * {
+  display: none !important;
+}
+
+body.uplifters-site-builder-blocks-heading-advance-is-selected .block-editor-block-toolbar > *:has(.block-editor-block-draggable),
+body.uplifters-site-builder-blocks-heading-advance-is-selected .block-editor-block-toolbar > *:has(.block-editor-block-mover),
+body.uplifters-site-builder-blocks-heading-advance-is-selected .block-editor-block-toolbar > .block-editor-block-mover {
+  display: flex !important;
+}
+
+body.uplifters-site-builder-blocks-heading-advance-is-selected .block-editor-block-toolbar .block-editor-block-draggable,
+body.uplifters-site-builder-blocks-heading-advance-is-selected .block-editor-block-toolbar .block-editor-block-mover,
+body.uplifters-site-builder-blocks-heading-advance-is-selected .block-editor-block-toolbar .block-editor-block-mover button {
+  display: inline-flex !important;
+}

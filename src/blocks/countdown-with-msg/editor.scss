@@ -1,0 +1,303 @@
+.uplifters-site-builder-blocks-countdown-with-msg-device-badge {
+	display: inline-flex;
+	align-items: center;
+	margin-bottom: 12px;
+	padding: 5px 10px;
+	border-radius: 999px;
+	background: #f0f0f1;
+	color: #1e1e1e;
+	font-size: 12px;
+	font-weight: 600;
+	line-height: 1.4;
+}
+
+.uplifters-site-builder-blocks-countdown-with-msg-responsive-help {
+	margin: 0 0 16px;
+	color: #757575;
+	font-size: 12px;
+	line-height: 1.5;
+}
+
+.uplifters-site-builder-blocks-countdown-with-msg-editor,
+.uplifters-site-builder-blocks-countdown-with-msg-editor * {
+	box-sizing: border-box;
+}
+
+.uplifters-site-builder-blocks-countdown-with-msg-editor {
+	position: relative;
+	width: 100%;
+	max-width: none;
+}
+
+.uplifters-site-builder-blocks-countdown-with-msg-editor__preview {
+	position: relative;
+	width: 100%;
+	padding:
+		var(
+			--uplifters-site-builder-blocks-countdown-with-msg-spacing,
+			32px
+		)
+		16px;
+	background-color:
+		var(
+			--uplifters-site-builder-blocks-countdown-with-msg-background-color,
+			transparent
+		);
+	transition:
+		background-color 0.15s ease,
+		padding 0.15s ease;
+}
+
+.uplifters-site-builder-blocks-countdown-with-msg-editor__units {
+	display: flex;
+	flex-wrap: wrap;
+	gap:
+		var(
+			--uplifters-site-builder-blocks-countdown-with-msg-gap,
+			16px
+		);
+	justify-content:
+		var(
+			--uplifters-site-builder-blocks-countdown-with-msg-alignment,
+			center
+		);
+}
+
+.uplifters-site-builder-blocks-countdown-with-msg-layout-grid
+	.uplifters-site-builder-blocks-countdown-with-msg-editor__units {
+	display: grid;
+	grid-template-columns:
+		repeat(2, minmax(0, 1fr));
+	justify-items:
+		var(
+			--uplifters-site-builder-blocks-countdown-with-msg-alignment,
+			center
+		);
+}
+
+.uplifters-site-builder-blocks-countdown-with-msg-layout-stack
+	.uplifters-site-builder-blocks-countdown-with-msg-editor__units {
+	flex-direction: column;
+	align-items:
+		var(
+			--uplifters-site-builder-blocks-countdown-with-msg-alignment,
+			center
+		);
+}
+
+.uplifters-site-builder-blocks-countdown-with-msg-editor__unit {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	min-width:
+		var(
+			--uplifters-site-builder-blocks-countdown-with-msg-box-min-width,
+			110px
+		);
+	padding:
+		var(
+			--uplifters-site-builder-blocks-countdown-with-msg-box-padding,
+			20px
+		);
+	border-radius:
+		var(
+			--uplifters-site-builder-blocks-countdown-with-msg-box-radius,
+			12px
+		);
+	background:
+		var(
+			--uplifters-site-builder-blocks-countdown-with-msg-box-background,
+			#f1f5f9
+		);
+}
+
+.uplifters-site-builder-blocks-countdown-with-msg-editor__number {
+	display: block;
+	font-size:
+		var(
+			--uplifters-site-builder-blocks-countdown-with-msg-number-size,
+			48px
+		);
+	font-weight: 700;
+	line-height: 1.1;
+	color:
+		var(
+			--uplifters-site-builder-blocks-countdown-with-msg-number-color,
+			#0f172a
+		);
+	font-variant-numeric: tabular-nums;
+}
+
+.uplifters-site-builder-blocks-countdown-with-msg-editor__label {
+	display: block;
+	margin-top: 6px;
+	font-size:
+		var(
+			--uplifters-site-builder-blocks-countdown-with-msg-label-size,
+			13px
+		);
+	font-weight: 500;
+	line-height: 1.3;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	color:
+		var(
+			--uplifters-site-builder-blocks-countdown-with-msg-label-color,
+			#64748b
+		);
+}
+
+.uplifters-site-builder-blocks-countdown-with-msg-editor__notice,
+.uplifters-site-builder-blocks-countdown-with-msg-editor__expired {
+	margin: 0;
+	line-height: 1.5;
+}
+
+.uplifters-site-builder-blocks-countdown-with-msg-editor__notice {
+	text-align: center;
+	font-size: 14px;
+	color: #64748b;
+}
+
+.uplifters-site-builder-blocks-countdown-with-msg-editor__expired {
+	font-weight: 600;
+	font-size:
+		var(
+			--uplifters-site-builder-blocks-countdown-with-msg-expired-size,
+			20px
+		);
+	text-align:
+		var(
+			--uplifters-site-builder-blocks-countdown-with-msg-expired-align,
+			center
+		);
+	color:
+		var(
+			--uplifters-site-builder-blocks-countdown-with-msg-expired-color,
+			#0f172a
+		);
+}
+
+.uplifters-site-builder-blocks-countdown-with-msg-editor__message {
+	margin: 0;
+	font-weight: 500;
+	line-height: 1.6;
+	font-size:
+		var(
+			--uplifters-site-builder-blocks-countdown-with-msg-message-size,
+			16px
+		);
+	text-align:
+		var(
+			--uplifters-site-builder-blocks-countdown-with-msg-message-align,
+			center
+		);
+	color:
+		var(
+			--uplifters-site-builder-blocks-countdown-with-msg-message-color,
+			#475569
+		);
+	margin-top:
+		var(
+			--uplifters-site-builder-blocks-countdown-with-msg-message-gap,
+			16px
+		);
+}
+
+/**
+ * Target date and time control.
+ */
+.uplifters-site-builder-blocks-countdown-with-msg-datefield {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex-wrap: wrap;
+}
+
+.uplifters-site-builder-blocks-countdown-with-msg-datefield__dropdown {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
+.uplifters-site-builder-blocks-countdown-with-msg-datefield__toggle {
+	width: 100%;
+	justify-content: flex-start;
+	white-space: normal;
+	text-align: left;
+	height: auto;
+	min-height: 36px;
+	padding: 6px 12px;
+	line-height: 1.4;
+}
+
+/**
+ * Calendar popover. The native browser picker cannot be
+ * styled, so the block uses the editor date picker and
+ * gives it a lifted, readable surface of its own.
+ */
+.uplifters-site-builder-blocks-countdown-with-msg-datepicker {
+	background: #fff;
+	border: 1px solid rgba(15, 23, 42, 0.08);
+	border-radius: 12px;
+	box-shadow:
+		0 18px 40px rgba(15, 23, 42, 0.18),
+		0 6px 14px rgba(15, 23, 42, 0.1);
+	overflow: hidden;
+}
+
+.uplifters-site-builder-blocks-countdown-with-msg-datepicker.components-popover__content,
+.components-popover__content
+	> .uplifters-site-builder-blocks-countdown-with-msg-datepicker {
+	background: #fff;
+	border-radius: 12px;
+	box-shadow:
+		0 18px 40px rgba(15, 23, 42, 0.18),
+		0 6px 14px rgba(15, 23, 42, 0.1);
+}
+
+.uplifters-site-builder-blocks-countdown-with-msg-datepicker
+	.components-datetime {
+	padding: 12px;
+	background: #fff;
+}
+
+.uplifters-site-builder-blocks-countdown-with-msg-datepicker
+	.components-datetime__date {
+	background: #fff;
+	border-radius: 8px;
+}
+
+.uplifters-site-builder-blocks-countdown-with-msg-datepicker
+	.components-datetime__time {
+	margin-bottom: 8px;
+}
+
+/**
+ * Hour, minute and meridiem sit in one compact row so the
+ * time is set with taps rather than typed into a 24 hour field.
+ */
+.uplifters-site-builder-blocks-countdown-with-msg-timefield {
+	flex: 1 1 100%;
+	display: grid;
+	grid-template-columns: 1fr 1fr auto;
+	gap: 8px;
+	align-items: end;
+	width: 100%;
+
+	.components-base-control {
+		margin-bottom: 0;
+	}
+
+	.components-base-control__field {
+		margin-bottom: 0;
+	}
+
+	select {
+		width: 100%;
+	}
+}
+
+.uplifters-site-builder-blocks-countdown-with-msg-timefield__meridiem {
+	display: flex;
+}

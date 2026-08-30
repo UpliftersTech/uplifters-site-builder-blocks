@@ -1,0 +1,375 @@
+{
+  "$schema": "https://schemas.wp.org/wp/6.7/block.json",
+  "apiVersion": 3,
+  "name": "uplifters-site-builder-blocks/copyright-component-rearrange",
+  "version": "1.0.0",
+  "title": "Copyright Notice",
+  "category": "uplifters-site-builder-blocks-gene",
+  "icon": "smiley",
+  "description": "Display a customizable copyright line with automatic or fixed year options.",
+  "textdomain": "uplifters-site-builder-blocks",
+	"example": { "attributes": { "preview": true }, "viewportWidth": 700 },
+  "editorScript": "file:./index.js",
+  "style": "file:./style-index.css",
+  "editorStyle": "file:./index.css",
+  "viewScript": "file:./view.js",
+  "render": "file:./render.php",
+  
+  "supports": {
+    "html": false
+  },
+  "attributes": {
+    "preview": {
+      "type": "boolean",
+      "default": false
+    },
+    "text": {
+      "type": "object",
+      "default": {
+        "desktop": "",
+        "tablet": "",
+        "mobile": ""
+      }
+    },
+    "secondText": {
+      "type": "object",
+      "default": {
+        "desktop": "",
+        "tablet": "",
+        "mobile": ""
+      }
+    },
+    "copyrightMark": {
+      "type": "string",
+      "default": "copyright"
+    },
+    "contentOrder": {
+      "type": "object",
+      "default": {
+        "desktop": "mark-text-year",
+        "tablet": "mark-text-year",
+        "mobile": "mark-text-year"
+      }
+    },
+    "markFontSize": {
+      "type": "object",
+      "default": {
+        "desktop": 20,
+        "tablet": 20,
+        "mobile": 20
+      }
+    },
+    "markColor": {
+      "type": "object",
+      "default": {
+        "desktop": "",
+        "tablet": "",
+        "mobile": ""
+      }
+    },
+    "markBackgroundColor": {
+      "type": "object",
+      "default": {
+        "desktop": "",
+        "tablet": "",
+        "mobile": ""
+      }
+    },
+    "markOpacity": {
+      "type": "object",
+      "default": {
+        "desktop": 1,
+        "tablet": 1,
+        "mobile": 1
+      }
+    },
+    "yearFontSize": {
+      "type": "object",
+      "default": {
+        "desktop": 16,
+        "tablet": 16,
+        "mobile": 16
+      }
+    },
+    "yearColor": {
+      "type": "object",
+      "default": {
+        "desktop": "",
+        "tablet": "",
+        "mobile": ""
+      }
+    },
+    "yearBackgroundColor": {
+      "type": "object",
+      "default": {
+        "desktop": "",
+        "tablet": "",
+        "mobile": ""
+      }
+    },
+    "yearOpacity": {
+      "type": "object",
+      "default": {
+        "desktop": 1,
+        "tablet": 1,
+        "mobile": 1
+      }
+    },
+    "mainTextFontSize": {
+      "type": "object",
+      "default": {
+        "desktop": 16,
+        "tablet": 16,
+        "mobile": 16
+      }
+    },
+    "mainTextColor": {
+      "type": "object",
+      "default": {
+        "desktop": "",
+        "tablet": "",
+        "mobile": ""
+      }
+    },
+    "mainTextOpacity": {
+      "type": "object",
+      "default": {
+        "desktop": 1,
+        "tablet": 1,
+        "mobile": 1
+      }
+    },
+    "mainTextFontWeight": {
+      "type": "object",
+      "default": {
+        "desktop": "400",
+        "tablet": "400",
+        "mobile": "400"
+      }
+    },
+    "mainTextItalic": {
+      "type": "object",
+      "default": {
+        "desktop": false,
+        "tablet": false,
+        "mobile": false
+      }
+    },
+    "mainTextLineHeight": {
+      "type": "object",
+      "default": {
+        "desktop": "",
+        "tablet": "",
+        "mobile": ""
+      }
+    },
+    "mainTextFontFamily": {
+      "type": "object",
+      "default": {
+        "desktop": "inherit",
+        "tablet": "inherit",
+        "mobile": "inherit"
+      }
+    },
+    "secondTextFontSize": {
+      "type": "object",
+      "default": {
+        "desktop": 14,
+        "tablet": 14,
+        "mobile": 14
+      }
+    },
+    "secondTextColor": {
+      "type": "object",
+      "default": {
+        "desktop": "",
+        "tablet": "",
+        "mobile": ""
+      }
+    },
+    "secondTextOpacity": {
+      "type": "object",
+      "default": {
+        "desktop": 1,
+        "tablet": 1,
+        "mobile": 1
+      }
+    },
+    "secondTextFontWeight": {
+      "type": "object",
+      "default": {
+        "desktop": "400",
+        "tablet": "400",
+        "mobile": "400"
+      }
+    },
+    "secondTextItalic": {
+      "type": "object",
+      "default": {
+        "desktop": false,
+        "tablet": false,
+        "mobile": false
+      }
+    },
+    "secondTextLineHeight": {
+      "type": "object",
+      "default": {
+        "desktop": "",
+        "tablet": "",
+        "mobile": ""
+      }
+    },
+    "secondTextFontFamily": {
+      "type": "object",
+      "default": {
+        "desktop": "inherit",
+        "tablet": "inherit",
+        "mobile": "inherit"
+      }
+    },
+    "showMark": {
+      "type": "object",
+      "default": {
+        "desktop": true,
+        "tablet": true,
+        "mobile": true
+      }
+    },
+    "showYear": {
+      "type": "object",
+      "default": {
+        "desktop": true,
+        "tablet": true,
+        "mobile": true
+      }
+    },
+    "showText": {
+      "type": "object",
+      "default": {
+        "desktop": true,
+        "tablet": true,
+        "mobile": true
+      }
+    },
+    "showSecondLine": {
+      "type": "object",
+      "default": {
+        "desktop": true,
+        "tablet": true,
+        "mobile": true
+      }
+    },
+    "yearMode": {
+      "type": "object",
+      "default": {
+        "desktop": "current",
+        "tablet": "current",
+        "mobile": "current"
+      }
+    },
+    "startingYear": {
+      "type": "object",
+      "default": {
+        "desktop": "",
+        "tablet": "",
+        "mobile": ""
+      }
+    },
+    "fixedYear": {
+      "type": "object",
+      "default": {
+        "desktop": "",
+        "tablet": "",
+        "mobile": ""
+      }
+    },
+    "position": {
+      "type": "object",
+      "default": {
+        "desktop": "start",
+        "tablet": "start",
+        "mobile": "start"
+      }
+    },
+    "textColor": {
+      "type": "object",
+      "default": {
+        "desktop": "",
+        "tablet": "",
+        "mobile": ""
+      }
+    },
+    "backgroundColor": {
+      "type": "object",
+      "default": {
+        "desktop": "",
+        "tablet": "",
+        "mobile": ""
+      }
+    },
+    "padding": {
+      "type": "object",
+      "default": {
+        "desktop": 2,
+        "tablet": 2,
+        "mobile": 2
+      }
+    },
+    "margin": {
+      "type": "object",
+      "default": {
+        "desktop": 2,
+        "tablet": 2,
+        "mobile": 2
+      }
+    },
+    "fontSize": {
+      "type": "object",
+      "default": {
+        "desktop": 16,
+        "tablet": 15,
+        "mobile": 14
+      }
+    },
+    "opacity": {
+      "type": "object",
+      "default": {
+        "desktop": 1,
+        "tablet": 1,
+        "mobile": 1
+      }
+    },
+    "isBold": {
+      "type": "object",
+      "default": {
+        "desktop": false,
+        "tablet": false,
+        "mobile": false
+      }
+    },
+    "lineHeight": {
+      "type": "object",
+      "default": {
+        "desktop": "",
+        "tablet": "",
+        "mobile": ""
+      }
+    },
+    "isItalic": {
+      "type": "object",
+      "default": {
+        "desktop": false,
+        "tablet": false,
+        "mobile": false
+      }
+    },
+    "fontWeight": {
+      "type": "object",
+      "default": {
+        "desktop": "400",
+        "tablet": "400",
+        "mobile": "400"
+      }
+    }
+  }
+}
