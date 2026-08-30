@@ -1,0 +1,17 @@
+@media (min-width: 1025px) {
+	.uplifters-site-builder-blocks-hidden-desktop {
+		display: none !important;
+	}
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+	.uplifters-site-builder-blocks-hidden-tablet {
+		display: none !important;
+	}
+}
+
+@media (max-width: 767px) {
+	.uplifters-site-builder-blocks-hidden-mobile {
+		display: none !important;
+	}
+}

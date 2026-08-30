@@ -1,0 +1,602 @@
+#uplifters-site-builder-blocks-responsive-floating-root {
+	position: fixed;
+	top: 72px;
+	right: 24px;
+	z-index: 9999999;
+	pointer-events: none;
+}
+
+.uplifters-site-builder-blocks-responsive-floating-bar {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	padding: 6px;
+	background: #ffffff;
+	border: 1px solid #dcdcde;
+	border-radius: 999px;
+	box-shadow:
+		0 4px 10px rgba(0, 0, 0, 0.12),
+		0 12px 30px rgba(0, 0, 0, 0.18),
+		0 24px 55px rgba(0, 0, 0, 0.12);
+	pointer-events: auto;
+	user-select: none;
+}
+
+.uplifters-site-builder-blocks-responsive-drag-handle {
+	width: 24px;
+	height: 36px;
+	padding: 0;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border: 0;
+	border-radius: 999px;
+	background: transparent;
+	color: #757575;
+	cursor: grab;
+	font-size: 13px;
+	line-height: 1;
+}
+
+.uplifters-site-builder-blocks-responsive-drag-handle:hover {
+	background: #f0f0f1;
+	color: #1e1e1e;
+}
+
+.uplifters-site-builder-blocks-responsive-drag-handle:active {
+	cursor: grabbing;
+}
+
+.uplifters-site-builder-blocks-responsive-device-button,
+.uplifters-site-builder-blocks-responsive-reset-button {
+	width: 36px;
+	height: 36px;
+	min-width: 36px;
+	padding: 0 !important;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border: 0;
+	border-radius: 999px !important;
+	background: transparent;
+	color: #1e1e1e;
+}
+
+.uplifters-site-builder-blocks-responsive-device-button:hover,
+.uplifters-site-builder-blocks-responsive-reset-button:hover {
+	background: #f0f0f1;
+}
+
+.uplifters-site-builder-blocks-responsive-device-button:focus,
+.uplifters-site-builder-blocks-responsive-reset-button:focus {
+	box-shadow: none;
+	outline: none;
+}
+
+.uplifters-site-builder-blocks-responsive-device-button:focus-visible,
+.uplifters-site-builder-blocks-responsive-reset-button:focus-visible {
+	box-shadow:
+		0 0 0 2px #ffffff,
+		0 0 0 4px #3858e9;
+}
+
+.uplifters-site-builder-blocks-responsive-device-button.is-active {
+	background: #1e1e1e !important;
+	color: #ffffff !important;
+}
+
+.uplifters-site-builder-blocks-responsive-device-icon {
+	width: 20px;
+	height: 20px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex: 0 0 20px;
+	line-height: 1;
+	color: currentColor;
+}
+
+.uplifters-site-builder-blocks-responsive-device-icon svg {
+	width: 20px;
+	height: 20px;
+	display: block;
+	overflow: visible;
+	color: inherit;
+}
+
+/* ==========================================================================
+   SVG Icon — Default state
+   All coloring is done purely via CSS. No inline fill/stroke in the JS.
+   ========================================================================== */
+
+/* Outer device frame: stroke only */
+.uplifters-site-builder-blocks-device-frame {
+	fill: none;
+	stroke: currentColor;
+}
+
+/* Screen: blue fill, no stroke */
+.uplifters-site-builder-blocks-device-screen {
+	fill: #dbeafe;
+	stroke: none;
+	transition: fill 160ms ease;
+}
+
+/* Screen glare: white stroke */
+.uplifters-site-builder-blocks-device-screen-highlight {
+	fill: none;
+	stroke: #ffffff;
+	opacity: 0.78;
+	transition: opacity 160ms ease;
+}
+
+/* Stroke-based details: neck, stand base (paths) */
+.uplifters-site-builder-blocks-device-detail--stroke {
+	fill: none;
+	stroke: currentColor;
+}
+
+/* Fill-based details: camera dot, Dynamic Island, volume/power buttons (rects/circles) */
+.uplifters-site-builder-blocks-device-detail--fill {
+	fill: currentColor;
+	stroke: none;
+}
+
+/* Home indicator / LED dot / pill bar */
+.uplifters-site-builder-blocks-device-home {
+	fill: currentColor;
+	stroke: none;
+}
+
+/* Hover: slightly deeper screen tint */
+.uplifters-site-builder-blocks-responsive-device-button:hover .uplifters-site-builder-blocks-device-screen {
+	fill: #bfdbfe;
+}
+
+/* ==========================================================================
+   SVG Icon — Active state (.is-active)
+   ========================================================================== */
+
+/* Active outer frame: white stroke */
+.uplifters-site-builder-blocks-responsive-device-button.is-active .uplifters-site-builder-blocks-device-frame {
+	stroke: #ffffff !important;
+}
+
+/* Active screen: blue-400 (visible on dark bg) */
+.uplifters-site-builder-blocks-responsive-device-button.is-active .uplifters-site-builder-blocks-device-screen {
+	fill: #60a5fa !important;
+}
+
+/* Active glare: near-white, more opaque */
+.uplifters-site-builder-blocks-responsive-device-button.is-active .uplifters-site-builder-blocks-device-screen-highlight {
+	stroke: #eff6ff !important;
+	opacity: 0.95 !important;
+}
+
+/* Active stroke details: white */
+.uplifters-site-builder-blocks-responsive-device-button.is-active .uplifters-site-builder-blocks-device-detail--stroke {
+	stroke: #ffffff !important;
+}
+
+/* Active fill details: white */
+.uplifters-site-builder-blocks-responsive-device-button.is-active .uplifters-site-builder-blocks-device-detail--fill {
+	fill: #ffffff !important;
+}
+
+/* Active home / LED / pill: white */
+.uplifters-site-builder-blocks-responsive-device-button.is-active .uplifters-site-builder-blocks-device-home {
+	fill: #ffffff !important;
+}
+
+.uplifters-site-builder-blocks-responsive-reset-button {
+	font-size: 16px;
+	color: #555555;
+}
+
+/* Desktop: normal Gutenberg layout */
+body.uplifters-site-builder-blocks-device-desktop .editor-styles-wrapper,
+html.uplifters-site-builder-blocks-device-desktop .editor-styles-wrapper {
+	max-width: none;
+	margin: 0;
+	border-radius: 0;
+	box-shadow: none;
+}
+
+body.uplifters-site-builder-blocks-device-desktop .edit-post-visual-editor,
+body.uplifters-site-builder-blocks-device-desktop .edit-site-visual-editor,
+body.uplifters-site-builder-blocks-device-desktop
+	.interface-interface-skeleton__content {
+	background: inherit;
+}
+
+/* Tablet/Mobile: gray preview stage */
+body.uplifters-site-builder-blocks-device-tablet .edit-post-visual-editor,
+body.uplifters-site-builder-blocks-device-mobile .edit-post-visual-editor,
+body.uplifters-site-builder-blocks-device-tablet .edit-site-visual-editor,
+body.uplifters-site-builder-blocks-device-mobile .edit-site-visual-editor,
+body.uplifters-site-builder-blocks-device-tablet
+	.interface-interface-skeleton__content,
+body.uplifters-site-builder-blocks-device-mobile
+	.interface-interface-skeleton__content {
+	background: #e5e7eb;
+}
+
+/* Tablet/Mobile: white device canvas */
+body.uplifters-site-builder-blocks-device-tablet .editor-styles-wrapper,
+body.uplifters-site-builder-blocks-device-mobile .editor-styles-wrapper,
+html.uplifters-site-builder-blocks-device-tablet .editor-styles-wrapper,
+html.uplifters-site-builder-blocks-device-mobile .editor-styles-wrapper {
+	background: #ffffff;
+	min-height: auto !important;
+	margin: 24px auto !important;
+	overflow: visible;
+	box-shadow:
+		0 0 0 1px rgba(0, 0, 0, 0.08),
+		0 12px 40px rgba(0, 0, 0, 0.12);
+}
+
+/* Tablet width */
+body.uplifters-site-builder-blocks-device-tablet .editor-styles-wrapper,
+html.uplifters-site-builder-blocks-device-tablet .editor-styles-wrapper {
+	width: 768px;
+	max-width: calc(100vw - 64px);
+	border-radius: 18px;
+}
+
+/* Mobile width */
+body.uplifters-site-builder-blocks-device-mobile .editor-styles-wrapper,
+html.uplifters-site-builder-blocks-device-mobile .editor-styles-wrapper {
+	width: 390px;
+	max-width: calc(100vw - 32px);
+	border-radius: 22px;
+}
+
+/* Inner block canvas */
+body.uplifters-site-builder-blocks-device-tablet
+	.block-editor-block-list__layout,
+body.uplifters-site-builder-blocks-device-mobile
+	.block-editor-block-list__layout,
+html.uplifters-site-builder-blocks-device-tablet
+	.block-editor-block-list__layout,
+html.uplifters-site-builder-blocks-device-mobile
+	.block-editor-block-list__layout {
+	background: #ffffff;
+	max-width: 100% !important;
+	min-height: auto !important;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+/* Restore editor shell scrollbar */
+body.uplifters-site-builder-blocks-device-tablet
+	.interface-interface-skeleton__body,
+body.uplifters-site-builder-blocks-device-mobile
+	.interface-interface-skeleton__body,
+body.uplifters-site-builder-blocks-device-tablet
+	.interface-interface-skeleton__content,
+body.uplifters-site-builder-blocks-device-mobile
+	.interface-interface-skeleton__content {
+	overflow-y: auto !important;
+}
+
+/* ==========================================================================
+   Gutenberg FSE Canvas Footer / Page List Blank Space Fix
+   ========================================================================== */
+
+body.uplifters-site-builder-blocks-device-tablet .block-editor-writing-flow,
+body.uplifters-site-builder-blocks-device-mobile .block-editor-writing-flow,
+body.uplifters-site-builder-blocks-device-tablet .is-root-container,
+body.uplifters-site-builder-blocks-device-mobile .is-root-container,
+body.uplifters-site-builder-blocks-device-tablet
+	.edit-site-page-content-wrapper,
+body.uplifters-site-builder-blocks-device-mobile
+	.edit-site-page-content-wrapper,
+body.uplifters-site-builder-blocks-device-tablet
+	.edit-site-visual-editor__editor-canvas,
+body.uplifters-site-builder-blocks-device-mobile
+	.edit-site-visual-editor__editor-canvas {
+	padding-bottom: 12px !important;
+	margin-bottom: 0 !important;
+	min-height: auto !important;
+}
+
+body.uplifters-site-builder-blocks-device-tablet
+	.interface-interface-skeleton__footer,
+body.uplifters-site-builder-blocks-device-mobile
+	.interface-interface-skeleton__footer,
+body.uplifters-site-builder-blocks-device-tablet
+	.block-editor-block-breadcrumb,
+body.uplifters-site-builder-blocks-device-mobile
+	.block-editor-block-breadcrumb {
+	height: auto !important;
+	min-height: 28px !important;
+	max-height: 36px !important;
+	padding: 0 10px !important;
+	margin: 0 !important;
+	overflow: hidden !important;
+}
+
+body.uplifters-site-builder-blocks-device-tablet .wp-block-template-part,
+body.uplifters-site-builder-blocks-device-mobile .wp-block-template-part,
+body.uplifters-site-builder-blocks-device-tablet footer,
+body.uplifters-site-builder-blocks-device-mobile footer,
+body.uplifters-site-builder-blocks-device-tablet .wp-site-blocks > footer,
+body.uplifters-site-builder-blocks-device-mobile .wp-site-blocks > footer {
+	margin-top: 0 !important;
+	margin-bottom: 0 !important;
+	padding-top: 12px !important;
+	padding-bottom: 12px !important;
+	min-height: 0 !important;
+}
+
+body.uplifters-site-builder-blocks-device-tablet .wp-block-page-list,
+body.uplifters-site-builder-blocks-device-mobile .wp-block-page-list,
+body.uplifters-site-builder-blocks-device-tablet
+	.wp-block-navigation
+	.wp-block-page-list,
+body.uplifters-site-builder-blocks-device-mobile
+	.wp-block-navigation
+	.wp-block-page-list {
+	display: flex !important;
+	flex-wrap: wrap !important;
+	flex-direction: row !important;
+	align-items: center !important;
+	justify-content: flex-start !important;
+	gap: 6px 10px !important;
+	padding: 0 !important;
+	margin: 0 !important;
+	min-height: 0 !important;
+}
+
+body.uplifters-site-builder-blocks-device-tablet .wp-block-page-list li,
+body.uplifters-site-builder-blocks-device-mobile .wp-block-page-list li,
+body.uplifters-site-builder-blocks-device-tablet .wp-block-navigation-item,
+body.uplifters-site-builder-blocks-device-mobile .wp-block-navigation-item {
+	display: inline-flex !important;
+	align-items: center !important;
+	width: auto !important;
+	max-width: 100% !important;
+	min-height: 0 !important;
+	margin: 0 !important;
+	padding: 0 !important;
+}
+
+body.uplifters-site-builder-blocks-device-tablet
+	.wp-block-page-list
+	li
+	a,
+body.uplifters-site-builder-blocks-device-mobile
+	.wp-block-page-list
+	li
+	a,
+body.uplifters-site-builder-blocks-device-tablet
+	.wp-block-navigation-item__content,
+body.uplifters-site-builder-blocks-device-mobile
+	.wp-block-navigation-item__content {
+	display: inline-flex !important;
+	align-items: center !important;
+	padding: 4px 0 !important;
+	line-height: 1.35 !important;
+	white-space: normal !important;
+}
+
+body.uplifters-site-builder-blocks-device-tablet footer .wp-block-group,
+body.uplifters-site-builder-blocks-device-mobile footer .wp-block-group,
+body.uplifters-site-builder-blocks-device-tablet
+	.wp-block-template-part
+	.wp-block-group,
+body.uplifters-site-builder-blocks-device-mobile
+	.wp-block-template-part
+	.wp-block-group,
+body.uplifters-site-builder-blocks-device-tablet .wp-block-navigation,
+body.uplifters-site-builder-blocks-device-mobile .wp-block-navigation {
+	gap: 10px !important;
+	margin-top: 0 !important;
+	margin-bottom: 0 !important;
+	padding-top: 0 !important;
+	padding-bottom: 0 !important;
+	min-height: 0 !important;
+}
+
+body.uplifters-site-builder-blocks-device-mobile
+	.wp-block-navigation:not(.responsive-not-supported)
+	.wp-block-navigation__responsive-container-open:not(.always-on) {
+	display: flex !important;
+}
+
+body.uplifters-site-builder-blocks-device-mobile
+	.wp-block-navigation:not(.responsive-not-supported)
+	.wp-block-navigation__responsive-container:not(.always-on) {
+	display: none !important;
+}
+
+body.uplifters-site-builder-blocks-device-tablet
+	.block-editor-block-list__block,
+body.uplifters-site-builder-blocks-device-mobile
+	.block-editor-block-list__block {
+	max-width: 100%;
+}
+
+/* ==========================================================================
+   Iframe canvas fix rules (also applied inside the block-editor iframe via
+   a <link rel=stylesheet> pointing at this same file — see editor.js
+   injectIframeStyles()). Includes html.* variants alongside body.* since the
+   device class may land on either element depending on iframe context.
+   ========================================================================== */
+		html.uplifters-site-builder-blocks-device-desktop .editor-styles-wrapper,
+		body.uplifters-site-builder-blocks-device-desktop .editor-styles-wrapper {
+			max-width: none;
+			margin: 0;
+			border-radius: 0;
+			box-shadow: none;
+		}
+
+		html.uplifters-site-builder-blocks-device-tablet,
+		body.uplifters-site-builder-blocks-device-tablet,
+		html.uplifters-site-builder-blocks-device-mobile,
+		body.uplifters-site-builder-blocks-device-mobile {
+			background: #e5e7eb !important;
+		}
+
+		html.uplifters-site-builder-blocks-device-tablet .editor-styles-wrapper,
+		body.uplifters-site-builder-blocks-device-tablet .editor-styles-wrapper,
+		html.uplifters-site-builder-blocks-device-mobile .editor-styles-wrapper,
+		body.uplifters-site-builder-blocks-device-mobile .editor-styles-wrapper {
+			background: #ffffff !important;
+			min-height: auto !important;
+			margin: 24px auto !important;
+			overflow: visible !important;
+			box-shadow:
+				0 0 0 1px rgba(0, 0, 0, 0.08),
+				0 12px 40px rgba(0, 0, 0, 0.12) !important;
+		}
+
+		html.uplifters-site-builder-blocks-device-tablet .editor-styles-wrapper,
+		body.uplifters-site-builder-blocks-device-tablet .editor-styles-wrapper {
+			width: 768px !important;
+			max-width: calc(100vw - 64px) !important;
+			border-radius: 18px !important;
+		}
+
+		html.uplifters-site-builder-blocks-device-mobile .editor-styles-wrapper,
+		body.uplifters-site-builder-blocks-device-mobile .editor-styles-wrapper {
+			width: 390px !important;
+			max-width: calc(100vw - 32px) !important;
+			border-radius: 22px !important;
+		}
+
+		html.uplifters-site-builder-blocks-device-tablet .block-editor-block-list__layout,
+		body.uplifters-site-builder-blocks-device-tablet .block-editor-block-list__layout,
+		html.uplifters-site-builder-blocks-device-mobile .block-editor-block-list__layout,
+		body.uplifters-site-builder-blocks-device-mobile .block-editor-block-list__layout {
+			background: #ffffff !important;
+			max-width: 100% !important;
+			min-height: auto !important;
+			margin-left: auto !important;
+			margin-right: auto !important;
+		}
+
+		html.uplifters-site-builder-blocks-device-tablet .block-editor-writing-flow,
+		body.uplifters-site-builder-blocks-device-tablet .block-editor-writing-flow,
+		html.uplifters-site-builder-blocks-device-mobile .block-editor-writing-flow,
+		body.uplifters-site-builder-blocks-device-mobile .block-editor-writing-flow,
+		html.uplifters-site-builder-blocks-device-tablet .is-root-container,
+		body.uplifters-site-builder-blocks-device-tablet .is-root-container,
+		html.uplifters-site-builder-blocks-device-mobile .is-root-container,
+		body.uplifters-site-builder-blocks-device-mobile .is-root-container,
+		html.uplifters-site-builder-blocks-device-tablet .edit-site-page-content-wrapper,
+		body.uplifters-site-builder-blocks-device-tablet .edit-site-page-content-wrapper,
+		html.uplifters-site-builder-blocks-device-mobile .edit-site-page-content-wrapper,
+		body.uplifters-site-builder-blocks-device-mobile .edit-site-page-content-wrapper {
+			padding-bottom: 12px !important;
+			margin-bottom: 0 !important;
+			min-height: auto !important;
+		}
+
+		html.uplifters-site-builder-blocks-device-tablet .wp-block-template-part,
+		body.uplifters-site-builder-blocks-device-tablet .wp-block-template-part,
+		html.uplifters-site-builder-blocks-device-mobile .wp-block-template-part,
+		body.uplifters-site-builder-blocks-device-mobile .wp-block-template-part,
+		html.uplifters-site-builder-blocks-device-tablet footer,
+		body.uplifters-site-builder-blocks-device-tablet footer,
+		html.uplifters-site-builder-blocks-device-mobile footer,
+		body.uplifters-site-builder-blocks-device-mobile footer,
+		html.uplifters-site-builder-blocks-device-tablet .wp-site-blocks > footer,
+		body.uplifters-site-builder-blocks-device-tablet .wp-site-blocks > footer,
+		html.uplifters-site-builder-blocks-device-mobile .wp-site-blocks > footer,
+		body.uplifters-site-builder-blocks-device-mobile .wp-site-blocks > footer {
+			margin-top: 0 !important;
+			margin-bottom: 0 !important;
+			padding-top: 12px !important;
+			padding-bottom: 12px !important;
+			min-height: 0 !important;
+		}
+
+		html.uplifters-site-builder-blocks-device-tablet .wp-block-page-list,
+		body.uplifters-site-builder-blocks-device-tablet .wp-block-page-list,
+		html.uplifters-site-builder-blocks-device-mobile .wp-block-page-list,
+		body.uplifters-site-builder-blocks-device-mobile .wp-block-page-list,
+		html.uplifters-site-builder-blocks-device-tablet .wp-block-navigation .wp-block-page-list,
+		body.uplifters-site-builder-blocks-device-tablet .wp-block-navigation .wp-block-page-list,
+		html.uplifters-site-builder-blocks-device-mobile .wp-block-navigation .wp-block-page-list,
+		body.uplifters-site-builder-blocks-device-mobile .wp-block-navigation .wp-block-page-list {
+			display: flex !important;
+			flex-wrap: wrap !important;
+			flex-direction: row !important;
+			align-items: center !important;
+			justify-content: flex-start !important;
+			gap: 6px 10px !important;
+			padding: 0 !important;
+			margin: 0 !important;
+			min-height: 0 !important;
+		}
+
+		html.uplifters-site-builder-blocks-device-tablet .wp-block-page-list li,
+		body.uplifters-site-builder-blocks-device-tablet .wp-block-page-list li,
+		html.uplifters-site-builder-blocks-device-mobile .wp-block-page-list li,
+		body.uplifters-site-builder-blocks-device-mobile .wp-block-page-list li,
+		html.uplifters-site-builder-blocks-device-tablet .wp-block-navigation-item,
+		body.uplifters-site-builder-blocks-device-tablet .wp-block-navigation-item,
+		html.uplifters-site-builder-blocks-device-mobile .wp-block-navigation-item,
+		body.uplifters-site-builder-blocks-device-mobile .wp-block-navigation-item {
+			display: inline-flex !important;
+			align-items: center !important;
+			width: auto !important;
+			max-width: 100% !important;
+			min-height: 0 !important;
+			margin: 0 !important;
+			padding: 0 !important;
+		}
+
+		html.uplifters-site-builder-blocks-device-tablet .wp-block-page-list li a,
+		body.uplifters-site-builder-blocks-device-tablet .wp-block-page-list li a,
+		html.uplifters-site-builder-blocks-device-mobile .wp-block-page-list li a,
+		body.uplifters-site-builder-blocks-device-mobile .wp-block-page-list li a,
+		html.uplifters-site-builder-blocks-device-tablet .wp-block-navigation-item__content,
+		body.uplifters-site-builder-blocks-device-tablet .wp-block-navigation-item__content,
+		html.uplifters-site-builder-blocks-device-mobile .wp-block-navigation-item__content,
+		body.uplifters-site-builder-blocks-device-mobile .wp-block-navigation-item__content {
+			display: inline-flex !important;
+			align-items: center !important;
+			padding: 4px 0 !important;
+			line-height: 1.35 !important;
+			white-space: normal !important;
+		}
+
+		html.uplifters-site-builder-blocks-device-tablet footer .wp-block-group,
+		body.uplifters-site-builder-blocks-device-tablet footer .wp-block-group,
+		html.uplifters-site-builder-blocks-device-mobile footer .wp-block-group,
+		body.uplifters-site-builder-blocks-device-mobile footer .wp-block-group,
+		html.uplifters-site-builder-blocks-device-tablet .wp-block-template-part .wp-block-group,
+		body.uplifters-site-builder-blocks-device-tablet .wp-block-template-part .wp-block-group,
+		html.uplifters-site-builder-blocks-device-mobile .wp-block-template-part .wp-block-group,
+		body.uplifters-site-builder-blocks-device-mobile .wp-block-template-part .wp-block-group,
+		html.uplifters-site-builder-blocks-device-tablet .wp-block-navigation,
+		body.uplifters-site-builder-blocks-device-tablet .wp-block-navigation,
+		html.uplifters-site-builder-blocks-device-mobile .wp-block-navigation,
+		body.uplifters-site-builder-blocks-device-mobile .wp-block-navigation {
+			gap: 10px !important;
+			margin-top: 0 !important;
+			margin-bottom: 0 !important;
+			padding-top: 0 !important;
+			padding-bottom: 0 !important;
+			min-height: 0 !important;
+		}
+
+		html.uplifters-site-builder-blocks-device-mobile
+			.wp-block-navigation:not(.responsive-not-supported)
+			.wp-block-navigation__responsive-container-open:not(.always-on),
+		body.uplifters-site-builder-blocks-device-mobile
+			.wp-block-navigation:not(.responsive-not-supported)
+			.wp-block-navigation__responsive-container-open:not(.always-on) {
+			display: flex !important;
+		}
+
+		html.uplifters-site-builder-blocks-device-mobile
+			.wp-block-navigation:not(.responsive-not-supported)
+			.wp-block-navigation__responsive-container:not(.always-on),
+		body.uplifters-site-builder-blocks-device-mobile
+			.wp-block-navigation:not(.responsive-not-supported)
+			.wp-block-navigation__responsive-container:not(.always-on) {
+			display: none !important;
+		}
