@@ -1,0 +1,90 @@
+{
+	"$schema": "https://schemas.wp.org/wp/6.7/block.json",
+	"apiVersion": 3,
+	"name": "uplifters-site-builder-blocks/image-marquee",
+	"version": "1.0.0",
+	"title": "Image Ticker",
+	"category": "uplifters-site-builder-blocks-gene",
+	"icon": "smiley",
+	"description": "Display images in a continuously scrolling, responsive marquee.",
+	"example": {
+		"attributes": { "preview": true },
+		"viewportWidth": 700
+	},
+	"textdomain": "uplifters-site-builder-blocks",
+
+	"editorScript": "file:./index.js",
+	"style": "file:./style-index.css",
+	"editorStyle": "file:./index.css",
+	"viewScript": "file:./view.js",
+	"render": "file:./render.php",
+
+	"supports": {
+		"html": false
+	},
+
+	"attributes": {
+		"preview": {
+			"type": "boolean",
+			"default": false
+		},
+		"images": {
+			"type": "array",
+			"default": []
+		},
+
+		"imagePadding": {
+			"type": "object",
+			"default": {
+				"desktop": 0,
+				"tablet": 0,
+				"mobile": 0
+			}
+		},
+
+		"margin": {
+			"type": "object",
+			"default": {
+				"desktop": 0,
+				"tablet": 0,
+				"mobile": 0
+			}
+		},
+
+		"duration": {
+			"type": "object",
+			"default": {
+				"desktop": 20,
+				"tablet": 20,
+				"mobile": 20
+			}
+		},
+
+		"imageHeight": {
+			"type": "object",
+			"default": {
+				"desktop": 256,
+				"tablet": 220,
+				"mobile": 180
+			}
+		},
+
+		"imageWidth": {
+			"type": "object",
+			"default": {
+				"desktop": 256,
+				"tablet": 220,
+				"mobile": 180
+			}
+		},
+
+		"backgroundColor": {
+			"type": "object",
+			"default": {
+				"desktop": "",
+				"tablet": "",
+				"mobile": ""
+			}
+		}
+	}
+}

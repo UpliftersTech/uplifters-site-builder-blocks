@@ -1,0 +1,63 @@
+{
+	"$schema": "https://schemas.wp.org/wp/6.7/block.json",
+	"apiVersion": 3,
+	"name": "uplifters-site-builder-blocks/popup-scroll-modal",
+	"version": "1.0.0",
+	"title": "Scroll Popup Modal",
+	"category": "uplifters-site-builder-blocks-gene",
+	"icon": "smiley",
+	"description": "Display customizable block content in a popup after the visitor scrolls a set distance.",
+	"example": {
+		"attributes": { "preview": true },
+		"viewportWidth": 700
+	},
+	"textdomain": "uplifters-site-builder-blocks",
+
+	"editorScript": "file:./index.js",
+	"style": "file:./style-index.css",
+	"editorStyle": "file:./index.css",
+	"viewScript": "file:./view.js",
+	"render": "file:./render.php",
+
+	"attributes": {
+		"preview": {
+			"type": "boolean",
+			"default": false
+		},
+		"scrollOffset": {
+			"type": "object",
+			"default": {
+				"desktop": 300,
+				"tablet": 250,
+				"mobile": 200
+			}
+		},
+
+		"oncePerPage": {
+			"type": "boolean",
+			"default": true
+		},
+
+		"overlayColor": {
+			"type": "object",
+			"default": {
+				"desktop": "#000000",
+				"tablet": "#000000",
+				"mobile": "#000000"
+			}
+		},
+
+		"overlayOpacity": {
+			"type": "object",
+			"default": {
+				"desktop": 60,
+				"tablet": 60,
+				"mobile": 60
+			}
+		}
+	},
+
+	"supports": {
+		"html": false
+	}
+}

@@ -1,0 +1,136 @@
+{
+  "$schema": "https://schemas.wp.org/wp/6.7/block.json",
+  "apiVersion": 3,
+  "name": "uplifters-site-builder-blocks/loading-screen-animate",
+  "title": "Animated Loading Screen",
+  "category": "uplifters-site-builder-blocks-gene",
+  "icon": "smiley",
+  "description": "Show a customizable loading overlay while the page is being prepared.",
+  "version": "1.0.0",
+  "textdomain": "uplifters-site-builder-blocks",
+  "editorScript": "file:./index.js",
+  "style": "file:./style-index.css",
+  "editorStyle": "file:./index.css",
+  "viewScript": "file:./view.js",
+  "render": "file:./render.php",
+  "example": {
+    "attributes": {
+      "preview": true,
+      "message": "Loading page..."
+    }
+  },
+  "attributes": {
+    "preview": {
+      "type": "boolean",
+      "default": false
+    },
+    "message": {
+      "type": "string",
+      "default": "Loading page..."
+    },
+    "overlayColor": {
+      "type": "object",
+      "default": {
+        "desktop": "#f8fafc",
+        "tablet": "#f8fafc",
+        "mobile": "#f8fafc"
+      }
+    },
+    "shimmerColor": {
+      "type": "object",
+      "default": {
+        "desktop": "rgba(148, 163, 184, 0.22)",
+        "tablet": "rgba(148, 163, 184, 0.22)",
+        "mobile": "rgba(148, 163, 184, 0.22)"
+      }
+    },
+    "highlightColor": {
+      "type": "object",
+      "default": {
+        "desktop": "rgba(255, 255, 255, 0.78)",
+        "tablet": "rgba(255, 255, 255, 0.78)",
+        "mobile": "rgba(255, 255, 255, 0.78)"
+      }
+    },
+    "textColor": {
+      "type": "object",
+      "default": {
+        "desktop": "#334155",
+        "tablet": "#334155",
+        "mobile": "#334155"
+      }
+    },
+    "duration": {
+      "type": "object",
+      "default": {
+        "desktop": 1.8,
+        "tablet": 1.8,
+        "mobile": 1.8
+      }
+    },
+    "maxWait": {
+      "type": "object",
+      "default": {
+        "desktop": 8000,
+        "tablet": 8000,
+        "mobile": 8000
+      }
+    },
+    "fontFamily": {
+      "type": "object",
+      "default": {
+        "desktop": "default",
+        "tablet": "default",
+        "mobile": "default"
+      }
+    },
+    "fontSize": {
+      "type": "object",
+      "default": {
+        "desktop": 28,
+        "tablet": 26,
+        "mobile": 22
+      }
+    },
+    "fontWeight": {
+      "type": "object",
+      "default": {
+        "desktop": "700",
+        "tablet": "700",
+        "mobile": "700"
+      }
+    },
+    "lineHeight": {
+      "type": "object",
+      "default": {
+        "desktop": 1.2,
+        "tablet": 1.2,
+        "mobile": 1.25
+      }
+    },
+    "contentWidth": {
+      "type": "object",
+      "default": {
+        "desktop": "480px",
+        "tablet": "440px",
+        "mobile": "320px"
+      }
+    },
+    "padding": {
+      "type": "object",
+      "default": {
+        "desktop": "24px",
+        "tablet": "24px",
+        "mobile": "18px"
+      }
+    },
+    "enableLoader": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "supports": {
+    "html": false,
+    "multiple": false
+  }
+}

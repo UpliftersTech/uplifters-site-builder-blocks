@@ -1,0 +1,95 @@
+.up2-m-sub,
+.up2-m-sub * {
+	box-sizing: border-box;
+}
+
+.up2-m-sub a,
+.up2-m-sub a:visited,
+.up2-m-sub a:hover,
+.up2-m-sub a:focus,
+.up2-m-sub a:active {
+	text-decoration: none !important;
+}
+
+.up2-m-sub ul,
+.up2-m-sub ol {
+	list-style: none !important;
+	padding-left: 0 !important;
+	margin-left: 0 !important;
+}
+
+.up2-m-sub li {
+	list-style: none !important;
+}
+
+.up2-m-sub li::marker {
+	content: "" !important;
+}
+
+.up2-m-sub .up2-root-grid {
+	display: grid !important;
+	grid-template-columns: repeat(
+		var(--up2-items-per-row, 3),
+		max-content
+	) !important;
+	gap: 0.5rem !important;
+	align-items: start !important;
+	justify-content: start !important;
+	width: max-content !important;
+	max-width: 100% !important;
+	overflow: visible !important;
+	margin-left: var(--up2-grid-margin-left, 0) !important;
+	margin-right: var(--up2-grid-margin-right, auto) !important;
+}
+
+.up2-m-sub .up2-page-li {
+	display: block !important;
+	width: max-content !important;
+	max-width: 100% !important;
+	margin: 0 !important;
+	padding: 0 !important;
+}
+
+.up2-m-sub .up2-item {
+	display: inline-block !important;
+	width: auto !important;
+	max-width: 100% !important;
+}
+
+.up2-m-sub .up2-title {
+	display: inline-block !important;
+	width: auto !important;
+	max-width: 100% !important;
+	white-space: normal !important;
+}
+
+.up2-m-sub .up2-nested {
+	display: flex !important;
+	flex-direction: column !important;
+	gap: 0.5rem !important;
+	margin-top: 0.5rem !important;
+	padding-left: 1rem !important;
+	border-left: 1px solid #e2e8f0 !important;
+}
+
+.up2-m-sub .up2-item:hover {
+	background-color: transparent !important;
+}
+
+.up2-m-sub .up2-item:hover .up2-title {
+	background-color: var(--up2-hover-bg, transparent) !important;
+	color: var(--up2-hover-text, inherit) !important;
+}
+
+.uplifters-site-builder-blocks-page-grid-device-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	margin-bottom: 12px;
+	padding: 5px 10px;
+	border-radius: 999px;
+	background: #f0f0f1;
+	color: #1e1e1e;
+	font-size: 12px;
+	font-weight: 600;
+}

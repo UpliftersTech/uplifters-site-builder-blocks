@@ -1,0 +1,157 @@
+{
+	"$schema": "https://schemas.wp.org/wp/6.7/block.json",
+	"apiVersion": 3,
+	"name": "uplifters-site-builder-blocks/image-gallery",
+	"version": "1.0.0",
+	"title": "Image Gallery",
+	"category": "uplifters-site-builder-blocks-gene",
+	"icon": "smiley",
+	"description": "Create a responsive gallery with clickable images and preview links.",
+	"textdomain": "uplifters-site-builder-blocks",
+	"example": {
+		"attributes": { "preview": true },
+		"viewportWidth": 700
+	},
+
+	"editorScript": "file:./index.js",
+	"style": "file:./style-index.css",
+	"editorStyle": "file:./index.css",
+	"viewScript": "file:./view.js",
+	"render": "file:./render.php",
+
+	"keywords": [
+		"image",
+		"gallery",
+		"lightbox",
+		"zoom",
+		"responsive"
+	],
+
+	"supports": {
+		"html": false,
+		"align": [
+			"wide",
+			"full"
+		],
+		"anchor": true
+	},
+
+	"attributes": {
+		"preview": {
+			"type": "boolean",
+			"default": false
+		},
+		"images": {
+			"type": "array",
+			"default": []
+		},
+
+		"selectedIndex": {
+			"type": "number",
+			"default": 0
+		},
+
+		"linkTo": {
+			"type": "string",
+			"default": "none"
+		},
+
+		"openInNewTab": {
+			"type": "boolean",
+			"default": false
+		},
+
+		"objectFit": {
+			"type": "object",
+			"default": {
+				"desktop": "cover",
+				"tablet": "cover",
+				"mobile": "cover"
+			}
+		},
+
+		"imagesPerRow": {
+			"type": "object",
+			"default": {
+				"desktop": 3,
+				"tablet": 2,
+				"mobile": 1
+			}
+		},
+
+		"imageHeight": {
+			"type": "object",
+			"default": {
+				"desktop": "320px",
+				"tablet": "280px",
+				"mobile": "240px"
+			}
+		},
+
+		"imageShadow": {
+			"type": "object",
+			"default": {
+				"desktop": true,
+				"tablet": true,
+				"mobile": true
+			}
+		},
+
+		"backgroundColor": {
+			"type": "object",
+			"default": {
+				"desktop": "",
+				"tablet": "",
+				"mobile": ""
+			}
+		},
+
+		"padding": {
+			"type": "object",
+			"default": {
+				"desktop": {
+					"top": "",
+					"right": "",
+					"bottom": "",
+					"left": ""
+				},
+				"tablet": {
+					"top": "",
+					"right": "",
+					"bottom": "",
+					"left": ""
+				},
+				"mobile": {
+					"top": "",
+					"right": "",
+					"bottom": "",
+					"left": ""
+				}
+			}
+		},
+
+		"margin": {
+			"type": "object",
+			"default": {
+				"desktop": {
+					"top": "",
+					"right": "",
+					"bottom": "",
+					"left": ""
+				},
+				"tablet": {
+					"top": "",
+					"right": "",
+					"bottom": "",
+					"left": ""
+				},
+				"mobile": {
+					"top": "",
+					"right": "",
+					"bottom": "",
+					"left": ""
+				}
+			}
+		}
+	}
+}

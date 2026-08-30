@@ -1,0 +1,85 @@
+{
+	"$schema": "https://schemas.wp.org/wp/6.7/block.json",
+	"apiVersion": 3,
+	"name": "uplifters-site-builder-blocks/image-interval-cover",
+	"version": "1.0.0",
+	"title": "Cover Slideshow",
+	"category": "uplifters-site-builder-blocks-gene",
+	"icon": "smiley",
+	"description": "Display a responsive animated image grid with captions and slide indicators.",
+	"example": {
+		"attributes": { "preview": true },
+		"viewportWidth": 700
+	},
+	"textdomain": "uplifters-site-builder-blocks",
+
+	"editorScript": "file:./index.js",
+	"style": "file:./style-index.css",
+	"editorStyle": "file:./index.css",
+	"viewScript": "file:./view.js",
+	"render": "file:./render.php",
+
+	"supports": {
+		"align": [
+			"full",
+			"wide"
+		],
+		"html": false
+	},
+
+	"attributes": {
+		"preview": {
+			"type": "boolean",
+			"default": false
+		},
+		"images": {
+			"type": "array",
+			"default": []
+		},
+
+		"height": {
+			"type": "object",
+			"default": {
+				"desktop": 500,
+				"tablet": 420,
+				"mobile": 340
+			}
+		},
+
+		"duration": {
+			"type": "object",
+			"default": {
+				"desktop": 3000,
+				"tablet": 3000,
+				"mobile": 3000
+			}
+		},
+
+		"columns": {
+			"type": "object",
+			"default": {
+				"desktop": 3,
+				"tablet": 2,
+				"mobile": 1
+			}
+		},
+
+		"indicatorColor": {
+			"type": "object",
+			"default": {
+				"desktop": "#ffffff",
+				"tablet": "#ffffff",
+				"mobile": "#ffffff"
+			}
+		},
+
+		"backgroundColor": {
+			"type": "object",
+			"default": {
+				"desktop": "",
+				"tablet": "",
+				"mobile": ""
+			}
+		}
+	}
+}

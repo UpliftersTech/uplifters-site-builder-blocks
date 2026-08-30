@@ -1,0 +1,115 @@
+			.uplifters-site-builder-blocks-image-interval-cover-editor {
+				position: relative;
+				overflow: hidden;
+				border: 2px dashed #9ca3af;
+				padding: 56px 16px 16px;
+				box-sizing: border-box;
+			}
+
+			.uplifters-site-builder-blocks-image-interval-cover-editor *,
+			.uplifters-site-builder-blocks-image-interval-cover-editor *::before,
+			.uplifters-site-builder-blocks-image-interval-cover-editor *::after {
+				box-sizing: border-box;
+			}
+
+			.uplifters-site-builder-blocks-image-interval-cover-editor__empty {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				min-height: 128px;
+				background: #f3f4f6;
+				color: #6b7280;
+				text-align: center;
+				padding: 16px;
+			}
+
+			.uplifters-site-builder-blocks-image-interval-cover-editor__grid {
+				display: grid;
+				gap: 12px;
+				grid-template-columns:
+					repeat(
+						var(
+							--uplifters-site-builder-blocks-image-interval-cover-editor-columns,
+							1
+						),
+						minmax(0, 1fr)
+					);
+			}
+
+			.uplifters-site-builder-blocks-image-interval-cover-editor__card {
+				position: relative;
+				border-radius: 12px;
+				overflow: hidden;
+				cursor: pointer;
+			}
+
+			.uplifters-site-builder-blocks-image-interval-cover-editor__card:focus,
+			.uplifters-site-builder-blocks-image-interval-cover-editor__card.is-selected {
+				outline: 3px solid rgba(59, 130, 246, 0.9);
+				outline-offset: 3px;
+			}
+
+			.uplifters-site-builder-blocks-image-interval-cover-editor__image {
+				display: block;
+				width: 100%;
+				max-width: none;
+				object-fit: cover;
+			}
+
+			.uplifters-site-builder-blocks-image-interval-cover-editor__placeholder {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				width: 100%;
+				background: #d1d5db;
+				color: #374151;
+			}
+
+			.uplifters-site-builder-blocks-image-interval-cover-editor__caption {
+				position: absolute;
+				left: 50%;
+				bottom: 16px;
+				width: 92%;
+				text-align: center;
+				text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+				transform: translateX(-50%);
+				pointer-events: none;
+			}
+
+			.uplifters-site-builder-blocks-image-interval-cover-editor__upload {
+				position: absolute;
+				top: 12px;
+				right: 12px;
+				z-index: 2;
+			}
+
+			.uplifters-site-builder-blocks-image-interval-cover-editor__add-more {
+				position: absolute;
+				top: 12px;
+				right: 12px;
+				z-index: 4;
+			}
+
+			.uplifters-site-builder-blocks-image-interval-cover-editor__dots {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				gap: 8px;
+				margin-top: 12px;
+			}
+
+			.uplifters-site-builder-blocks-image-interval-cover-editor__dot {
+				width: 10px;
+				height: 10px;
+				padding: 0;
+				border: 0;
+				border-radius: 9999px;
+				cursor: pointer;
+				transition:
+					transform 0.15s ease,
+					background 0.15s ease;
+			}
+
+			.uplifters-site-builder-blocks-image-interval-cover-editor__dot.is-active {
+				transform: scale(1.15);
+			}

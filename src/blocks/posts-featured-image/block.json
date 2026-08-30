@@ -1,0 +1,55 @@
+{
+	"$schema": "https://schemas.wp.org/wp/6.7/block.json",
+	"apiVersion": 3,
+	"name": "uplifters-site-builder-blocks/posts-featured-image",
+	"title": "Post Featured Image",
+	"category": "uplifters-site-builder-blocks-gene",
+	"icon": "smiley",
+	"description": "Style the featured image of the post this block is placed in.",
+	"version": "1.0.0",
+	"textdomain": "uplifters-site-builder-blocks",
+	"editorScript": "file:./index.js",
+	"style": "file:./style-index.css",
+	"editorStyle": "file:./index.css",
+	"viewScript": "file:./view.js",
+	"render": "file:./render.php",
+
+	"example": {
+		"attributes": { "preview": true },
+		"viewportWidth": 700
+	},
+	"attributes": {
+		"preview": {
+			"type": "boolean",
+			"default": false
+		},
+		"imageBackgroundColor": {
+			"type": "string",
+			"default": "#ffffff"
+		},
+		"imageBorderRadius": {
+			"type": "number",
+			"default": 12
+		},
+		"imageShadowX": {
+			"type": "number",
+			"default": 0
+		},
+		"imageShadowY": {
+			"type": "number",
+			"default": 10
+		},
+		"imageShadowBlur": {
+			"type": "number",
+			"default": 30
+		},
+		"imageShadowSpread": {
+			"type": "number",
+			"default": 0
+		},
+		"imageShadowOpacity": {
+			"type": "number",
+			"default": 0.18
+		}
+	}
+}

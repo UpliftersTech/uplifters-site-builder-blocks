@@ -1,0 +1,131 @@
+{
+	"$schema": "https://schemas.wp.org/wp/6.7/block.json",
+	"apiVersion": 3,
+	"name": "uplifters-site-builder-blocks/page-grid",
+	"version": "1.0.0",
+	"title": "Selected Pages Grid",
+	"category": "uplifters-site-builder-blocks-gene",
+	"icon": "smiley",
+	"description": "Display selected site pages as a responsive grid of linked page titles.",
+	"example": {
+		"attributes": { "preview": true },
+		"viewportWidth": 700
+	},
+	"textdomain": "uplifters-site-builder-blocks",
+
+	"editorScript": "file:./index.js",
+	"style": "file:./style-index.css",
+	"editorStyle": "file:./index.css",
+	"viewScript": "file:./view.js",
+	"render": "file:./render.php",
+
+	"attributes": {
+		"preview": {
+			"type": "boolean",
+			"default": false
+		},
+		"perPage": {
+			"type": "number",
+			"default": 10
+		},
+		"itemsPerRow": {
+			"type": "object",
+			"default": {
+				"desktop": 3,
+				"tablet": 2,
+				"mobile": 1
+			}
+		},
+		"position": {
+			"type": "object",
+			"default": {
+				"desktop": "start",
+				"tablet": "start",
+				"mobile": "start"
+			}
+		},
+		"selectedPageIds": {
+			"type": "array",
+			"default": []
+		},
+
+		"titlePadding": {
+			"type": "object",
+			"default": {
+				"desktop": {
+					"top": "3px",
+					"right": "3px",
+					"bottom": "3px",
+					"left": "3px"
+				},
+				"tablet": {
+					"top": "3px",
+					"right": "3px",
+					"bottom": "3px",
+					"left": "3px"
+				},
+				"mobile": {
+					"top": "3px",
+					"right": "3px",
+					"bottom": "3px",
+					"left": "3px"
+				}
+			}
+		},
+		"titleBg": {
+			"type": "object",
+			"default": {
+				"desktop": "",
+				"tablet": "",
+				"mobile": ""
+			}
+		},
+		"titleColor": {
+			"type": "object",
+			"default": {
+				"desktop": "#0f172a",
+				"tablet": "#0f172a",
+				"mobile": "#0f172a"
+			}
+		},
+		"titleFontSize": {
+			"type": "object",
+			"default": {
+				"desktop": 13,
+				"tablet": 11,
+				"mobile": 14
+			}
+		},
+		"titleFontFamily": {
+			"type": "object",
+			"default": {
+				"desktop": "",
+				"tablet": "",
+				"mobile": ""
+			}
+		},
+
+		"hoverBg": {
+			"type": "object",
+			"default": {
+				"desktop": "#e2e8f0",
+				"tablet": "#e2e8f0",
+				"mobile": "#e2e8f0"
+			}
+		},
+		"hoverTextColor": {
+			"type": "object",
+			"default": {
+				"desktop": "#0f172a",
+				"tablet": "#0f172a",
+				"mobile": "#0f172a"
+			}
+		}
+	},
+
+	"supports": {
+		"html": false,
+		"anchor": true,
+		"align": true
+	}
+}

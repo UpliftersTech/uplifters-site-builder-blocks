@@ -1,0 +1,38 @@
+{
+  "$schema": "https://schemas.wp.org/wp/6.7/block.json",
+  "apiVersion": 3,
+  "name": "uplifters-site-builder-blocks/location-map",
+  "version": "1.0.0",
+  "title": "Live Google Location",
+  "category": "uplifters-site-builder-blocks-gene",
+  "icon": "smiley",
+  "description": "Show a named location on an embedded Google Map with a link to Maps.",
+	"example": {
+		"attributes": { "preview": true },
+		"viewportWidth": 700
+	},
+  "textdomain": "uplifters-site-builder-blocks",
+  "editorScript": "file:./index.js",
+  "style": "file:./style-index.css",
+  "editorStyle": "file:./index.css",
+  "viewScript": "file:./view.js",
+  "render": "file:./render.php",
+  "supports": {
+    "html": false,
+    "align": ["wide", "full"]
+  },
+	"attributes": {
+		"preview": {
+			"type": "boolean",
+			"default": false
+		},
+    "locationName": {
+      "type": "string",
+      "default": ""
+    },
+    "backgroundColor": {
+      "type": "string",
+      "default": ""
+    }
+  }
+}

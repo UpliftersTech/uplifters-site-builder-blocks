@@ -1,0 +1,132 @@
+.up2-posts-comment-form-block,
+.up2-posts-comment-form-block * {
+	box-sizing: border-box;
+}
+
+.up2-posts-comment-form-block .up2-editor-card {
+	border: 1px solid #e5e7eb;
+	background: #ffffff;
+	border-radius: 16px;
+	padding: 20px;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.up2-posts-comment-form-block .up2-editor-header {
+	margin-bottom: 16px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+}
+
+.up2-posts-comment-form-block .up2-editor-title {
+	margin: 0;
+	color: #111827;
+	font-size: 18px;
+	font-weight: 700;
+	line-height: 1.2;
+}
+
+.up2-posts-comment-form-block .up2-editor-grid {
+	display: grid;
+	gap: 16px;
+}
+
+.up2-posts-comment-form-block .up2-editor-row-two {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 16px;
+}
+
+.up2-posts-comment-form-block--device-mobile .up2-editor-row-two {
+	grid-template-columns: 1fr;
+}
+
+.up2-posts-comment-form-block .up2-editor-label {
+	display: grid;
+	gap: 8px;
+	color: #374151;
+	font-size: 14px;
+}
+
+.up2-posts-comment-form-block .up2-editor-label-text {
+	color: #111827;
+	font-weight: 600;
+}
+
+.up2-posts-comment-form-block .up2-editor-input,
+.up2-posts-comment-form-block .up2-editor-textarea {
+	width: 100%;
+	border: 1px solid #e5e7eb;
+	border-radius: 12px;
+	background: #ffffff;
+	color: #111827;
+	font-size: 14px;
+	outline: none;
+}
+
+.up2-posts-comment-form-block .up2-editor-input {
+	height: 44px;
+	padding: 0 12px;
+}
+
+.up2-posts-comment-form-block .up2-editor-textarea {
+	min-height: 130px;
+	padding: 12px;
+	resize: vertical;
+}
+
+.up2-posts-comment-form-block .up2-editor-comment-wrap {
+	display: grid;
+	gap: 16px;
+}
+
+.up2-posts-comment-form-block .up2-editor-comment-wrap.has-top-space {
+	padding-top: 8px;
+}
+
+.up2-posts-comment-form-block .up2-editor-actions {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+}
+
+.up2-posts-comment-form-block--device-mobile .up2-editor-actions {
+	flex-direction: column;
+	align-items: flex-start;
+	justify-content: flex-start;
+}
+
+.up2-posts-comment-form-block .up2-editor-button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border: 0;
+	font-size: 14px;
+	font-weight: 700;
+	line-height: 1.2;
+	opacity: 0.6;
+}
+
+.up2-posts-comment-form-block .up2-editor-help {
+	color: #6b7280;
+	font-size: 12px;
+	line-height: 1.5;
+}
+
+.up2-inspector-stack {
+	display: grid;
+	gap: 16px;
+}
+
+.up2-inspector-field {
+	display: grid;
+	gap: 8px;
+}
+
+.up2-inspector-label {
+	font-size: 13px;
+	font-weight: 600;
+}

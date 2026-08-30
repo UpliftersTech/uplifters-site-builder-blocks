@@ -1,0 +1,138 @@
+{
+	"$schema": "https://schemas.wp.org/wp/6.7/block.json",
+	"apiVersion": 3,
+	"name": "uplifters-site-builder-blocks/posts-comment-form",
+	"title": "Comment Form",
+	"category": "uplifters-site-builder-blocks-gene",
+	"icon": "smiley",
+	"description": "Let visitors submit comments through a customizable post or page comment form.",
+	"version": "1.0.0",
+	"example": { "attributes": { "preview": true }, "viewportWidth": 700 },
+	"textdomain": "uplifters-site-builder-blocks",
+	"editorScript": "file:./index.js",
+	"style": "file:./style-index.css",
+	"editorStyle": "file:./index.css",
+	"viewScript": "file:./view.js",
+	"render": "file:./render.php",
+	"usesContext": [
+		"postId",
+		"postType"
+	],
+	"attributes": {
+		"preview": {
+			"type": "boolean",
+			"default": false
+		},
+		"titleText": {
+			"type": "string",
+			"default": "Leave a comment"
+		},
+		"buttonText": {
+			"type": "string",
+			"default": "Send Comment"
+		},
+		"placeholder": {
+			"type": "string",
+			"default": "Write your comment…"
+		},
+		"showNameEmail": {
+			"type": "object",
+			"default": {
+				"desktop": true,
+				"tablet": true,
+				"mobile": true
+			}
+		},
+		"nameLabel": {
+			"type": "string",
+			"default": "Name"
+		},
+		"emailLabel": {
+			"type": "string",
+			"default": "Email"
+		},
+		"commentLabel": {
+			"type": "string",
+			"default": "Comment"
+		},
+		"successText": {
+			"type": "string",
+			"default": "Thanks! Your comment has been submitted."
+		},
+		"errorText": {
+			"type": "string",
+			"default": "Could not submit comment. Please try again."
+		},
+		"requireNameEmail": {
+			"type": "boolean",
+			"default": true
+		},
+		"buttonBgColor": {
+			"type": "object",
+			"default": {
+				"desktop": "#111827",
+				"tablet": "#111827",
+				"mobile": "#111827"
+			}
+		},
+		"buttonHoverBgColor": {
+			"type": "object",
+			"default": {
+				"desktop": "#0b1220",
+				"tablet": "#0b1220",
+				"mobile": "#0b1220"
+			}
+		},
+		"buttonTextColor": {
+			"type": "object",
+			"default": {
+				"desktop": "#ffffff",
+				"tablet": "#ffffff",
+				"mobile": "#ffffff"
+			}
+		},
+		"buttonRadius": {
+			"type": "object",
+			"default": {
+				"desktop": 12,
+				"tablet": 12,
+				"mobile": 12
+			}
+		},
+		"buttonPaddingX": {
+			"type": "object",
+			"default": {
+				"desktop": 16,
+				"tablet": 15,
+				"mobile": 14
+			}
+		},
+		"buttonPaddingY": {
+			"type": "object",
+			"default": {
+				"desktop": 10,
+				"tablet": 10,
+				"mobile": 9
+			}
+		},
+		"buttonMarginTop": {
+			"type": "object",
+			"default": {
+				"desktop": 0,
+				"tablet": 0,
+				"mobile": 0
+			}
+		},
+		"fontFamily": {
+			"type": "object",
+			"default": {
+				"desktop": "inherit",
+				"tablet": "inherit",
+				"mobile": "inherit"
+			}
+		}
+	},
+	"supports": {
+		"html": false
+	}
+}

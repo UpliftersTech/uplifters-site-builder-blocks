@@ -1,0 +1,150 @@
+{
+	"$schema": "https://schemas.wp.org/wp/6.7/block.json",
+	"apiVersion": 3,
+	"name": "uplifters-site-builder-blocks/posts-comment-list",
+	"title": "Comments List",
+	"category": "uplifters-site-builder-blocks-gene",
+	"icon": "smiley",
+	"description": "Display existing comments with avatars, dates, replies, and threaded discussions.",
+	"version": "1.0.0",
+	"example": { "attributes": { "preview": true }, "viewportWidth": 700 },
+	"textdomain": "uplifters-site-builder-blocks",
+	"editorScript": "file:./index.js",
+	"viewScript": "file:./view.js",
+	"render": "file:./render.php",
+	"style": "file:./style-index.css",
+	"editorStyle": "file:./index.css",
+	"usesContext": [
+		"postId",
+		"postType"
+	],
+	"attributes": {
+		"preview": {
+			"type": "boolean",
+			"default": false
+		},
+		"perPage": {
+			"type": "number",
+			"default": 10
+		},
+		"order": {
+			"type": "string",
+			"default": "asc"
+		},
+		"showAvatars": {
+			"type": "object",
+			"default": {
+				"desktop": true,
+				"tablet": true,
+				"mobile": true
+			}
+		},
+		"avatarSize": {
+			"type": "object",
+			"default": {
+				"desktop": 44,
+				"tablet": 40,
+				"mobile": 36
+			}
+		},
+		"showDate": {
+			"type": "object",
+			"default": {
+				"desktop": true,
+				"tablet": true,
+				"mobile": true
+			}
+		},
+		"dateFontSize": {
+			"type": "object",
+			"default": {
+				"desktop": 12,
+				"tablet": 12,
+				"mobile": 11
+			}
+		},
+		"authorColor": {
+			"type": "object",
+			"default": {
+				"desktop": "#111827",
+				"tablet": "#111827",
+				"mobile": "#111827"
+			}
+		},
+		"metaColor": {
+			"type": "object",
+			"default": {
+				"desktop": "#6b7280",
+				"tablet": "#6b7280",
+				"mobile": "#6b7280"
+			}
+		},
+		"contentColor": {
+			"type": "object",
+			"default": {
+				"desktop": "#374151",
+				"tablet": "#374151",
+				"mobile": "#374151"
+			}
+		},
+		"bubbleBg": {
+			"type": "object",
+			"default": {
+				"desktop": "#ffffff",
+				"tablet": "#ffffff",
+				"mobile": "#ffffff"
+			}
+		},
+		"bubbleBorder": {
+			"type": "object",
+			"default": {
+				"desktop": "#e5e7eb",
+				"tablet": "#e5e7eb",
+				"mobile": "#e5e7eb"
+			}
+		},
+		"threaded": {
+			"type": "object",
+			"default": {
+				"desktop": true,
+				"tablet": true,
+				"mobile": true
+			}
+		},
+		"maxDepth": {
+			"type": "object",
+			"default": {
+				"desktop": 3,
+				"tablet": 2,
+				"mobile": 1
+			}
+		},
+		"showReplyLink": {
+			"type": "object",
+			"default": {
+				"desktop": true,
+				"tablet": true,
+				"mobile": true
+			}
+		},
+		"replyText": {
+			"type": "string",
+			"default": "Reply"
+		},
+		"emptyText": {
+			"type": "string",
+			"default": "No comments yet."
+		},
+		"fontFamily": {
+			"type": "object",
+			"default": {
+				"desktop": "inherit",
+				"tablet": "inherit",
+				"mobile": "inherit"
+			}
+		}
+	},
+	"supports": {
+		"html": false
+	}
+}

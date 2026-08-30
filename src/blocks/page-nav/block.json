@@ -1,0 +1,163 @@
+{
+  "$schema": "https://schemas.wp.org/wp/6.7/block.json",
+  "apiVersion": 3,
+  "name": "uplifters-site-builder-blocks/page-nav",
+  "version": "1.0.0",
+  "title": "Page Menu",
+  "category": "uplifters-site-builder-blocks-gene",
+  "icon": "smiley",
+  "description": "Create a responsive navigation menu from selected WordPress pages.",
+	"example": {
+		"attributes": { "preview": true },
+		"viewportWidth": 700
+	},
+  "textdomain": "uplifters-site-builder-blocks",
+  "editorScript": "file:./index.js",
+  "style": "file:./style-index.css",
+  "editorStyle": "file:./index.css",
+  "viewScript": "file:./view.js",
+  "render": "file:./render.php",
+	"attributes": {
+		"preview": {
+			"type": "boolean",
+			"default": false
+		},
+    "perPage": {
+      "type": "number",
+      "default": 50
+    },
+    "selectedPageIds": {
+      "type": "array",
+      "default": []
+    },
+    "pagePosition": {
+      "type": "object",
+      "default": {
+        "desktop": "center",
+        "tablet": "center",
+        "mobile": "center"
+      }
+    },
+    "titlePadding": {
+      "type": "object",
+      "default": {
+        "desktop": {
+          "top": "2px",
+          "right": "2px",
+          "bottom": "2px",
+          "left": "2px"
+        },
+        "tablet": {
+          "top": "2px",
+          "right": "2px",
+          "bottom": "2px",
+          "left": "2px"
+        },
+        "mobile": {
+          "top": "2px",
+          "right": "2px",
+          "bottom": "2px",
+          "left": "2px"
+        }
+      }
+    },
+    "titleMargin": {
+      "type": "object",
+      "default": {
+        "desktop": {
+          "top": "0px",
+          "right": "0px",
+          "bottom": "0px",
+          "left": "0px"
+        },
+        "tablet": {
+          "top": "0px",
+          "right": "0px",
+          "bottom": "0px",
+          "left": "0px"
+        },
+        "mobile": {
+          "top": "0px",
+          "right": "0px",
+          "bottom": "0px",
+          "left": "0px"
+        }
+      }
+    },
+    "titleBg": {
+      "type": "object",
+      "default": {
+        "desktop": "",
+        "tablet": "",
+        "mobile": ""
+      }
+    },
+    "titleColor": {
+      "type": "object",
+      "default": {
+        "desktop": "",
+        "tablet": "",
+        "mobile": ""
+      }
+    },
+    "titleFontFamily": {
+      "type": "object",
+      "default": {
+        "desktop": "default",
+        "tablet": "default",
+        "mobile": "default"
+      }
+    },
+    "titleFontSize": {
+      "type": "object",
+      "default": {
+        "desktop": 16,
+        "tablet": 16,
+        "mobile": 16
+      }
+    },
+    "hoverBg": {
+      "type": "object",
+      "default": {
+        "desktop": "",
+        "tablet": "",
+        "mobile": ""
+      }
+    },
+    "hoverTextColor": {
+      "type": "object",
+      "default": {
+        "desktop": "",
+        "tablet": "",
+        "mobile": ""
+      }
+    },
+    "activeTextColor": {
+      "type": "object",
+      "default": {
+        "desktop": "#dc2626",
+        "tablet": "#dc2626",
+        "mobile": "#dc2626"
+      }
+    },
+    "hamburgerBg": {
+      "type": "object",
+      "default": {
+        "desktop": "#ffffff",
+        "tablet": "#ffffff",
+        "mobile": "#ffffff"
+      }
+    },
+    "hamburgerColor": {
+      "type": "object",
+      "default": {
+        "desktop": "#334155",
+        "tablet": "#334155",
+        "mobile": "#334155"
+      }
+    }
+  },
+  "supports": {
+    "html": false
+  }
+}
