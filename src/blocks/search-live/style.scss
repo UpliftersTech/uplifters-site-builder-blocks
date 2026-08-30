@@ -1,0 +1,68 @@
+.wp-block-uplifters-site-builder-blocks-search-live.uplifters-site-builder-blocks-m-search,
+.uplifters-site-builder-blocks-m-search {
+  width: auto !important;
+  max-width: 100% !important;
+  min-width: 46px !important;
+  flex-grow: 1 !important;
+  flex-shrink: 1 !important;
+  flex-basis: 46px !important;
+  box-sizing: border-box !important;
+}
+
+.wp-block-uplifters-site-builder-blocks-search-live.uplifters-site-builder-blocks-m-search.uplifters-site-builder-blocks-m-search-icon-only,
+.uplifters-site-builder-blocks-m-search.uplifters-site-builder-blocks-m-search-icon-only {
+  width: 46px !important;
+  max-width: 46px !important;
+  min-width: 46px !important;
+  flex-grow: 0 !important;
+  flex-shrink: 0 !important;
+  flex-basis: 46px !important;
+  position: relative !important;
+  overflow: visible !important;
+  box-sizing: border-box !important;
+}
+
+.uplifters-site-builder-blocks-m-search,
+.uplifters-site-builder-blocks-ms-wrap,
+.uplifters-site-builder-blocks-ms-relative,
+.uplifters-site-builder-blocks-ms-input {
+  box-sizing: border-box !important;
+}
+
+.uplifters-site-builder-blocks-ms-wrap,
+.uplifters-site-builder-blocks-ms-relative,
+.uplifters-site-builder-blocks-ms-input {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+}
+
+.uplifters-site-builder-blocks-m-search-icon-only .uplifters-site-builder-blocks-ms-wrap,
+.uplifters-site-builder-blocks-m-search-icon-only .uplifters-site-builder-blocks-ms-relative {
+  width: 46px !important;
+  max-width: 46px !important;
+  min-width: 46px !important;
+  overflow: visible !important;
+}
+
+.uplifters-site-builder-blocks-m-search-icon-only .uplifters-site-builder-blocks-ms-icon-panel {
+  width: calc(100vw - 32px) !important;
+  max-width: calc(100vw - 32px) !important;
+  min-width: 0 !important;
+}
+
+.uplifters-site-builder-blocks-m-search-icon-only .uplifters-site-builder-blocks-ms-icon-panel .uplifters-site-builder-blocks-ms-relative,
+.uplifters-site-builder-blocks-m-search-icon-only .uplifters-site-builder-blocks-ms-icon-panel .uplifters-site-builder-blocks-ms-input {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+}
+
+.uplifters-site-builder-blocks-ms-input {
+  display: block !important;
+}
+
+.uplifters-site-builder-blocks-ms-input::placeholder {
+  color: var(--uplifters-site-builder-blocks-placeholder-color, rgb(100 116 139));
+  opacity: 1;
+}

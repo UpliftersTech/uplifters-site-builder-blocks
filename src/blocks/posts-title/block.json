@@ -1,0 +1,54 @@
+{
+  "$schema": "https://schemas.wp.org/wp/6.7/block.json",
+  "apiVersion": 3,
+  "name": "uplifters-site-builder-blocks/posts-title",
+  "title": "Post Title",
+  "category": "uplifters-site-builder-blocks-gene",
+  "icon": "smiley",
+  "description": "Style the title of the post this block is placed in.",
+  "version": "1.0.0",
+  "textdomain": "uplifters-site-builder-blocks",
+  "editorScript": "file:./index.js",
+  "style": "file:./style-index.css",
+  "editorStyle": "file:./index.css",
+  "viewScript": "file:./view.js",
+  "render": "file:./render.php",
+  "example": {
+    "attributes": { "preview": true },
+    "viewportWidth": 700
+  },
+  "attributes": {
+    "preview": {
+      "type": "boolean",
+      "default": false
+    },
+    "titleColor": {
+      "type": "object",
+      "default": {
+        "desktop": "#111827",
+        "tablet": "#111827",
+        "mobile": "#111827"
+      }
+    },
+    "titleFontSize": {
+      "type": "object",
+      "default": {
+        "desktop": 18,
+        "tablet": 17,
+        "mobile": 16
+      }
+    },
+    "titleFontFamily": {
+      "type": "object",
+      "default": {
+        "desktop": "inherit",
+        "tablet": "inherit",
+        "mobile": "inherit"
+      }
+    },
+    "linkTitle": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

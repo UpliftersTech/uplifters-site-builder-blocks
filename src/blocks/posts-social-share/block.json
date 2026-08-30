@@ -1,0 +1,102 @@
+{
+  "$schema": "https://schemas.wp.org/wp/6.7/block.json",
+  "apiVersion": 3,
+  "name": "uplifters-site-builder-blocks/posts-social-share",
+  "title": "Social Share Buttons",
+  "category": "uplifters-site-builder-blocks-gene",
+  "icon": "smiley",
+  "description": "Let visitors share the current post through social networks, email, or a copied link.",
+  "version": "1.0.0",
+  "textdomain": "uplifters-site-builder-blocks",
+  "editorScript": "file:./index.js",
+  "viewScript": "file:./view.js",
+  "render": "file:./render.php",
+  "style": "file:./style-index.css",
+  "editorStyle": "file:./index.css",
+	"example": { "attributes": { "preview": true }, "viewportWidth": 700 },
+  "attributes": {
+    "preview": {
+      "type": "boolean",
+      "default": false
+    },
+    "openInNewTab": {
+      "type": "boolean",
+      "default": true
+    },
+    "variant": {
+      "type": "object",
+      "default": {
+        "desktop": "solid",
+        "tablet":  "solid",
+        "mobile":  "solid"
+      }
+    },
+    "facebook": {
+      "type": "boolean",
+      "default": true
+    },
+    "x": {
+      "type": "boolean",
+      "default": true
+    },
+    "whatsapp": {
+      "type": "boolean",
+      "default": true
+    },
+    "email": {
+      "type": "boolean",
+      "default": true
+    },
+    "reddit": {
+      "type": "boolean",
+      "default": true
+    },
+    "copyLink": {
+      "type": "boolean",
+      "default": true
+    },
+    "position": {
+      "type": "object",
+      "default": {
+        "desktop": "start",
+        "tablet":  "start",
+        "mobile":  "center"
+      }
+    },
+    "iconSize": {
+      "type": "object",
+      "default": {
+        "desktop": 50,
+        "tablet":  44,
+        "mobile":  38
+      }
+    },
+    "iconGap": {
+      "type": "object",
+      "default": {
+        "desktop": 8,
+        "tablet":  8,
+        "mobile":  6
+      }
+    },
+    "boxPadding": {
+      "type": "object",
+      "default": {
+        "desktop": 16,
+        "tablet":  14,
+        "mobile":  12
+      }
+    },
+    "boxMargin": {
+      "type": "object",
+      "default": {
+        "desktop": 0,
+        "tablet":  0,
+        "mobile":  0
+      }
+    }
+  },
+  "supports": {
+    "html": false
+  }
+}

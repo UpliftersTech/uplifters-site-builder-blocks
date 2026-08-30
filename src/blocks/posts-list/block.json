@@ -1,0 +1,133 @@
+{
+	"$schema": "https://schemas.wp.org/wp/6.7/block.json",
+	"apiVersion": 3,
+	"name": "uplifters-site-builder-blocks/posts-list",
+	"title": "Post List",
+	"category": "uplifters-site-builder-blocks-gene",
+	"icon": "smiley",
+	"description": "Display WordPress posts in customizable list, grid, or compact layouts.",
+	"version": "1.0.0",
+	"textdomain": "uplifters-site-builder-blocks",
+	"editorScript": "file:./index.js",
+	"style": "file:./style-index.css",
+	"editorStyle": "file:./index.css",
+	"viewScript": "file:./view.js",
+	"render": "file:./render.php",
+	"example": {
+		"attributes": { "preview": true },
+		"viewportWidth": 700
+	},
+	"attributes": {
+		"preview": {
+			"type": "boolean",
+			"default": false
+		},
+		"layoutType": {
+			"type": "object",
+			"default": {
+				"desktop": "",
+				"tablet": "",
+				"mobile": ""
+			}
+		},
+		"perPage": {
+			"type": "number",
+			"default": 6
+		},
+		"columns": {
+			"type": "object",
+			"default": {
+				"desktop": 3,
+				"tablet": 2,
+				"mobile": 1
+			}
+		},
+		"titleColor": {
+			"type": "object",
+			"default": {
+				"desktop": "#111827",
+				"tablet": "#111827",
+				"mobile": "#111827"
+			}
+		},
+		"titleFontFamily": {
+			"type": "object",
+			"default": {
+				"desktop": "inherit",
+				"tablet": "inherit",
+				"mobile": "inherit"
+			}
+		},
+		"linkTitle": {
+			"type": "boolean",
+			"default": false
+		},
+		"showImage": {
+			"type": "object",
+			"default": {
+				"desktop": true,
+				"tablet": true,
+				"mobile": true
+			}
+		},
+		"showDate": {
+			"type": "object",
+			"default": {
+				"desktop": true,
+				"tablet": true,
+				"mobile": true
+			}
+		},
+		"showExcerpt": {
+			"type": "object",
+			"default": {
+				"desktop": true,
+				"tablet": true,
+				"mobile": true
+			}
+		},
+		"showReadMore": {
+			"type": "object",
+			"default": {
+				"desktop": true,
+				"tablet": true,
+				"mobile": true
+			}
+		},
+		"dateFontSize": {
+			"type": "object",
+			"default": {
+				"desktop": 14,
+				"tablet": 13,
+				"mobile": 12
+			}
+		},
+		"excerptMaxChars": {
+			"type": "object",
+			"default": {
+				"desktop": 40,
+				"tablet": 36,
+				"mobile": 30
+			}
+		},
+		"readMoreBgColor": {
+			"type": "object",
+			"default": {
+				"desktop": "#111827",
+				"tablet": "#111827",
+				"mobile": "#111827"
+			}
+		},
+		"readMoreFontSize": {
+			"type": "object",
+			"default": {
+				"desktop": 14,
+				"tablet": 13,
+				"mobile": 12
+			}
+		}
+	},
+	"supports": {
+		"html": false
+	}
+}

@@ -1,0 +1,137 @@
+/**
+ * Frontend and editor shared styles for the ScrollToTop block.
+ *
+ * Only structural CSS lives here. All responsive (desktop/tablet/mobile)
+ * values are generated per block instance in render.php and attached with
+ * wp_add_inline_style() through BlocksDynamicStyle, so no raw <style> tag is
+ * printed and each instance keeps its own variant values.
+ */
+
+.uplifters-scroll-to-top-wrapper {
+	--uplifters-stt-offset-x: 32px;
+	--uplifters-stt-offset-y: 32px;
+
+	position: fixed;
+	z-index: 999;
+	line-height: 0;
+	opacity: 1;
+	transition: opacity 200ms ease;
+}
+
+.uplifters-scroll-to-top-wrapper.is-hidden {
+	opacity: 0;
+	pointer-events: none;
+}
+
+.uplifters-scroll-to-top-wrapper--bottom-right {
+	right: var(--uplifters-stt-offset-x);
+	bottom: var(--uplifters-stt-offset-y);
+}
+
+.uplifters-scroll-to-top-wrapper--bottom-left {
+	left: var(--uplifters-stt-offset-x);
+	bottom: var(--uplifters-stt-offset-y);
+}
+
+.uplifters-scroll-to-top-wrapper--top-right {
+	right: var(--uplifters-stt-offset-x);
+	top: var(--uplifters-stt-offset-y);
+}
+
+.uplifters-scroll-to-top-wrapper--top-left {
+	left: var(--uplifters-stt-offset-x);
+	top: var(--uplifters-stt-offset-y);
+}
+
+.uplifters-scroll-to-top {
+	--uplifters-stt-size: 64px;
+	--uplifters-stt-outline-width: 2px;
+	--uplifters-stt-outline-color: #111827;
+	--uplifters-stt-background-color: #2563eb;
+	--uplifters-stt-arrow-color: #ffffff;
+	--uplifters-stt-arrow-size: 22px;
+
+	/**
+	 * Hover values fall back to the resting values, so a variant that was
+	 * never given its own hover color simply keeps the same color.
+	 */
+	--uplifters-stt-hover-background-color: var(--uplifters-stt-background-color);
+	--uplifters-stt-hover-outline-color: var(--uplifters-stt-outline-color);
+	--uplifters-stt-hover-arrow-color: var(--uplifters-stt-arrow-color);
+	--uplifters-stt-hover-lift: -6px;
+	--uplifters-stt-hover-duration: 220ms;
+
+	position: relative;
+	display: block;
+	box-sizing: border-box;
+	width: var(--uplifters-stt-size);
+	height: var(--uplifters-stt-size);
+	padding: 0;
+	cursor: pointer;
+	appearance: none;
+	-webkit-appearance: none;
+	background: var(--uplifters-stt-background-color);
+	border: var(--uplifters-stt-outline-width) solid var(--uplifters-stt-outline-color);
+	border-radius: 50%;
+	transform: translateY(0);
+	transition:
+		transform var(--uplifters-stt-hover-duration) ease,
+		background-color var(--uplifters-stt-hover-duration) ease,
+		border-color var(--uplifters-stt-hover-duration) ease;
+}
+
+.uplifters-scroll-to-top:hover,
+.uplifters-scroll-to-top:focus-visible {
+	transform: translateY(var(--uplifters-stt-hover-lift));
+	background: var(--uplifters-stt-hover-background-color);
+	border-color: var(--uplifters-stt-hover-outline-color);
+}
+
+.uplifters-scroll-to-top:active {
+	transform: translateY(0);
+}
+
+.uplifters-scroll-to-top:focus-visible {
+	outline: 2px solid var(--uplifters-stt-hover-outline-color);
+	outline-offset: 3px;
+}
+
+.uplifters-scroll-to-top__icon {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--uplifters-stt-arrow-color);
+	pointer-events: none;
+	transition: color var(--uplifters-stt-hover-duration) ease;
+}
+
+.uplifters-scroll-to-top:hover .uplifters-scroll-to-top__icon,
+.uplifters-scroll-to-top:focus-visible .uplifters-scroll-to-top__icon {
+	color: var(--uplifters-stt-hover-arrow-color);
+}
+
+.uplifters-scroll-to-top__icon-svg {
+	display: block;
+	width: var(--uplifters-stt-arrow-size);
+	height: var(--uplifters-stt-arrow-size);
+	max-width: 100%;
+	max-height: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.uplifters-scroll-to-top-wrapper {
+		transition: none;
+	}
+
+	.uplifters-scroll-to-top,
+	.uplifters-scroll-to-top__icon {
+		transition: none;
+	}
+
+	.uplifters-scroll-to-top:hover,
+	.uplifters-scroll-to-top:focus-visible {
+		transform: none;
+	}
+}

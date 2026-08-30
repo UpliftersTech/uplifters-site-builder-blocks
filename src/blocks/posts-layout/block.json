@@ -1,0 +1,85 @@
+{
+	"$schema": "https://schemas.wp.org/wp/6.7/block.json",
+	"apiVersion": 3,
+	"name": "uplifters-site-builder-blocks/posts-layout",
+	"title": "Posts Layout",
+	"version": "1.0.0",
+	"category": "uplifters-site-builder-blocks-gene",
+	"icon": "smiley",
+	"description": "A dynamic parent layout block for building post templates with responsive inner blocks.",
+	"keywords": [ "posts", "layout", "template", "uplifters-site-builder-blocks" ],
+	"example": {
+		"attributes": { "preview": true },
+		"viewportWidth": 700
+	},
+	"textdomain": "uplifters-site-builder-blocks",
+	"editorScript": "file:./index.js",
+	"style": "file:./style-index.css",
+	"editorStyle": "file:./index.css",
+	"viewScript": "file:./view.js",
+	"render": "file:./render.php",
+	"attributes": {
+		"preview": {
+			"type": "boolean",
+			"default": false
+		},
+		"align": {
+			"type": "string",
+			"default": "full"
+		},
+		"postsTemplate": {
+			"type": "string",
+			"default": ""
+		},
+		"padding": {
+			"type": "object",
+			"default": {
+				"desktop": 0,
+				"tablet": 0,
+				"mobile": 0
+			}
+		},
+		"margin": {
+			"type": "object",
+			"default": {
+				"desktop": 0,
+				"tablet": 0,
+				"mobile": 0
+			}
+		},
+		"backgroundColor": {
+			"type": "object",
+			"default": {
+				"desktop": "",
+				"tablet": "",
+				"mobile": ""
+			}
+		},
+		"borderRadius": {
+			"type": "object",
+			"default": {
+				"desktop": 0,
+				"tablet": 0,
+				"mobile": 0
+			}
+		},
+		"shadow": {
+			"type": "object",
+			"default": {
+				"desktop": 0,
+				"tablet": 0,
+				"mobile": 0
+			}
+		}
+	},
+
+	"allowedBlocks": [
+		"uplifters-site-builder-blocks/posts-section"
+	],
+	"supports": {
+		"align": [
+			"full"
+		],
+		"html": false
+	}
+}

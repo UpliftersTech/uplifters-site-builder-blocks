@@ -1,0 +1,90 @@
+.e2pu-layout-preview-modal {
+			width: 86vw;
+			height: auto;
+			max-width: 1180px;
+			max-height: 88vh;
+		}
+
+		.e2pu-layout-preview-modal .components-modal__content {
+			padding: 16px;
+			overflow: auto;
+			box-sizing: border-box;
+		}
+
+		.e2pu-layout-preview-modal .components-modal__header {
+			border-bottom: 1px solid #e5e7eb;
+		}
+
+		.e2pu-layout-preview-grid {
+			grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) !important;
+		}
+
+		.e2pu-layout-choice-card {
+			transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease, background-color 180ms ease;
+		}
+
+		.e2pu-layout-choice-card:hover {
+			transform: translateY(-4px) scale(1.01);
+			border-color: #94a3b8 !important;
+			box-shadow: 0 16px 30px rgba(15, 23, 42, 0.20), 0 6px 12px rgba(15, 23, 42, 0.12) !important;
+		}
+
+		.e2pu-layout-choice-card:focus-visible {
+			border-color: #2563eb !important;
+			box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.22), 0 14px 26px rgba(15, 23, 42, 0.16) !important;
+		}
+
+		.e2pu-layout-choice-card.is-current {
+			border-color: #2563eb !important;
+			background: #eff6ff !important;
+			box-shadow: 0 10px 20px rgba(37, 99, 235, 0.16), 0 3px 8px rgba(15, 23, 42, 0.08) !important;
+		}
+
+		.e2pu-layout-current-badge {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			flex-shrink: 0;
+			min-height: 20px;
+			padding: 3px 6px;
+			border-radius: 999px;
+			background: #2563eb;
+			color: #ffffff;
+			font-size: 9px;
+			font-weight: 700;
+			line-height: 1;
+			letter-spacing: 0.04em;
+			text-transform: uppercase;
+		}
+
+		@media (max-width: 782px) {
+			.e2pu-layout-preview-grid {
+				grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)) !important;
+			}
+		}
+
+		@media (max-width: 700px) {
+			.e2pu-layout-preview-modal {
+				width: calc(100vw - 24px);
+				max-width: calc(100vw - 24px);
+				max-height: 86vh;
+			}
+
+			.e2pu-layout-preview-modal .components-modal__content {
+				padding: 14px;
+			}
+
+			.e2pu-layout-preview-grid {
+				grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+			}
+		}
+
+		@media (prefers-reduced-motion: reduce) {
+			.e2pu-layout-choice-card {
+				transition: none;
+			}
+
+			.e2pu-layout-choice-card:hover {
+				transform: none;
+			}
+		}

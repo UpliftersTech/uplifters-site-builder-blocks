@@ -1,0 +1,114 @@
+/**
+ * Frontend styles for uplifters-site-builder-blocks/posts-section.
+ *
+ * Per-instance spacing/background/radius arrive as CSS custom properties set
+ * by render.php on the section's wrapper element (see
+ * uplifters_site_builder_blocks_b_posts_section_device_css()), so only static,
+ * instance-independent rules live here.
+ */
+
+.uplifters-site-builder-blocks-posts-section {
+	img,
+	video,
+	iframe {
+		max-width: 100%;
+		height: auto;
+	}
+
+	a {
+		color: inherit;
+	}
+}
+
+/* Fallback-rendered child: Post Title (see posts-section/render.php) */
+.uplifters-posts-title {
+	margin: 0;
+	font-size: clamp(32px, 5vw, 56px);
+	line-height: 1.08;
+	letter-spacing: -0.04em;
+
+	&__link {
+		text-decoration: none;
+		color: inherit;
+	}
+}
+
+/* Fallback-rendered child: Post Featured Image (see posts-section/render.php) */
+.uplifters-posts-featured-image {
+	margin-left: 0;
+	margin-right: 0;
+	overflow: hidden;
+
+	&--default {
+		position: relative;
+		background: #f8fafc;
+	}
+
+	&__media {
+		position: relative;
+		display: block;
+		width: 100%;
+		overflow: hidden;
+		background: linear-gradient(135deg, #e0f2fe, #eef2ff);
+	}
+
+	&__link {
+		display: block;
+		width: 100%;
+		height: 100%;
+		color: inherit;
+		text-decoration: none;
+	}
+
+	&__img {
+		display: block;
+		width: 100%;
+		height: 100%;
+		min-height: inherit;
+	}
+
+	&__caption {
+		padding: 10px 14px;
+		background: rgba(15, 23, 42, 0.04);
+		color: #64748b;
+		font-size: 13px;
+		line-height: 1.5;
+		text-align: center;
+	}
+
+	&--placeholder &__media {
+		min-height: 280px;
+	}
+
+	&__placeholder {
+		position: absolute;
+		inset: 0;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 10px;
+		padding: 60px 20px;
+		text-align: center;
+		color: #334155;
+		font-weight: 800;
+	}
+
+	&__placeholder-icon {
+		display: grid;
+		place-items: center;
+		width: 54px;
+		height: 54px;
+		border-radius: 18px;
+		background: rgba(255, 255, 255, 0.72);
+		box-shadow: 0 14px 34px rgba(15, 23, 42, 0.12);
+		font-size: 28px;
+		line-height: 1;
+	}
+}
+
+@media (max-width: 800px) {
+	.uplifters-posts-title {
+		font-size: clamp(26px, 7vw, 40px);
+	}
+}

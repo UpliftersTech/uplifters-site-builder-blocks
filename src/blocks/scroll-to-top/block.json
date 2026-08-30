@@ -1,0 +1,131 @@
+{
+	"$schema": "https://schemas.wp.org/wp/6.7/block.json",
+	"apiVersion": 3,
+	"name": "uplifters-site-builder-blocks/scroll-to-top",
+	"version": "1.0.0",
+	"title": "Scroll To Top",
+	"category": "uplifters-site-builder-blocks-gene",
+	"icon": "smiley",
+	"description": "A floating button that scrolls the page back to the top.",
+	"example": { "attributes": { "preview": true }, "viewportWidth": 700 },
+	"textdomain": "uplifters-site-builder-blocks",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css",
+	"viewScript": "file:./view.js",
+	"render": "file:./render.php",
+	"attributes": {
+		"preview": {
+			"type": "boolean",
+			"default": false
+		},
+		"placement": {
+			"type": "string",
+			"default": "bottom-right"
+		},
+		"hideAtStart": {
+			"type": "boolean",
+			"default": true
+		},
+		"showAfter": {
+			"type": "number",
+			"default": 300
+		},
+		"arrowStyle": {
+			"type": "string",
+			"default": "arrow"
+		},
+		"arrowColor": {
+			"type": "object",
+			"default": {
+				"desktop": "#ffffff",
+				"tablet": "#ffffff",
+				"mobile": "#ffffff"
+			}
+		},
+		"arrowSize": {
+			"type": "object",
+			"default": {
+				"desktop": "22px",
+				"tablet": "20px",
+				"mobile": "18px"
+			}
+		},
+		"size": {
+			"type": "object",
+			"default": {
+				"desktop": "64px",
+				"tablet": "56px",
+				"mobile": "48px"
+			}
+		},
+		"backgroundColor": {
+			"type": "object",
+			"default": {
+				"desktop": "#2563eb",
+				"tablet": "#2563eb",
+				"mobile": "#2563eb"
+			}
+		},
+		"outlineWidth": {
+			"type": "object",
+			"default": {
+				"desktop": "2px",
+				"tablet": "2px",
+				"mobile": "2px"
+			}
+		},
+		"outlineColor": {
+			"type": "object",
+			"default": {
+				"desktop": "#111827",
+				"tablet": "#111827",
+				"mobile": "#111827"
+			}
+		},
+		"hoverBackgroundColor": {
+			"type": "object",
+			"default": {
+				"desktop": "#1d4ed8",
+				"tablet": "#1d4ed8",
+				"mobile": "#1d4ed8"
+			}
+		},
+		"hoverArrowColor": {
+			"type": "object",
+			"default": {
+				"desktop": "#ffffff",
+				"tablet": "#ffffff",
+				"mobile": "#ffffff"
+			}
+		},
+		"hoverOutlineColor": {
+			"type": "object",
+			"default": {
+				"desktop": "#111827",
+				"tablet": "#111827",
+				"mobile": "#111827"
+			}
+		},
+		"offsetX": {
+			"type": "object",
+			"default": {
+				"desktop": "32px",
+				"tablet": "24px",
+				"mobile": "16px"
+			}
+		},
+		"offsetY": {
+			"type": "object",
+			"default": {
+				"desktop": "32px",
+				"tablet": "24px",
+				"mobile": "16px"
+			}
+		}
+	},
+	"supports": {
+		"html": false,
+		"multiple": false
+	}
+}

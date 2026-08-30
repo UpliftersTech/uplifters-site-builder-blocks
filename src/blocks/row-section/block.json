@@ -1,0 +1,57 @@
+{
+	"$schema": "https://schemas.wp.org/wp/6.7/block.json",
+	"apiVersion": 3,
+	"name": "uplifters-site-builder-blocks/row-section",
+	"title": "Row Section",
+	"category": "uplifters-site-builder-blocks-gene",
+	"icon": "smiley",
+	"description": "A section container inside the Row Layout block with responsive padding, margin, and background controls.",
+	"version": "1.0.0",
+	"textdomain": "uplifters-site-builder-blocks",
+	"editorScript": "file:./index.js",
+	"style": "file:./style-index.css",
+	"editorStyle": "file:./index.css",
+	"viewScript": "file:./view.js",
+	"render": "file:./render.php",
+	"example": {
+		"attributes": { "preview": true },
+		"viewportWidth": 700
+	},
+	"attributes": {
+		"preview": {
+			"type": "boolean",
+			"default": false
+		},
+		"padding": {
+			"type": "object",
+			"default": {
+				"desktop": 0,
+				"tablet": 0,
+				"mobile": 0
+			}
+		},
+		"margin": {
+			"type": "object",
+			"default": {
+				"desktop": 0,
+				"tablet": 0,
+				"mobile": 0
+			}
+		},
+		"backgroundColor": {
+			"type": "object",
+			"default": {
+				"desktop": "",
+				"tablet": "",
+				"mobile": ""
+			}
+		}
+	},
+	"parent": [
+		"uplifters-site-builder-blocks/row-layout"
+	],
+	"supports": {
+		"html": false,
+		"inserter": false
+	}
+}

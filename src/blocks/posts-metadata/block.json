@@ -1,0 +1,142 @@
+{
+	"$schema": "https://schemas.wp.org/wp/6.7/block.json",
+	"apiVersion": 3,
+	"name": "uplifters-site-builder-blocks/posts-metadata",
+	"title": "Post Metadata",
+	"category": "uplifters-site-builder-blocks-gene",
+	"icon": "smiley",
+	"description": "Display the current postâ€™s author, category, and publication date.",
+	"version": "1.0.0",
+	"textdomain": "uplifters-site-builder-blocks",
+	"editorScript": "file:./index.js",
+	"style": "file:./style-index.css",
+	"editorStyle": "file:./index.css",
+	"viewScript": "file:./view.js",
+	"render": "file:./render.php",
+	"example": {
+		"attributes": { "preview": true },
+		"viewportWidth": 700
+	},
+	"attributes": {
+		"preview": {
+			"type": "boolean",
+			"default": false
+		},
+		"showAuthor": {
+			"type": "object",
+			"default": {
+				"desktop": true,
+				"tablet": true,
+				"mobile": true
+			}
+		},
+		"showCategory": {
+			"type": "object",
+			"default": {
+				"desktop": true,
+				"tablet": true,
+				"mobile": true
+			}
+		},
+		"showDate": {
+			"type": "object",
+			"default": {
+				"desktop": true,
+				"tablet": true,
+				"mobile": true
+			}
+		},
+		"linkAuthor": {
+			"type": "boolean",
+			"default": false
+		},
+		"linkCategory": {
+			"type": "boolean",
+			"default": false
+		},
+		"dateFormat": {
+			"type": "string",
+			"default": "d-m-Y"
+		},
+		"uppercase": {
+			"type": "object",
+			"default": {
+				"desktop": false,
+				"tablet": false,
+				"mobile": false
+			}
+		},
+		"textColor": {
+			"type": "object",
+			"default": {
+				"desktop": "#111827",
+				"tablet": "#111827",
+				"mobile": "#111827"
+			}
+		},
+		"textOpacity": {
+			"type": "object",
+			"default": {
+				"desktop": 1,
+				"tablet": 1,
+				"mobile": 1
+			}
+		},
+		"fontFamily": {
+			"type": "object",
+			"default": {
+				"desktop": "default",
+				"tablet": "default",
+				"mobile": "default"
+			}
+		},
+		"fontSize": {
+			"type": "object",
+			"default": {
+				"desktop": 16,
+				"tablet": 15,
+				"mobile": 14
+			}
+		},
+		"fontWeight": {
+			"type": "object",
+			"default": {
+				"desktop": "500",
+				"tablet": "500",
+				"mobile": "500"
+			}
+		},
+		"textAlign": {
+			"type": "object",
+			"default": {
+				"desktop": "left",
+				"tablet": "left",
+				"mobile": "left"
+			}
+		},
+		"metaGap": {
+			"type": "object",
+			"default": {
+				"desktop": 8,
+				"tablet": 7,
+				"mobile": 6
+			}
+		},
+		"postId": {
+			"type": "number"
+		},
+		"postTypeEndpoint": {
+			"type": "string",
+			"default": "posts"
+		}
+	},
+	"usesContext": [
+		"postId",
+		"postType"
+	],
+
+	"supports": {
+		"html": false
+		
+	}
+}

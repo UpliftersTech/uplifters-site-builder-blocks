@@ -1,0 +1,62 @@
+{
+	"$schema": "https://schemas.wp.org/wp/6.7/block.json",
+	"apiVersion": 3,
+	"name": "uplifters-site-builder-blocks/row-layout",
+	"version": "1.0.0",
+	"title": "Row Layout",
+	"category": "uplifters-site-builder-blocks-gene",
+	"icon": "smiley",
+	"description": "Create a responsive vertical layout with selectable and resizable content rows.",
+	"textdomain": "uplifters-site-builder-blocks",
+	"editorScript": "file:./index.js",
+	"style": "file:./style-index.css",
+	"editorStyle": "file:./index.css",
+	"viewScript": "file:./view.js",
+	"render": "file:./render.php",
+	"example": {
+		"attributes": { "preview": true },
+		"viewportWidth": 700
+	},
+	"keywords": [
+		"row",
+		"layout",
+		"section",
+		"grid",
+		"resize",
+		"stack",
+		"rows"
+	],
+	"attributes": {
+		"preview": {
+			"type": "boolean",
+			"default": false
+		},
+		"sections": {
+			"type": "number",
+			"default": 0
+		},
+		"columnWidths": {
+			"type": "object",
+			"default": {
+				"desktop": [],
+				"tablet": [],
+				"mobile": []
+			}
+		},
+		"gap": {
+			"type": "object",
+			"default": {
+				"desktop": 0,
+				"tablet": 0,
+				"mobile": 0
+			}
+		}
+	},
+	"supports": {
+		"html": false,
+		"align": [
+			"wide",
+			"full"
+		]
+	}
+}

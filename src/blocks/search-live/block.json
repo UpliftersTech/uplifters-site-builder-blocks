@@ -1,0 +1,77 @@
+{
+  "$schema": "https://schemas.wp.org/wp/6.7/block.json",
+  "apiVersion": 3,
+  "name": "uplifters-site-builder-blocks/search-live",
+  "version": "1.0.0",
+  "title": "Live Search",
+  "category": "uplifters-site-builder-blocks-gene",
+  "icon": "smiley",
+  "description": "Search site content instantly and display results as the visitor types.",
+  "textdomain": "uplifters-site-builder-blocks",
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css",
+  "viewScript": "file:./view.js",
+  "render": "file:./render.php",
+	"example": {
+		"attributes": { "preview": true },
+		"viewportWidth": 700
+	},
+	"attributes": {
+		"preview": {
+			"type": "boolean",
+			"default": false
+		},
+    "placeholder": {
+      "type": "string",
+      "default": "Search…"
+    },
+    "perPage": {
+      "type": "number",
+      "default": 8
+    },
+    "minChars": {
+      "type": "number",
+      "default": 2
+    },
+    "inputHeight": {
+      "type": "object",
+      "default": {
+        "desktop": 34
+      }
+    },
+    "inputBorderRadius": {
+      "type": "object",
+      "default": {
+        "desktop": 12
+      }
+    },
+    "inputBackgroundColor": {
+      "type": "object",
+      "default": {
+        "desktop": "#ffffff"
+      }
+    },
+    "placeholderColor": {
+      "type": "object",
+      "default": {
+        "desktop": "rgb(100 116 139)"
+      }
+    },
+    "searchIconColor": {
+      "type": "object",
+      "default": {
+        "desktop": "rgb(100 116 139)"
+      }
+    },
+    "iconOnlySearch": {
+      "type": "object",
+      "default": {
+        "desktop": false
+      }
+    }
+  },
+  "supports": {
+    "html": false
+  }
+}

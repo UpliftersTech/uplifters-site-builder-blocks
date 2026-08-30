@@ -1,0 +1,20 @@
+.uplifters-site-builder-blocks-posts-previous-next-device-badge {
+  display:inline-flex;align-items:center;margin-bottom:12px;padding:5px 10px;
+  border-radius:999px;background:#f0f0f1;color:#1e1e1e;font-size:12px;font-weight:600;
+}
+.uplifters-site-builder-blocks-posts-previous-next-editor {
+  display:flex;align-items:center;justify-content:space-between;width:100%;box-sizing:border-box;
+}
+.uplifters-site-builder-blocks-posts-previous-next-editor .uplifters-site-builder-blocks-posts-previous-next-editor-button {
+  transition:color .18s ease,background-color .18s ease,border-color .18s ease,transform .18s ease;
+}
+.uplifters-site-builder-blocks-posts-previous-next-editor .uplifters-site-builder-blocks-posts-previous-next-editor-button:hover {
+  color:var(--uplifters-site-builder-blocks-posts-previous-next-hover-text);background:var(--uplifters-site-builder-blocks-posts-previous-next-hover-bg);
+  border-color:var(--uplifters-site-builder-blocks-posts-previous-next-hover-border);transform:translateY(-1px);
+}
+.uplifters-site-builder-blocks-posts-previous-next-editor .uplifters-site-builder-blocks-posts-previous-next-editor-spacer { flex:1 1 auto; }
+.uplifters-site-builder-blocks-posts-previous-next-editor.uplifters-site-builder-blocks-posts-previous-next-device-mobile {
+  flex-direction:column;align-items:stretch;
+}
+.uplifters-site-builder-blocks-posts-previous-next-editor.uplifters-site-builder-blocks-posts-previous-next-device-mobile .uplifters-site-builder-blocks-posts-previous-next-editor-button { width:100%; }
+.uplifters-site-builder-blocks-posts-previous-next-editor.uplifters-site-builder-blocks-posts-previous-next-device-mobile .uplifters-site-builder-blocks-posts-previous-next-editor-spacer { display:none; }

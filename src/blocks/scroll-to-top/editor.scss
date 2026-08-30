@@ -1,0 +1,109 @@
+/**
+ * Editor-only styles for the ScrollToTop block.
+ *
+ * The preview reuses the real frontend markup and class names so every
+ * attribute (placement, offsets, colors, hover state, responsive variants)
+ * previews live. The only frontend rule that cannot survive inside the editor
+ * canvas is `position: fixed`, which would float the button over the whole
+ * editing surface, so the wrapper is switched to `absolute` inside a stage
+ * that acts as a miniature viewport.
+ */
+
+.uplifters-scroll-to-top-editor {
+	padding: 20px;
+	border: 1px dashed #c3c4c7;
+	border-radius: 8px;
+	background: #fbfbfc;
+}
+
+.uplifters-scroll-to-top-editor__preview {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+/**
+ * Miniature viewport. `contain: layout` keeps the absolutely positioned
+ * wrapper anchored here even if a theme adds transforms further up the tree.
+ */
+.uplifters-scroll-to-top-editor__stage {
+	position: relative;
+	width: 100%;
+	height: 280px;
+	overflow: hidden;
+	box-sizing: border-box;
+	border: 1px solid #e0e0e0;
+	border-radius: 6px;
+	background-color: #ffffff;
+	background-image:
+		linear-gradient(45deg, #f4f4f5 25%, transparent 25%),
+		linear-gradient(-45deg, #f4f4f5 25%, transparent 25%),
+		linear-gradient(45deg, transparent 75%, #f4f4f5 75%),
+		linear-gradient(-45deg, transparent 75%, #f4f4f5 75%);
+	background-size: 20px 20px;
+	background-position: 0 0, 0 10px, 10px -10px, -10px 0;
+	transition: max-width 200ms ease;
+}
+
+.uplifters-scroll-to-top-editor__stage-label {
+	position: absolute;
+	top: 8px;
+	left: 10px;
+	padding: 2px 8px;
+	border-radius: 999px;
+	background: rgba(30, 30, 30, 0.55);
+	color: #ffffff;
+	font-size: 11px;
+	font-weight: 500;
+	letter-spacing: 0.02em;
+	pointer-events: none;
+}
+
+/**
+ * Narrow the stage for the tablet and mobile variants so the responsive
+ * preview reads as an actual device width rather than a full-width box.
+ */
+.uplifters-scroll-to-top-editor--device-tablet .uplifters-scroll-to-top-editor__stage {
+	max-width: 620px;
+}
+
+.uplifters-scroll-to-top-editor--device-mobile .uplifters-scroll-to-top-editor__stage {
+	max-width: 360px;
+	height: 380px;
+}
+
+/**
+ * Frontend uses `fixed`; inside the canvas that would escape the block, so it
+ * is anchored to the stage instead. Every other wrapper rule (corner classes,
+ * offset variables, opacity transition) is inherited from style.scss.
+ */
+.uplifters-scroll-to-top-editor .uplifters-scroll-to-top-wrapper {
+	position: absolute;
+	z-index: 1;
+}
+
+.uplifters-scroll-to-top-editor .uplifters-scroll-to-top {
+	cursor: pointer;
+}
+
+.uplifters-scroll-to-top-editor .components-notice {
+	margin: 0;
+}
+
+.uplifters-scroll-to-top__device-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	margin-bottom: 12px;
+	padding: 5px 10px;
+	border-radius: 999px;
+	background: #f0f0f1;
+	color: #1e1e1e;
+	font-size: 12px;
+	font-weight: 600;
+}
+
+.uplifters-scroll-to-top__control-label {
+	margin-bottom: 8px;
+	font-weight: 600;
+}
