@@ -1,0 +1,188 @@
+.wp-block-uplifters-site-builder-blocks-accordion-icon-custom,
+.wp-block-uplifters-site-builder-blocks-accordion-icon-custom *,
+.wp-block-uplifters-site-builder-blocks-accordion-icon-custom *::before,
+.wp-block-uplifters-site-builder-blocks-accordion-icon-custom *::after {
+	box-sizing: border-box;
+}
+
+.wp-block-uplifters-site-builder-blocks-accordion-icon-custom .uplifters-site-builder-blocks-accordion-icon-custom__heading {
+	margin: 0 0 16px;
+	font-weight: 600;
+	line-height: 1.25;
+	color: #111827;
+}
+
+.wp-block-uplifters-site-builder-blocks-accordion-icon-custom .uplifters-site-builder-blocks-accordion-icon-custom__group {
+	width: 100%;
+}
+
+.wp-block-uplifters-site-builder-blocks-accordion-icon-custom .uplifters-site-builder-blocks-accordion-icon-custom__editor-item {
+	position: relative;
+	margin-bottom: 12px;
+}
+
+.wp-block-uplifters-site-builder-blocks-accordion-icon-custom .uplifters-site-builder-blocks-accordion-icon-custom__item {
+	margin: 0;
+	padding: 0 16px;
+	border: 1px solid #e5e7eb;
+	border-radius: 10px;
+	background: #fff;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.wp-block-uplifters-site-builder-blocks-accordion-icon-custom .uplifters-site-builder-blocks-accordion-icon-custom__toggle {
+	display: inline-flex;
+	align-items: center;
+	width: 100%;
+	gap: 12px;
+	padding: 12px 0;
+	border: 0;
+	border-radius: 8px;
+	background: transparent;
+	color: #111827;
+	font: inherit;
+	font-weight: 600;
+	text-align: left;
+	cursor: pointer;
+	list-style: none;
+}
+
+.wp-block-uplifters-site-builder-blocks-accordion-icon-custom .uplifters-site-builder-blocks-accordion-icon-custom__toggle::-webkit-details-marker {
+	display: none;
+}
+
+.wp-block-uplifters-site-builder-blocks-accordion-icon-custom .uplifters-site-builder-blocks-accordion-icon-custom__toggle:hover,
+.wp-block-uplifters-site-builder-blocks-accordion-icon-custom .uplifters-site-builder-blocks-accordion-icon-custom__toggle:focus {
+	color: #4b5563;
+}
+
+.wp-block-uplifters-site-builder-blocks-accordion-icon-custom .uplifters-site-builder-blocks-accordion-icon-custom__toggle:focus-visible,
+.wp-block-uplifters-site-builder-blocks-accordion-icon-custom .uplifters-site-builder-blocks-accordion-icon-custom__editor-action:focus-visible,
+.wp-block-uplifters-site-builder-blocks-accordion-icon-custom .uplifters-site-builder-blocks-accordion-icon-custom__add-button:focus-visible {
+	outline: 2px solid #2563eb;
+	outline-offset: 2px;
+}
+
+.wp-block-uplifters-site-builder-blocks-accordion-icon-custom .uplifters-site-builder-blocks-accordion-icon-custom__icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex: 0 0 auto;
+	width: 16px;
+	height: 16px;
+	color: currentColor;
+}
+
+.wp-block-uplifters-site-builder-blocks-accordion-icon-custom .uplifters-site-builder-blocks-accordion-icon-custom__icon svg {
+	display: block;
+	width: 16px;
+	height: 16px;
+}
+
+.wp-block-uplifters-site-builder-blocks-accordion-icon-custom .uplifters-site-builder-blocks-accordion-icon-custom__icon--hidden {
+	display: none;
+}
+
+.wp-block-uplifters-site-builder-blocks-accordion-icon-custom .uplifters-site-builder-blocks-accordion-icon-custom__title {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
+.wp-block-uplifters-site-builder-blocks-accordion-icon-custom .uplifters-site-builder-blocks-accordion-icon-custom__content {
+	width: 100%;
+	overflow: hidden;
+}
+
+.wp-block-uplifters-site-builder-blocks-accordion-icon-custom .uplifters-site-builder-blocks-accordion-icon-custom__content.is-hidden {
+	display: none;
+}
+
+.wp-block-uplifters-site-builder-blocks-accordion-icon-custom .uplifters-site-builder-blocks-accordion-icon-custom__text {
+	margin: 0;
+	padding: 0 0 16px;
+	color: #374151;
+	line-height: 1.65;
+}
+
+.wp-block-uplifters-site-builder-blocks-accordion-icon-custom .uplifters-site-builder-blocks-accordion-icon-custom__editor-toolbar {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 4px;
+	min-height: 30px;
+	margin-top: 6px;
+	opacity: 0;
+	transform: translateY(-2px);
+	transition: opacity 120ms ease, transform 120ms ease;
+}
+
+.wp-block-uplifters-site-builder-blocks-accordion-icon-custom .uplifters-site-builder-blocks-accordion-icon-custom__editor-item:hover .uplifters-site-builder-blocks-accordion-icon-custom__editor-toolbar,
+.wp-block-uplifters-site-builder-blocks-accordion-icon-custom .uplifters-site-builder-blocks-accordion-icon-custom__editor-item:focus-within .uplifters-site-builder-blocks-accordion-icon-custom__editor-toolbar {
+	opacity: 1;
+	transform: translateY(0);
+}
+
+.wp-block-uplifters-site-builder-blocks-accordion-icon-custom .uplifters-site-builder-blocks-accordion-icon-custom__editor-action {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 28px;
+	height: 28px;
+	padding: 0;
+	border: 1px solid #dcdcde;
+	border-radius: 6px;
+	background: #fff;
+	color: #50575e;
+	line-height: 0;
+	cursor: pointer;
+}
+
+.wp-block-uplifters-site-builder-blocks-accordion-icon-custom .uplifters-site-builder-blocks-accordion-icon-custom__editor-action:hover {
+	border-color: #8c8f94;
+	color: #1d2327;
+}
+
+.wp-block-uplifters-site-builder-blocks-accordion-icon-custom .uplifters-site-builder-blocks-accordion-icon-custom__editor-action--drag {
+	cursor: move;
+}
+
+.wp-block-uplifters-site-builder-blocks-accordion-icon-custom .uplifters-site-builder-blocks-accordion-icon-custom__editor-action:disabled {
+	opacity: 0.45;
+	cursor: not-allowed;
+}
+
+.wp-block-uplifters-site-builder-blocks-accordion-icon-custom .uplifters-site-builder-blocks-accordion-icon-custom__editor-action svg {
+	display: block;
+	width: 16px;
+	height: 16px;
+}
+
+.wp-block-uplifters-site-builder-blocks-accordion-icon-custom .uplifters-site-builder-blocks-accordion-icon-custom__add-row {
+	display: flex;
+	justify-content: center;
+	margin-top: 4px;
+}
+
+.wp-block-uplifters-site-builder-blocks-accordion-icon-custom .uplifters-site-builder-blocks-accordion-icon-custom__add-button {
+	display: inline-flex;
+	align-items: center;
+	gap: 7px;
+}
+
+.wp-block-uplifters-site-builder-blocks-accordion-icon-custom .uplifters-site-builder-blocks-accordion-icon-custom__add-button svg {
+	width: 16px;
+	height: 16px;
+}
+
+.uplifters-site-builder-blocks-accordion-icon-custom-device-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	margin-bottom: 12px;
+	padding: 5px 10px;
+	border-radius: 999px;
+	background: #f0f0f1;
+	color: #1e1e1e;
+	font-size: 12px;
+	font-weight: 600;
+}

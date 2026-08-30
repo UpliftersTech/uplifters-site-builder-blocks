@@ -1,0 +1,129 @@
+{
+	"$schema": "https://schemas.wp.org/wp/6.7/block.json",
+	"apiVersion": 3,
+	"name": "uplifters-site-builder-blocks/accordion-icon-custom",
+	"version": "1.0.0",
+	"title": "Accordion",
+	"category": "uplifters-site-builder-blocks-gene",
+	"icon": "smiley",
+	"description": "Organize expandable headings and content into customizable accordion panels.",
+	"example": { "attributes": { "preview": true }, "viewportWidth": 700 },
+	"textdomain": "uplifters-site-builder-blocks",
+	"editorScript": "file:./index.js",
+	"style": "file:./style-index.css",
+	"editorStyle": "file:./index.css",
+	"viewScript": "file:./view.js",
+	"render": "file:./render.php",
+	"supports": {
+		"html": false
+	},
+	"attributes": {
+		"preview": {
+			"type": "boolean",
+			"default": false
+		},
+		"heading": {
+			"type": "string",
+			"default": "FAQ"
+		},
+		"items": {
+			"type": "array",
+			"default": [
+				{
+					"id": "item-1",
+					"title": "Accordion #1",
+					"content": "This is the first item's accordion body.",
+					"isOpen": false
+				},
+				{
+					"id": "item-2",
+					"title": "Accordion #2",
+					"content": "This is the second item's accordion body.",
+					"isOpen": false
+				},
+				{
+					"id": "item-3",
+					"title": "Accordion #3",
+					"content": "This is the third item's accordion body.",
+					"isOpen": false
+				}
+			]
+		},
+		"defaultOpenId": {
+			"type": "string",
+			"default": ""
+		},
+		"headingFontFamily": {
+			"type": "object",
+			"default": {
+				"desktop": "default",
+				"tablet": "default",
+				"mobile": "default"
+			}
+		},
+		"headingFontSize": {
+			"type": "object",
+			"default": {
+				"desktop": 28,
+				"tablet": 26,
+				"mobile": 24
+			}
+		},
+		"headingColor": {
+			"type": "object",
+			"default": {
+				"desktop": "",
+				"tablet": "",
+				"mobile": ""
+			}
+		},
+		"titleFontFamily": {
+			"type": "object",
+			"default": {
+				"desktop": "default",
+				"tablet": "default",
+				"mobile": "default"
+			}
+		},
+		"titleFontSize": {
+			"type": "object",
+			"default": {
+				"desktop": 16,
+				"tablet": 16,
+				"mobile": 15
+			}
+		},
+		"titleColor": {
+			"type": "object",
+			"default": {
+				"desktop": "",
+				"tablet": "",
+				"mobile": ""
+			}
+		},
+		"contentFontFamily": {
+			"type": "object",
+			"default": {
+				"desktop": "default",
+				"tablet": "default",
+				"mobile": "default"
+			}
+		},
+		"contentFontSize": {
+			"type": "object",
+			"default": {
+				"desktop": 14,
+				"tablet": 14,
+				"mobile": 14
+			}
+		},
+		"contentColor": {
+			"type": "object",
+			"default": {
+				"desktop": "",
+				"tablet": "",
+				"mobile": ""
+			}
+		}
+	}
+}
