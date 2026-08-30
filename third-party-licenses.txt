@@ -1,0 +1,352 @@
+Uplifters Website Builder Third-Party Software and Asset Notices
+================================================
+
+This file covers the direct packages, development tools, fonts, and icon
+families identified in the Uplifters Website Builder 1.0.0 source tree. Uplifters Website Builder itself is
+Copyright (C) 2026 Uplifters LLC and is licensed under GNU GPL version 2
+or, at your option, any later version. See license.txt.
+
+Package versions below are the ranges declared in package.json. Build-time
+tools are not intended to be included in the published plugin archive.
+
+
+1. Runtime JavaScript dependencies
+----------------------------------
+
+Motion (motion)
+Declared version: ^13.1.1
+Usage: Animation and reduced-motion behavior in the Uplifters Website Builder admin dashboard and block-inserter previews.
+Copyright: Copyright (c) 2024 Motion B.V.
+License: MIT
+Source: https://github.com/motiondivision/motion
+License: https://github.com/motiondivision/motion/blob/main/LICENSE.md
+
+React Icons (react-icons)
+Declared version: ^5.7.0
+Usage: Block inserter, dashboard, and social-network SVG icons.
+Copyright: Copyright 2018 kamijin_fanta
+License for the React Icons wrapper/code: MIT
+Source: https://github.com/react-icons/react-icons
+License: https://github.com/react-icons/react-icons/blob/master/LICENSE
+
+React Icons notes that each included icon project retains its own license.
+The icon families actually imported by Uplifters Website Builder are listed in section 4.
+
+
+2. Development and build-time dependencies
+-------------------------------------------
+
+None of the packages in this section ship inside the published plugin
+archive: @wordpress/env and @wordpress/scripts are local tooling only, and
+the four @wordpress/* packages imported by the source (block-editor,
+components, element, i18n) are externalized by the wp-scripts build to the
+WordPress-provided `wp.*` globals rather than bundled into build/.
+
+@wordpress/env
+Declared version: ^11.12.0
+Usage: Local WordPress development environment tooling only.
+Copyright: The WordPress Contributors
+License: GNU GPL version 2 or later
+Source: https://github.com/WordPress/gutenberg/tree/trunk/packages/env
+
+@wordpress/scripts
+Declared version: ^34.0.0
+Usage: Build, lint, formatting, and plugin packaging tooling only.
+Copyright: The WordPress Contributors
+License: GNU GPL version 2 or later
+Source: https://github.com/WordPress/gutenberg/tree/trunk/packages/scripts
+
+@wordpress/block-editor
+Declared version: ^17.0.0
+Usage: Imported by block edit.js source (InspectorControls, useBlockProps, and
+related editor UI) for compile-time JSX. wp-scripts externalizes this package
+to the wp.blockEditor global that WordPress core already provides, so its
+code is not bundled into the compiled build/ output.
+Copyright: The WordPress Contributors
+License: GNU GPL version 2 or later
+Source: https://github.com/WordPress/gutenberg/tree/trunk/packages/block-editor
+
+@wordpress/components
+Declared version: ^40.0.0
+Usage: Imported by block edit.js and dashboard source (PanelBody, Button,
+SelectControl, and related editor/dashboard UI controls) for compile-time
+JSX. Externalized to the wp.components global at build time; not bundled.
+Copyright: The WordPress Contributors
+License: GNU GPL version 2 or later
+Source: https://github.com/WordPress/gutenberg/tree/trunk/packages/components
+
+@wordpress/element
+Declared version: ^8.6.0
+Usage: Imported for React-compatible hooks (useState, useEffect, and similar)
+in block and dashboard source. Externalized to the wp.element global at
+build time; not bundled.
+Copyright: The WordPress Contributors
+License: GNU GPL version 2 or later
+Source: https://github.com/WordPress/gutenberg/tree/trunk/packages/element
+
+@wordpress/i18n
+Declared version: ^6.27.0
+Usage: Imported for translation functions (__) across block and dashboard
+source. Externalized to the wp.i18n global at build time; not bundled.
+Copyright: The WordPress Contributors
+License: GNU GPL version 2 or later
+Source: https://github.com/WordPress/gutenberg/tree/trunk/packages/i18n
+
+The complete GNU GPL version 2 terms are available in license.txt by reference
+and at https://www.gnu.org/licenses/old-licenses/gpl-2.0.html.
+
+
+3. Bundled fonts
+----------------
+
+Gravitas One
+Files:
+  assets/fonts-lib/gravitas-one-lib/gravitas-one-regular.ttf
+Copyright: Copyright (c) 2011, Sorkin Type Co (www.sorkintype.com)
+Designer: Riccardo De Franceschi
+Reserved Font Name: Gravitas
+License: SIL Open Font License 1.1
+Source: https://github.com/google/fonts/tree/main/ofl/gravitasone
+
+Oswald
+Files:
+  assets/fonts-lib/oswald-lib/oswald-regular.ttf
+  assets/fonts-lib/oswald-lib/oswald-bold.ttf
+Copyright: Copyright 2016 The Oswald Project Authors
+Source project: https://github.com/googlefonts/OswaldFont
+License: SIL Open Font License 1.1
+Source: https://github.com/google/fonts/tree/main/ofl/oswald
+
+The SIL Open Font License 1.1 text appears in section 8.
+
+
+4. Icons used through React Icons
+---------------------------------
+
+The prefixes and imports below were found in the Uplifters Website Builder source. Repeated uses
+are listed once. Some dashboard imports are reserved for its block catalog even
+when a particular icon is not rendered by the current catalog configuration.
+
+Bootstrap Icons (react-icons/bs)
+License: MIT
+Project: https://github.com/twbs/icons
+Icons: Bs123, BsArrowsVertical, BsCardChecklist, BsCardHeading,
+BsCaretRightSquare, BsChatText, BsFileEarmarkImage, BsFileRichtext, BsFront,
+BsGeoAlt, BsGlobe, BsGrid, BsImages, BsLayoutSplit, BsNewspaper, BsPeople,
+BsPersonVcard, BsPlay, BsShare, BsViewStacked.
+
+Font Awesome 5 Free (react-icons/fa)
+Icon license: Creative Commons Attribution 4.0 International (CC BY 4.0)
+Project: https://github.com/FortAwesome/Font-Awesome
+Attribution: Font Awesome Free by Fonticons, Inc.
+Icons: FaArrowUp, FaExchangeAlt, FaFacebookF, FaGoogle, FaInstagram,
+FaLinkedinIn, FaLink, FaListUl, FaPinterestP, FaRegComments, FaRegCopyright,
+FaRegHandPointer, FaRegImage, FaSearch, FaSitemap, FaTwitter, FaYoutube.
+
+Font Awesome 6 Free (react-icons/fa6)
+Icon license: Creative Commons Attribution 4.0 International (CC BY 4.0)
+Project: https://github.com/FortAwesome/Font-Awesome
+Attribution: Font Awesome Free by Fonticons, Inc.
+Icons: FaClockRotateLeft, FaPanorama. The source also imports FaImages through
+this family for the Post Featured Image block.
+
+Material Design Icons (react-icons/md)
+License: Apache License 2.0
+Project: https://github.com/google/material-design-icons
+Icons: MdOpenInNew, MdOutlineArticle, MdTitle.
+
+Remix Icon (react-icons/ri)
+License represented by React Icons 5.7.0: Apache License 2.0
+Project: https://github.com/Remix-Design/RemixIcon
+Icons: RiLayoutBottomLine, RiLayoutRowLine, RiLayoutTopLine, RiLoopLeftLine.
+Note: Remix Icon changed its upstream license in January 2026. The icons shipped
+through React Icons remain documented under the version/license recorded by
+the React Icons release declared in package.json.
+
+Themify Icons (react-icons/tfi)
+License: MIT
+Project: https://github.com/lykmapipo/themify-icons
+Icons: TfiLayoutAccordionSeparated, TfiLayoutMediaCenterAlt,
+TfiLayoutTabWindow.
+
+Simple Icons (react-icons/si)
+License: CC0 1.0 Universal
+Project: https://github.com/simple-icons/simple-icons
+Icons: SiGithub, SiMoleculer, SiTiktok, SiWhatsapp.
+Simple Icons contains brand glyphs. Brand names and logos remain trademarks of
+their respective owners; inclusion does not imply endorsement.
+
+Tabler Icons (react-icons/tb)
+License: MIT
+Project: https://github.com/tabler/tabler-icons
+Icons: TbWaveSine.
+
+Phosphor Icons (react-icons/pi)
+Copyright: Phosphor Icons
+License: MIT
+Project: https://github.com/phosphor-icons/core
+Icons: PiColumnsPlusRight.
+
+The React Icons project records its included icon-set licenses at:
+https://github.com/react-icons/react-icons#icons
+
+
+5. Other icons and SVG artwork
+------------------------------
+
+WordPress Dashicons
+Usage: Uplifters Website Builder dashboard navigation, status, device, search, media, and action
+icons, plus a handful of block-editor toolbar and inspector controls (passed
+as string `icon` props to `@wordpress/components` Button/ToolbarButton/Icon,
+which render them as Dashicons). Names used include admin-home,
+screenoptions, admin-generic, edit-page, arrow-right-alt2, desktop, tablet,
+smartphone, menu-alt3, search, arrow-up-alt2, wordpress, format-image,
+no-alt, saved, plus, undo, and video-alt3.
+Copyright: WordPress Contributors
+License: GNU GPL version 2 or later
+Source: https://developer.wordpress.org/resource/dashicons/
+
+Frontend social icons
+The Social Icons and Social Share blocks contain inline SVG path data for
+Google, Facebook, Instagram, LinkedIn, YouTube, Pinterest, X/Twitter, GitHub,
+WhatsApp, TikTok, Reddit, email, and link symbols. The brand paths correspond
+to the Font Awesome and Simple Icons families already attributed above. Brand
+names and logos remain the property of their respective owners.
+
+Generic inline interface SVGs
+Uplifters Website Builder also contains inline SVG markup for search, close, navigation arrows,
+accordion controls, media placeholders, post metadata, slide controls, logo
+placeholders, and shape dividers. These are part of the Uplifters Website Builder source except
+where they reproduce an icon family identified above, in which case the
+upstream notice above applies.
+
+Uplifters Website Builder brand artwork
+The Uplifters Website Builder admin-sidebar, editor-topbar, plugin-page, and block-category brand
+icons are original Uplifters Website Builder assets and are covered by the plugin's GNU GPL
+version 2 or later license.
+
+
+6. MIT License text
+-------------------
+
+The following text applies to Motion, React Icons, Bootstrap Icons, Themify
+Icons, Tabler Icons, and Phosphor Icons, subject to each project's copyright
+notice above or in its source distribution:
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+
+7. Other icon license references
+--------------------------------
+
+Font Awesome Free icon license (CC BY 4.0):
+https://creativecommons.org/licenses/by/4.0/legalcode
+
+Material Design Icons and the Remix Icon version represented by React Icons
+5.7.0 (Apache License 2.0):
+https://www.apache.org/licenses/LICENSE-2.0
+
+Simple Icons (CC0 1.0 Universal):
+https://creativecommons.org/publicdomain/zero/1.0/legalcode
+
+
+8. SIL Open Font License 1.1
+--------------------------------
+
+SIL OPEN FONT LICENSE Version 1.1 - 26 February 2007
+
+PREAMBLE
+The goals of the Open Font License (OFL) are to stimulate worldwide
+development of collaborative font projects, to support the font creation
+efforts of academic and linguistic communities, and to provide a free and
+open framework in which fonts may be shared and improved in partnership with
+others.
+
+The OFL allows the licensed fonts to be used, studied, modified and
+redistributed freely as long as they are not sold by themselves. The fonts,
+including any derivative works, can be bundled, embedded, redistributed
+and/or sold with any software provided that any reserved names are not used
+by derivative works. The fonts and derivatives, however, cannot be released
+under any other type of license. The requirement for fonts to remain under
+this license does not apply to any document created using the fonts or their
+derivatives.
+
+DEFINITIONS
+"Font Software" refers to the set of files released by the Copyright Holder(s)
+under this license and clearly marked as such. This may include source files,
+build scripts and documentation.
+
+"Reserved Font Name" refers to any names specified as such after the copyright
+statement(s).
+
+"Original Version" refers to the collection of Font Software components as
+distributed by the Copyright Holder(s).
+
+"Modified Version" refers to any derivative made by adding to, deleting, or
+substituting -- in part or in whole -- any of the components of the Original
+Version, by changing formats or by porting the Font Software to a new
+environment.
+
+"Author" refers to any designer, engineer, programmer, technical writer or
+other person who contributed to the Font Software.
+
+PERMISSION & CONDITIONS
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of the Font Software, to use, study, copy, merge, embed, modify, redistribute,
+and sell modified and unmodified copies of the Font Software, subject to the
+following conditions:
+
+1) Neither the Font Software nor any of its individual components, in Original
+or Modified Versions, may be sold by itself.
+
+2) Original or Modified Versions of the Font Software may be bundled,
+redistributed and/or sold with any software, provided that each copy contains
+the above copyright notice and this license. These can be included either as
+stand-alone text files, human-readable headers or in the appropriate
+machine-readable metadata fields within text or binary files as long as those
+fields can be easily viewed by the user.
+
+3) No Modified Version of the Font Software may use the Reserved Font Name(s)
+unless explicit written permission is granted by the corresponding Copyright
+Holder. This restriction only applies to the primary font name as presented to
+the users.
+
+4) The name(s) of the Copyright Holder(s) or the Author(s) of the Font Software
+shall not be used to promote, endorse or advertise any Modified Version,
+except to acknowledge the contribution(s) of the Copyright Holder(s) and the
+Author(s) or with their explicit written permission.
+
+5) The Font Software, modified or unmodified, in part or in whole, must be
+distributed entirely under this license, and must not be distributed under
+any other license. The requirement for fonts to remain under this license does
+not apply to any document created using the Font Software.
+
+TERMINATION
+This license becomes null and void if any of the above conditions are not met.
+
+DISCLAIMER
+THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF COPYRIGHT, PATENT,
+TRADEMARK, OR OTHER RIGHT. IN NO EVENT SHALL THE COPYRIGHT HOLDER BE LIABLE FOR
+ANY CLAIM, DAMAGES OR OTHER LIABILITY, INCLUDING ANY GENERAL, SPECIAL,
+INDIRECT, INCIDENTAL, OR CONSEQUENTIAL DAMAGES, WHETHER IN AN ACTION OF
+CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF THE USE OR INABILITY TO USE
+THE FONT SOFTWARE OR FROM OTHER DEALINGS IN THE FONT SOFTWARE.
+

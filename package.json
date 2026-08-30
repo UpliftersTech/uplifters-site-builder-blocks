@@ -1,0 +1,30 @@
+{
+	"name": "uplifters-site-builder-blocks",
+	"version": "1.0.0",
+	"description": "Build responsive pages and site layouts with customizable Gutenberg blocks, live breakpoint controls, templates, and advanced design tools.",
+	"author": "Uplifters",
+	"license": "GPL-2.0-or-later",
+	"main": "build/index.js",
+	"scripts": {
+		"build": "wp-scripts build --blocks-manifest",
+		"format": "wp-scripts format",
+		"lint:css": "wp-scripts lint-style",
+		"lint:js": "wp-scripts lint-js",
+		"packages-update": "wp-scripts packages-update",
+		"plugin-zip": "wp-scripts plugin-zip",
+		"start": "wp-scripts start",
+		"env": "wp-env"
+	},
+	"devDependencies": {
+		"@wordpress/block-editor": "^17.0.0",
+		"@wordpress/components": "^40.0.0",
+		"@wordpress/element": "^8.6.0",
+		"@wordpress/env": "^11.12.0",
+		"@wordpress/i18n": "^6.27.0",
+		"@wordpress/scripts": "^34.0.0"
+	},
+	"dependencies": {
+		"motion": "^13.1.1",
+		"react-icons": "^5.7.0"
+	}
+}
