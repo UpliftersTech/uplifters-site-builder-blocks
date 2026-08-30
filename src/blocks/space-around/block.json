@@ -1,0 +1,81 @@
+{
+	"$schema": "https://schemas.wp.org/wp/6.7/block.json",
+	"apiVersion": 3,
+	"name": "uplifters-site-builder-blocks/space-around",
+	"title": "Spacer All-Around",
+	"category": "uplifters-site-builder-blocks-gene",
+	"icon": "smiley",
+	"description": "Adds responsive vertical and horizontal space with optional background color.",
+	"version": "1.0.0",
+	"textdomain": "uplifters-site-builder-blocks",
+	"editorScript": "file:./index.js",
+	"style": "file:./style-index.css",
+	"editorStyle": "file:./index.css",
+	"viewScript": "file:./view.js",
+	"render": "file:./render.php",
+	"attributes": {
+		"preview": {
+			"type": "boolean",
+			"default": false
+		},
+		"spacingDirection": {
+			"type": "string",
+			"default": "vertical"
+		},
+		"height": {
+			"type": "object",
+			"default": {
+				"desktop": 0,
+				"tablet": 0,
+				"mobile": 0
+			}
+		},
+		"width": {
+			"type": "object",
+			"default": {
+				"desktop": 0,
+				"tablet": 0,
+				"mobile": 0
+			}
+		},
+		"backgroundColor": {
+			"type": "object",
+			"default": {
+				"desktop": "transparent",
+				"tablet": "transparent",
+				"mobile": "transparent"
+			}
+		},
+		"labelColor": {
+			"type": "object",
+			"default": {
+				"desktop": "#64748b",
+				"tablet": "#64748b",
+				"mobile": "#64748b"
+			}
+		}
+	},
+
+
+	"supports": {
+		"html": false,
+		"anchor": true,
+		"align": true
+	},
+ 
+	"example": {
+		"attributes": {
+			"preview": true,
+			"height": {
+				"desktop": 80,
+				"tablet": 60,
+				"mobile": 40
+			},
+			"width": {
+				"desktop": 200,
+				"tablet": 160,
+				"mobile": 120
+			}
+		}
+	}
+}

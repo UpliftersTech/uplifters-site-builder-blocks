@@ -1,0 +1,112 @@
+{
+  "$schema": "https://schemas.wp.org/wp/6.7/block.json",
+  "apiVersion": 3,
+  "name": "uplifters-site-builder-blocks/video-embed",
+  "version": "1.0.0",
+  "title": "Video Embed",
+  "category": "uplifters-site-builder-blocks-gene",
+  "icon": "smiley",
+  "description": "Display multiple embedded videos (YouTube, Vimeo, etc.) in a responsive grid.",
+  "textdomain": "uplifters-site-builder-blocks",
+  "editorScript": "file:./index.js",
+  "style": "file:./style-index.css",
+  "editorStyle": "file:./index.css",
+  "viewScript": "file:./view.js",
+  "render": "file:./render.php",
+	"example": {
+		"attributes": { "preview": true },
+		"viewportWidth": 700
+	},
+  "supports": {
+    "html": false,
+    "align": [
+      "wide",
+      "full"
+    ],
+    "anchor": true
+  },
+	"attributes": {
+		"preview": {
+			"type": "boolean",
+			"default": false
+		},
+    "items": {
+      "type": "array",
+      "default": []
+    },
+    "selectedIndex": {
+      "type": "number",
+      "default": 0
+    },
+    "embedsPerRow": {
+      "type": "object",
+      "default": {
+        "desktop": 2,
+        "tablet": 2,
+        "mobile": 1
+      }
+    },
+    "fontFamily": {
+      "type": "object",
+      "default": {
+        "desktop": "default",
+        "tablet": "default",
+        "mobile": "default"
+      }
+    },
+    "textColor": {
+      "type": "object",
+      "default": {
+        "desktop": "#0f172a",
+        "tablet": "#0f172a",
+        "mobile": "#0f172a"
+      }
+    },
+    "padding": {
+      "type": "object",
+      "default": {
+        "desktop": {
+          "top": "",
+          "right": "",
+          "bottom": "",
+          "left": ""
+        },
+        "tablet": {
+          "top": "",
+          "right": "",
+          "bottom": "",
+          "left": ""
+        },
+        "mobile": {
+          "top": "",
+          "right": "",
+          "bottom": "",
+          "left": ""
+        }
+      }
+    },
+    "margin": {
+      "type": "object",
+      "default": {
+        "desktop": {
+          "top": "",
+          "right": "",
+          "bottom": "",
+          "left": ""
+        },
+        "tablet": {
+          "top": "",
+          "right": "",
+          "bottom": "",
+          "left": ""
+        },
+        "mobile": {
+          "top": "",
+          "right": "",
+          "bottom": "",
+          "left": ""
+        }
+      }
+    }
+  }
+}

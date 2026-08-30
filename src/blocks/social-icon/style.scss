@@ -1,0 +1,6 @@
+/**
+ * This block registers this stylesheet only so WordPress auto-registers a
+ * style handle for it (block.json "style"). All actual CSS for this block is
+ * generated per instance in render.php and attached to that handle via
+ * wp_add_inline_style(), instead of printing a raw <style> tag.
+ */

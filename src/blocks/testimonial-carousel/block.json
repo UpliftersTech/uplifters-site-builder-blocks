@@ -1,0 +1,230 @@
+{
+	"$schema": "https://schemas.wp.org/wp/6.7/block.json",
+	"apiVersion": 3,
+	"name": "uplifters-site-builder-blocks/testimonial-carousel",
+	"version": "1.0.0",
+	"title": "Testimonial Carousel",
+	"category": "uplifters-site-builder-blocks-gene",
+	"icon": "smiley",
+	"description": "Display customer testimonials in a responsive carousel with autoplay and navigation.",
+	"textdomain": "uplifters-site-builder-blocks",
+	"editorScript": "file:./index.js",
+	"style": "file:./style-index.css",
+	"editorStyle": "file:./index.css",
+	"viewScript": "file:./view.js",
+	"render": "file:./render.php",
+	"example": { "attributes": { "preview": true }, "viewportWidth": 700 },
+	"attributes": {
+		"preview": {
+			"type": "boolean",
+			"default": false
+		},
+		"items": {
+			"type": "array",
+			"default": [
+				{
+					"imageId": 0,
+					"imageUrl": "",
+					"imageAlt": "",
+					"name": "",
+					"designation": "",
+					"text": ""
+				}
+			]
+		},
+		"displayCount": {
+			"type": "object",
+			"default": {
+				"desktop": 1,
+				"tablet": 1,
+				"mobile": 1
+			}
+		},
+		"imageWidth": {
+			"type": "object",
+			"default": {
+				"desktop": 64,
+				"tablet": 64,
+				"mobile": 56
+			}
+		},
+		"imageHeight": {
+			"type": "object",
+			"default": {
+				"desktop": 64,
+				"tablet": 64,
+				"mobile": 56
+			}
+		},
+		"gap": {
+			"type": "object",
+			"default": {
+				"desktop": 16,
+				"tablet": 14,
+				"mobile": 12
+			}
+		},
+		"autoplay": {
+			"type": "boolean",
+			"default": true
+		},
+		"pauseOnHover": {
+			"type": "boolean",
+			"default": true
+		},
+		"interval": {
+			"type": "number",
+			"default": 3500
+		},
+		"speed": {
+			"type": "number",
+			"default": 650
+		},
+		"showArrows": {
+			"type": "boolean",
+			"default": true
+		},
+		"showDots": {
+			"type": "boolean",
+			"default": true
+		},
+		"perView": {
+			"type": "object",
+			"default": {
+				"desktop": 3,
+				"tablet": 2,
+				"mobile": 1
+			}
+		},
+		"minCardWidth": {
+			"type": "object",
+			"default": {
+				"desktop": 280,
+				"tablet": 240,
+				"mobile": 180
+			}
+		},
+		"fontFamily": {
+			"type": "object",
+			"default": {
+				"desktop": "default",
+				"tablet": "default",
+				"mobile": "default"
+			}
+		},
+		"nameFontFamily": {
+			"type": "object",
+			"default": {
+				"desktop": "default",
+				"tablet": "default",
+				"mobile": "default"
+			}
+		},
+		"designationFontFamily": {
+			"type": "object",
+			"default": {
+				"desktop": "default",
+				"tablet": "default",
+				"mobile": "default"
+			}
+		},
+		"textColor": {
+			"type": "object",
+			"default": {
+				"desktop": "",
+				"tablet": "",
+				"mobile": ""
+			}
+		},
+		"backgroundColor": {
+			"type": "object",
+			"default": {
+				"desktop": "",
+				"tablet": "",
+				"mobile": ""
+			}
+		},
+		"fontSize": {
+			"type": "object",
+			"default": {
+				"desktop": "",
+				"tablet": "",
+				"mobile": ""
+			}
+		},
+		"lineHeight": {
+			"type": "object",
+			"default": {
+				"desktop": "",
+				"tablet": "",
+				"mobile": ""
+			}
+		},
+		"isItalic": {
+			"type": "object",
+			"default": {
+				"desktop": false,
+				"tablet": false,
+				"mobile": false
+			}
+		},
+		"fontWeight": {
+			"type": "object",
+			"default": {
+				"desktop": "400",
+				"tablet": "400",
+				"mobile": "400"
+			}
+		},
+		"padding": {
+			"type": "object",
+			"default": {
+				"desktop": {
+					"top": "",
+					"right": "",
+					"bottom": "",
+					"left": ""
+				},
+				"tablet": {
+					"top": "",
+					"right": "",
+					"bottom": "",
+					"left": ""
+				},
+				"mobile": {
+					"top": "",
+					"right": "",
+					"bottom": "",
+					"left": ""
+				}
+			}
+		},
+		"margin": {
+			"type": "object",
+			"default": {
+				"desktop": {
+					"top": "",
+					"right": "",
+					"bottom": "",
+					"left": ""
+				},
+				"tablet": {
+					"top": "",
+					"right": "",
+					"bottom": "",
+					"left": ""
+				},
+				"mobile": {
+					"top": "",
+					"right": "",
+					"bottom": "",
+					"left": ""
+				}
+			}
+		}
+	},
+	"supports": {
+		"anchor": true,
+		"align": true
+	}
+}

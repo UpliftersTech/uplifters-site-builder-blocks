@@ -1,0 +1,107 @@
+.uplifters-site-builder-blocks-space-around-device-badge {
+	display: inline-flex;
+	align-items: center;
+	margin-bottom: 12px;
+	padding: 5px 10px;
+	border-radius: 999px;
+	background: #f0f0f1;
+	color: #1e1e1e;
+	font-size: 12px;
+	font-weight: 600;
+	line-height: 1.4;
+}
+
+.uplifters-site-builder-blocks-space-around-responsive-help {
+	margin: 0 0 16px;
+	color: #757575;
+	font-size: 12px;
+	line-height: 1.5;
+}
+
+.uplifters-site-builder-blocks-space-around-editor,
+.uplifters-site-builder-blocks-space-around-editor * {
+	box-sizing: border-box;
+}
+
+.uplifters-site-builder-blocks-space-around-editor {
+	position: relative;
+	display: block;
+	width:
+		var(
+			--uplifters-site-builder-blocks-space-around-editor-width,
+			100%
+		);
+	min-width:
+		var(
+			--uplifters-site-builder-blocks-space-around-editor-min-width,
+			0
+		);
+	max-width: 100%;
+	height:
+		var(
+			--uplifters-site-builder-blocks-space-around-editor-height,
+			0px
+		);
+	min-height: 32px;
+	overflow: hidden;
+	background:
+		var(
+			--uplifters-site-builder-blocks-space-around-bg,
+			transparent
+		);
+	border: 1px dashed #cbd5e1;
+	border-radius: 16px;
+	flex-shrink: 0;
+}
+
+.uplifters-site-builder-blocks-space-around-editor__overlay {
+	position: absolute;
+	inset: 0;
+	background-image:
+		linear-gradient(
+			90deg,
+			rgba(148, 163, 184, 0.12) 1px,
+			transparent 1px
+		),
+		linear-gradient(
+			rgba(148, 163, 184, 0.12) 1px,
+			transparent 1px
+		);
+	background-size: 24px 24px;
+	pointer-events: none;
+}
+
+.uplifters-site-builder-blocks-space-around-editor__content {
+	position: relative;
+	z-index: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 100%;
+	min-height: 32px;
+	padding: 16px;
+}
+
+.uplifters-site-builder-blocks-space-around-editor__label {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	max-width: 100%;
+	color:
+		var(
+			--uplifters-site-builder-blocks-space-around-label-color,
+			#64748b
+		);
+	background: rgba(255, 255, 255, 0.88);
+	border: 1px solid rgba(148, 163, 184, 0.28);
+	border-radius: 999px;
+	padding: 8px 14px;
+	font-size: 12px;
+	line-height: 1.3;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	text-align: center;
+	white-space: normal;
+}

@@ -1,0 +1,114 @@
+{
+  "$schema": "https://schemas.wp.org/wp/6.7/block.json",
+  "apiVersion": 3,
+  "name": "uplifters-site-builder-blocks/team-member",
+  "version": "1.0.0",
+  "title": "Team Members",
+  "category": "uplifters-site-builder-blocks-gene",
+  "icon": "smiley",
+  "description": "Present team member photos, names, and roles in customizable profile cards.",
+  "textdomain": "uplifters-site-builder-blocks",
+  "editorScript": "file:./index.js",
+  "style": "file:./style-index.css",
+  "editorStyle": "file:./index.css",
+  "viewScript": "file:./view.js",
+  "render": "file:./render.php",
+	"example": { "attributes": { "preview": true }, "viewportWidth": 700 },
+  "attributes": {
+    "preview": {
+      "type": "boolean",
+      "default": false
+    },
+    "cards": {
+      "type": "array",
+      "default": [
+        {
+          "id": "team-card-1",
+          "imageId": 0,
+          "imageUrl": "",
+          "imageAlt": "",
+          "name": "John Doe",
+          "designation": "Designation",
+          "content": "Add bio, social links, etc..."
+        }
+      ]
+    },
+    "cardColumns": {
+      "type": "object",
+      "default": { "desktop": 3, "tablet": 2, "mobile": 1 }
+    },
+    "imageWidth": {
+      "type": "object",
+      "default": { "desktop": 112, "tablet": 104, "mobile": 96 }
+    },
+    "imageHeight": {
+      "type": "object",
+      "default": { "desktop": 112, "tablet": 104, "mobile": 96 }
+    },
+    "cardShadow": {
+      "type": "object",
+      "default": { "desktop": 8, "tablet": 7, "mobile": 5 }
+    },
+    "fontFamily": {
+      "type": "object",
+      "default": { "desktop": "default", "tablet": "default", "mobile": "default" }
+    },
+    "nameFontFamily": {
+      "type": "object",
+      "default": { "desktop": "default", "tablet": "default", "mobile": "default" }
+    },
+    "designationFontFamily": {
+      "type": "object",
+      "default": { "desktop": "default", "tablet": "default", "mobile": "default" }
+    },
+    "nameFontSize": {
+      "type": "object",
+      "default": { "desktop": 20, "tablet": 19, "mobile": 18 }
+    },
+    "designationFontSize": {
+      "type": "object",
+      "default": { "desktop": 14, "tablet": 14, "mobile": 13 }
+    },
+    "nameColor": {
+      "type": "object",
+      "default": { "desktop": "#0f172a", "tablet": "#0f172a", "mobile": "#0f172a" }
+    },
+    "designationColor": {
+      "type": "object",
+      "default": { "desktop": "#475569", "tablet": "#475569", "mobile": "#475569" }
+    },
+    "backgroundColor": {
+      "type": "object",
+      "default": { "desktop": "#ffffff", "tablet": "#ffffff", "mobile": "#ffffff" }
+    },
+    "contentBackgroundColor": {
+      "type": "object",
+      "default": { "desktop": "#f1f5f9", "tablet": "#f1f5f9", "mobile": "#f1f5f9" }
+    },
+    "padding": {
+      "type": "object",
+      "default": {
+        "desktop": { "top": "24px", "right": "24px", "bottom": "24px", "left": "24px" },
+        "tablet": { "top": "22px", "right": "22px", "bottom": "22px", "left": "22px" },
+        "mobile": { "top": "20px", "right": "18px", "bottom": "20px", "left": "18px" }
+      }
+    },
+    "margin": {
+      "type": "object",
+      "default": {
+        "desktop": { "top": "0", "right": "0", "bottom": "0", "left": "0" },
+        "tablet": { "top": "0", "right": "0", "bottom": "0", "left": "0" },
+        "mobile": { "top": "0", "right": "0", "bottom": "0", "left": "0" }
+      }
+    },
+    "gap": {
+      "type": "object",
+      "default": { "desktop": 24, "tablet": 20, "mobile": 16 }
+    },
+    "maxWidth": {
+      "type": "object",
+      "default": { "desktop": "24rem", "tablet": "24rem", "mobile": "100%" }
+    }
+  },
+  "supports": { "anchor": true, "html": false }
+}

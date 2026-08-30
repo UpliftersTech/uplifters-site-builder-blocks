@@ -1,0 +1,166 @@
+{
+	"$schema": "https://schemas.wp.org/wp/6.7/block.json",
+	"apiVersion": 3,
+	"name": "uplifters-site-builder-blocks/shape-divider",
+	"version": "1.0.0",
+	"title": "Shape Divider",
+	"category": "uplifters-site-builder-blocks-gene",
+	"icon": "smiley",
+	"description": "Responsive SVG section divider with a customizable separator line for Gutenberg FSE.",
+	"example": {
+		"attributes": { "preview": true },
+		"viewportWidth": 700
+	},
+	"textdomain": "uplifters-site-builder-blocks",
+	"editorScript": "file:./index.js",
+	"style": "file:./style-index.css",
+	"editorStyle": "file:./index.css",
+	"viewScript": "file:./view.js",
+	"render": "file:./render.php",
+	"supports": {
+		"html": false,
+		"anchor": true,
+		"align": [
+			"wide",
+			"full"
+		],
+		"spacing": {
+			"margin": true,
+			"padding": false
+		}
+	},
+	"attributes": {
+		"preview": {
+			"type": "boolean",
+			"default": false
+		},
+		"dividerMode": {
+			"type": "object",
+			"default": {
+				"desktop": "shape",
+				"tablet": "shape",
+				"mobile": "shape"
+			}
+		},
+		"shapeType": {
+			"type": "object",
+			"default": {
+				"desktop": "wave",
+				"tablet": "wave",
+				"mobile": "wave"
+			}
+		},
+		"dividerStyle": {
+			"type": "object",
+			"default": {
+				"desktop": "fill",
+				"tablet": "fill",
+				"mobile": "fill"
+			}
+		},
+		"dividerColor": {
+			"type": "object",
+			"default": {
+				"desktop": "#0284c7",
+				"tablet": "#0284c7",
+				"mobile": "#0284c7"
+			}
+		},
+		"dividerOpacity": {
+			"type": "object",
+			"default": {
+				"desktop": 1,
+				"tablet": 1,
+				"mobile": 1
+			}
+		},
+		"dividerHeight": {
+			"type": "object",
+			"default": {
+				"desktop": 120,
+				"tablet": 100,
+				"mobile": 80
+			}
+		},
+		"dividerWidth": {
+			"type": "object",
+			"default": {
+				"desktop": 100,
+				"tablet": 100,
+				"mobile": 100
+			}
+		},
+		"flipHorizontal": {
+			"type": "object",
+			"default": {
+				"desktop": false,
+				"tablet": false,
+				"mobile": false
+			}
+		},
+		"flipVertical": {
+			"type": "object",
+			"default": {
+				"desktop": false,
+				"tablet": false,
+				"mobile": false
+			}
+		},
+		"separatorWidth": {
+			"type": "object",
+			"default": {
+				"desktop": 100,
+				"tablet": 100,
+				"mobile": 100
+			}
+		},
+		"separatorHeight": {
+			"type": "object",
+			"default": {
+				"desktop": 2,
+				"tablet": 2,
+				"mobile": 2
+			}
+		},
+		"separatorStyle": {
+			"type": "object",
+			"default": {
+				"desktop": "solid",
+				"tablet": "solid",
+				"mobile": "solid"
+			}
+		},
+		"separatorColor": {
+			"type": "object",
+			"default": {
+				"desktop": "#cbd5e1",
+				"tablet": "#cbd5e1",
+				"mobile": "#cbd5e1"
+			}
+		},
+		"backgroundColor": {
+			"type": "object",
+			"default": {
+				"desktop": "transparent",
+				"tablet": "transparent",
+				"mobile": "transparent"
+			}
+		},
+		"alignment": {
+			"type": "object",
+			"default": {
+				"desktop": "center",
+				"tablet": "center",
+				"mobile": "center"
+			}
+		},
+		"spacing": {
+			"type": "object",
+			"default": {
+				"desktop": 32,
+				"tablet": 24,
+				"mobile": 20
+			}
+		}
+	}
+}

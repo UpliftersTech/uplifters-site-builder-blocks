@@ -1,0 +1,94 @@
+{
+	"$schema": "https://schemas.wp.org/wp/6.7/block.json",
+	"apiVersion": 3,
+	"name": "uplifters-site-builder-blocks/social-icon",
+	"version": "1.0.0",
+	"title": "Social Icons",
+	"category": "uplifters-site-builder-blocks-gene",
+	"icon": "smiley",
+	"description": "Add linked social media icons with customizable styles, spacing, and alignment.",
+	"example": { "attributes": { "preview": true }, "viewportWidth": 700 },
+	"textdomain": "uplifters-site-builder-blocks",
+	"editorScript": "file:./index.js",
+	"style": "file:./style-index.css",
+	"editorStyle": "file:./index.css",
+	"viewScript": "file:./view.js",
+	"render": "file:./render.php",
+	"supports": {
+		"html": false
+	},
+	"attributes": {
+		"preview": {
+			"type": "boolean",
+			"default": false
+		},
+		"canvasBackgroundColor": {
+			"type": "object",
+			"default": {
+				"desktop": "",
+				"tablet": "",
+				"mobile": ""
+			}
+		},
+		"canvasGap": {
+			"type": "object",
+			"default": {
+				"desktop": 16,
+				"tablet": 14,
+				"mobile": 12
+			}
+		},
+		"icons": {
+			"type": "array",
+			"default": [
+				{
+					"name": "FaGoogle",
+					"size": {
+						"desktop": 20,
+						"tablet": 20,
+						"mobile": 20
+					},
+					"color": {
+						"desktop": "#000000",
+						"tablet": "#000000",
+						"mobile": "#000000"
+					},
+					"opacity": {
+						"desktop": 1,
+						"tablet": 1,
+						"mobile": 1
+					},
+					"borderRadius": {
+						"desktop": 8,
+						"tablet": 8,
+						"mobile": 8
+					},
+					"backgroundColor": {
+						"desktop": "#ffffff",
+						"tablet": "#ffffff",
+						"mobile": "#ffffff"
+					},
+					"padding": {
+						"desktop": 8,
+						"tablet": 8,
+						"mobile": 6
+					},
+					"margin": {
+						"desktop": 8,
+						"tablet": 6,
+						"mobile": 4
+					},
+					"url": ""
+				}
+			]
+		},
+		"iconPosition": {
+			"type": "object",
+			"default": {
+				"desktop": "start",
+				"tablet": "start",
+				"mobile": "start"
+			}
+		}
+	}
+}

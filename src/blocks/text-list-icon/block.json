@@ -1,0 +1,111 @@
+{
+  "$schema": "https://schemas.wp.org/wp/6.7/block.json",
+  "apiVersion": 3,
+  "name": "uplifters-site-builder-blocks/text-list-icon",
+  "title": "Text List Icon",
+  "category": "uplifters-site-builder-blocks-gene",
+  "icon": "smiley",
+  "description": "Create a responsive text list with customizable icons, symbols, or markers.",
+  "version": "1.0.0",
+  "textdomain": "uplifters-site-builder-blocks",
+  "editorScript": "file:./index.js",
+  "style": "file:./style-index.css",
+  "editorStyle": "file:./index.css",
+  "viewScript": "file:./view.js",
+  "render": "file:./render.php",
+  "attributes": {
+    "preview": {
+      "type": "boolean",
+      "default": false
+    },
+    "items": {
+      "type": "array",
+      "default": [
+        "First list item",
+        "Second list item",
+        "Third list item"
+      ]
+    },
+    "marker": {
+      "type": "object",
+      "default": {
+        "desktop": "check",
+        "tablet": "check",
+        "mobile": "check"
+      }
+    },
+    "fontFamily": {
+      "type": "object",
+      "default": {
+        "desktop": "default",
+        "tablet": "default",
+        "mobile": "default"
+      }
+    },
+    "textColor": {
+      "type": "object",
+      "default": {
+        "desktop": "#0f172a",
+        "tablet": "#0f172a",
+        "mobile": "#0f172a"
+      }
+    },
+    "markerColor": {
+      "type": "object",
+      "default": {
+        "desktop": "#2563eb",
+        "tablet": "#2563eb",
+        "mobile": "#2563eb"
+      }
+    },
+    "fontSize": {
+      "type": "object",
+      "default": {
+        "desktop": 18,
+        "tablet": 17,
+        "mobile": 16
+      }
+    },
+    "itemGap": {
+      "type": "object",
+      "default": {
+        "desktop": 14,
+        "tablet": 12,
+        "mobile": 10
+      }
+    },
+    "padding": {
+      "type": "object",
+      "default": {
+        "desktop": 0,
+        "tablet": 0,
+        "mobile": 0
+      }
+    }
+  },
+  "supports": {
+    "html": false,
+    "anchor": true,
+    "align": true
+  },
+  "example": {
+    "attributes": {
+      "preview": true,
+      "marker": {
+        "desktop": "check",
+        "tablet": "check",
+        "mobile": "check"
+      },
+      "fontSize": {
+        "desktop": 18,
+        "tablet": 17,
+        "mobile": 16
+      },
+      "itemGap": {
+        "desktop": 14,
+        "tablet": 12,
+        "mobile": 10
+      }
+    }
+  }
+}

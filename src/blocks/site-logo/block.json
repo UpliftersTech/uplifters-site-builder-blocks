@@ -1,0 +1,79 @@
+{
+	"$schema": "https://schemas.wp.org/wp/6.7/block.json",
+	"apiVersion": 3,
+	"name": "uplifters-site-builder-blocks/site-logo",
+	"version": "1.0.0",
+	"title": "Site Logo",
+	"category": "uplifters-site-builder-blocks-gene",
+	"icon": "smiley",
+	"description": "Display a responsive site logo with optional homepage linking and custom styling.",
+	"textdomain": "uplifters-site-builder-blocks",
+	"editorScript": "file:./index.js",
+	"style": "file:./style-index.css",
+	"editorStyle": "file:./index.css",
+	"viewScript": "file:./view.js",
+	"render": "file:./render.php",
+	"example": {
+		"attributes": { "preview": true },
+		"viewportWidth": 700
+	},
+	"supports": {
+		"html": false
+	},
+	"attributes": {
+		"preview": {
+			"type": "boolean",
+			"default": false
+		},
+		"logoUrl": {
+			"type": "string",
+			"default": ""
+		},
+		"logoWidth": {
+			"type": "object",
+			"default": {
+				"desktop": 80
+			}
+		},
+		"logoHeight": {
+			"type": "object",
+			"default": {
+				"desktop": 80
+			}
+		},
+		"isLinked": {
+			"type": "boolean",
+			"default": true
+		},
+		"padding": {
+			"type": "object",
+			"default": {
+				"desktop": 0
+			}
+		},
+		"margin": {
+			"type": "object",
+			"default": {
+				"desktop": 0
+			}
+		},
+		"borderRadius": {
+			"type": "object",
+			"default": {
+				"desktop": 0
+			}
+		},
+		"backgroundColor": {
+			"type": "object",
+			"default": {
+				"desktop": ""
+			}
+		},
+		"position": {
+			"type": "object",
+			"default": {
+				"desktop": "center"
+			}
+		}
+	}
+}

@@ -1,0 +1,47 @@
+/**
+ * Frontend and editor shared styles for the Video Grid Uploaded block.
+ *
+ * Only structural CSS lives here. All responsive (desktop/tablet/mobile)
+ * values are generated per block instance in render.php and attached with
+ * wp_add_inline_style() through BlocksDynamicStyle, so no raw <style> tag
+ * is printed and each instance keeps its own variant values.
+ */
+
+.wp-block-uplifters-site-builder-blocks-video-upload,
+.uplifters-video-upload {
+	width: 100%;
+
+	.uplifters-video-upload__grid {
+		--uplifters-video-upload-cols: 1;
+		--uplifters-video-upload-gap: 1rem;
+
+		display: grid;
+		gap: var(--uplifters-video-upload-gap);
+		grid-template-columns: repeat(
+			var(--uplifters-video-upload-cols),
+			minmax(0, 1fr)
+		);
+	}
+
+	.uplifters-video-upload__item {
+		--uplifters-video-upload-item-padding: 0rem;
+		--uplifters-video-upload-item-margin: 0rem;
+		--uplifters-video-upload-item-ratio: 320 / 180;
+		--uplifters-video-upload-item-radius: 0.375rem;
+		--uplifters-video-upload-item-border: 1px solid #e5e5e5;
+
+		overflow: hidden;
+		padding: var(--uplifters-video-upload-item-padding);
+		margin: var(--uplifters-video-upload-item-margin);
+		border: var(--uplifters-video-upload-item-border);
+		border-radius: var(--uplifters-video-upload-item-radius);
+	}
+
+	.uplifters-video-upload__video {
+		display: block;
+		width: 100%;
+		max-width: 100%;
+		height: auto;
+		aspect-ratio: var(--uplifters-video-upload-item-ratio);
+	}
+}
