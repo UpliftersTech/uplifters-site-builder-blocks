@@ -4,11 +4,11 @@ import './editor.scss';
 import './style.scss';
 import Edit from './edit';
 import Save from './save';
-import { BsFileEarmarkImage } from 'react-icons/bs';
+import { ImageGallery } from '../../assets-shared/icon-blocks';
 
 registerBlockType(metadata.name, {
 	...metadata,
 	edit: Edit,
 	save: Save,
-	icon: <BsFileEarmarkImage size={20} color="#5BC3F5" />,
+	icon: <ImageGallery />,
 });

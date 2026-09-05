@@ -4,11 +4,11 @@ import './editor.scss';
 import './style.scss';
 import Edit from './edit';
 import Save from './save';
-import { RiLayoutBottomLine } from 'react-icons/ri';
+import { FooterLayout } from '../../assets-shared/icon-blocks';
 
 registerBlockType(metadata.name, {
 	...metadata,
 	edit: Edit,
 	save: Save,
-	icon: <RiLayoutBottomLine size={20} color="#5BC3F5" />,
+	icon: <FooterLayout />,
 });

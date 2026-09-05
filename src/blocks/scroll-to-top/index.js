@@ -4,11 +4,11 @@ import './editor.scss';
 import './style.scss';
 import Edit from './edit';
 import Save from './save';
-import { FaArrowUp } from 'react-icons/fa';
+import { ScrollToTop } from '../../assets-shared/icon-blocks';
 
 registerBlockType(metadata.name, {
 	...metadata,
 	edit: Edit,
 	save: Save,
-	icon: <FaArrowUp size={20} color="#5BC3F5" />,
+	icon: <ScrollToTop />,
 });

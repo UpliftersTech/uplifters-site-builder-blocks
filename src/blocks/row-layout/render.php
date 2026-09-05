@@ -113,6 +113,26 @@ $uplifters_site_builder_blocks_gap_d = max( 0, min( 200, $uplifters_site_builder
 $uplifters_site_builder_blocks_gap_t = max( 0, min( 200, $uplifters_site_builder_blocks_to_float( $uplifters_site_builder_blocks_gap_attr['tablet']  ?? 0, 0 ) ) );
 $uplifters_site_builder_blocks_gap_m = max( 0, min( 200, $uplifters_site_builder_blocks_to_float( $uplifters_site_builder_blocks_gap_attr['mobile']  ?? 0, 0 ) ) );
 
+// topSpace / bottomSpace — { desktop:0, tablet:0, mobile:0 }
+// Extra space above the first row / below the last row, set by dragging the
+// layout's outer edge handles. Rendered as padding on the grid wrapper so
+// it never eats into the row tracks themselves.
+$uplifters_site_builder_blocks_top_attr = isset( $attributes['topSpace'] ) && is_array( $attributes['topSpace'] )
+	? $attributes['topSpace']
+	: array();
+
+$uplifters_site_builder_blocks_top_d = max( 0, min( 200, $uplifters_site_builder_blocks_to_float( $uplifters_site_builder_blocks_top_attr['desktop'] ?? 0, 0 ) ) );
+$uplifters_site_builder_blocks_top_t = max( 0, min( 200, $uplifters_site_builder_blocks_to_float( $uplifters_site_builder_blocks_top_attr['tablet']  ?? 0, 0 ) ) );
+$uplifters_site_builder_blocks_top_m = max( 0, min( 200, $uplifters_site_builder_blocks_to_float( $uplifters_site_builder_blocks_top_attr['mobile']  ?? 0, 0 ) ) );
+
+$uplifters_site_builder_blocks_bottom_attr = isset( $attributes['bottomSpace'] ) && is_array( $attributes['bottomSpace'] )
+	? $attributes['bottomSpace']
+	: array();
+
+$uplifters_site_builder_blocks_bottom_d = max( 0, min( 200, $uplifters_site_builder_blocks_to_float( $uplifters_site_builder_blocks_bottom_attr['desktop'] ?? 0, 0 ) ) );
+$uplifters_site_builder_blocks_bottom_t = max( 0, min( 200, $uplifters_site_builder_blocks_to_float( $uplifters_site_builder_blocks_bottom_attr['tablet']  ?? 0, 0 ) ) );
+$uplifters_site_builder_blocks_bottom_m = max( 0, min( 200, $uplifters_site_builder_blocks_to_float( $uplifters_site_builder_blocks_bottom_attr['mobile']  ?? 0, 0 ) ) );
+
 // ── Shared responsive CSS → <head> ───────────────────────────────────────────
 //
 // Only the media-query rules go here — they reference CSS custom properties
@@ -129,12 +149,16 @@ $uplifters_site_builder_blocks_layout_css = '
 	.uplifters-site-builder-blocks-q-row-layout {
 		grid-template-rows: var(--uplifters-site-builder-blocks-rl-rt) !important;
 		gap:                var(--uplifters-site-builder-blocks-rl-gt) !important;
+		padding-top:        var(--uplifters-site-builder-blocks-rl-pt-t) !important;
+		padding-bottom:     var(--uplifters-site-builder-blocks-rl-pb-t) !important;
 	}
 }
 @media (max-width:767px) {
 	.uplifters-site-builder-blocks-q-row-layout {
 		grid-template-rows: var(--uplifters-site-builder-blocks-rl-rm) !important;
 		gap:                var(--uplifters-site-builder-blocks-rl-gm) !important;
+		padding-top:        var(--uplifters-site-builder-blocks-rl-pt-m) !important;
+		padding-bottom:     var(--uplifters-site-builder-blocks-rl-pb-m) !important;
 	}
 }';
 
@@ -163,11 +187,20 @@ $uplifters_site_builder_blocks_inline_style = implode( '', array(
 	'--uplifters-site-builder-blocks-rl-gd:', $uplifters_site_builder_blocks_fmt( $uplifters_site_builder_blocks_gap_d ), 'px;',
 	'--uplifters-site-builder-blocks-rl-gt:', $uplifters_site_builder_blocks_fmt( $uplifters_site_builder_blocks_gap_t ), 'px;',
 	'--uplifters-site-builder-blocks-rl-gm:', $uplifters_site_builder_blocks_fmt( $uplifters_site_builder_blocks_gap_m ), 'px;',
+	// top/bottom space per device
+	'--uplifters-site-builder-blocks-rl-pt-d:', $uplifters_site_builder_blocks_fmt( $uplifters_site_builder_blocks_top_d ), 'px;',
+	'--uplifters-site-builder-blocks-rl-pt-t:', $uplifters_site_builder_blocks_fmt( $uplifters_site_builder_blocks_top_t ), 'px;',
+	'--uplifters-site-builder-blocks-rl-pt-m:', $uplifters_site_builder_blocks_fmt( $uplifters_site_builder_blocks_top_m ), 'px;',
+	'--uplifters-site-builder-blocks-rl-pb-d:', $uplifters_site_builder_blocks_fmt( $uplifters_site_builder_blocks_bottom_d ), 'px;',
+	'--uplifters-site-builder-blocks-rl-pb-t:', $uplifters_site_builder_blocks_fmt( $uplifters_site_builder_blocks_bottom_t ), 'px;',
+	'--uplifters-site-builder-blocks-rl-pb-m:', $uplifters_site_builder_blocks_fmt( $uplifters_site_builder_blocks_bottom_m ), 'px;',
 	// base (desktop) applied directly
 	'display:grid;',
 	'grid-template-columns:minmax(0,1fr);',
 	'grid-template-rows:var(--uplifters-site-builder-blocks-rl-rd);',
 	'gap:var(--uplifters-site-builder-blocks-rl-gd);',
+	'padding-top:var(--uplifters-site-builder-blocks-rl-pt-d);',
+	'padding-bottom:var(--uplifters-site-builder-blocks-rl-pb-d);',
 	'width:100%;',
 	'max-width:100%;',
 ) );

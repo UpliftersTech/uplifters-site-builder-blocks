@@ -1,6 +1,6 @@
 {
 	"name": "uplifters-site-builder-blocks",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "Build responsive pages and site layouts with customizable Gutenberg blocks, live breakpoint controls, templates, and advanced design tools.",
 	"author": "Uplifters",
 	"license": "GPL-2.0-or-later",

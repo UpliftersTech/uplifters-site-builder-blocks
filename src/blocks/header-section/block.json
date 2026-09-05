@@ -3,9 +3,9 @@
 	"apiVersion": 3,
 	"name": "uplifters-site-builder-blocks/header-section",
 	"title": "Header Section",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"category": "uplifters-site-builder-blocks-gene",
-	"icon": "smiley",
+	"icon": "<svg stroke='#5BC3F5' fill='#5BC3F5' stroke-width='0' viewBox='0 0 17 17' height='20' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M12 2h-12v14h17v-14h-5zM16 3v2h-4v-2h4zM11 3v2h-5v-2h5zM1 3h4v2h-4v-2zM16 15h-15v-9h15v9z'></path></svg>",
 	"description": "A section container inside the Header Layout block for arranging responsive header columns.",
 	"example": {
 		"attributes": { "preview": true },

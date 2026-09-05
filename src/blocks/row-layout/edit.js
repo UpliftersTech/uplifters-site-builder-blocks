@@ -74,6 +74,16 @@ function useGlobalResponsiveDevice() {
 const CHILD_BLOCK_NAME  = 'uplifters-site-builder-blocks/row-section';
 const MIN_STACK_SIZE    = 8;
 
+// Clamp for the top/bottom edge-space handles (matches row-section's own
+// padding RangeControl range, so dragging and typing land on the same scale).
+const MIN_EDGE_SPACE = 0;
+const MAX_EDGE_SPACE = 200;
+
+// Decorative inset around the dashed-border layout box in the editor only.
+// Kept separate from topSpace/bottomSpace so a fresh 0px space still shows
+// the same breathing room the box always had.
+const EDITOR_LAYOUT_INSET_PX = 4;
+
 // Editor-only floor for a single row. Kept at 40px: tall enough that the
 // 24px resize handle still has room to sit on a boundary without two
 // adjacent handles overlapping, short enough that a freshly dropped
@@ -134,13 +144,17 @@ const normalizeSizes = ( sizes, count ) => {
 // multiple of it): before the first drag there is no measured height, and
 // padding the budget out made every row open at twice its floor, which is
 // what made a freshly inserted block eat so much canvas.
-const getRowPixelHeights = ( sizes, count, totalHeightPx, gapPx = 0 ) => {
+// `paddingPx` is the total vertical padding (editor inset + topSpace +
+// bottomSpace) already claimed by the box — it never contributes to row
+// space, so it comes out of the measured total before rows get their share.
+const getRowPixelHeights = ( sizes, count, totalHeightPx, gapPx = 0, paddingPx = 0 ) => {
 	const list       = sizes.length ? sizes : getEqualSizes( count || 1 );
 	const rowCount   = count || list.length || 1;
 	const floorTotal = rowCount * EDITOR_MIN_ROW_PX;
 	const gapsTotal  = Math.max( 0, rowCount - 1 ) * ( Number( gapPx ) || 0 );
 	const fallback   = floorTotal + gapsTotal;
-	const available  = Math.max( floorTotal, ( totalHeightPx || fallback ) - gapsTotal );
+	const measured   = totalHeightPx ? Math.max( 0, totalHeightPx - paddingPx ) : null;
+	const available  = Math.max( floorTotal, ( measured ?? fallback ) - gapsTotal );
 	const extra      = available - floorTotal;
 
 	return list.map( ( s ) => EDITOR_MIN_ROW_PX + ( s / 100 ) * extra );
@@ -152,14 +166,14 @@ const getRowPixelHeights = ( sizes, count, totalHeightPx, gapPx = 0 ) => {
 // row's MINIMUM, never its maximum. A fixed px maximum was what let a tall
 // image spill out of its stack and paint over the stack below it — with an
 // `auto` maximum the row simply grows to fit its content instead.
-const getEditorGridTemplateRows = ( sizes, count, totalHeightPx, gapPx = 0 ) => {
+const getEditorGridTemplateRows = ( sizes, count, totalHeightPx, gapPx = 0, paddingPx = 0 ) => {
 	const normalized = normalizeSizes( sizes, count );
 
 	if ( ! normalized.length ) {
 		return `repeat(${ count || 1 }, minmax(${ EDITOR_MIN_ROW_PX }px, auto))`;
 	}
 
-	return getRowPixelHeights( normalized, count, totalHeightPx, gapPx )
+	return getRowPixelHeights( normalized, count, totalHeightPx, gapPx, paddingPx )
 		.map( ( px ) => `minmax(${ px.toFixed( 2 ) }px, auto)` )
 		.join( ' ' );
 };
@@ -197,7 +211,7 @@ const getHandlePositions = ( layoutEl, count ) => {
 // ── Edit ──────────────────────────────────────────────────────────────────────
 
 function Editor( { attributes, setAttributes, clientId } ) {
-	const { sections = 0, columnWidths = {}, gap = {} } = attributes;
+	const { sections = 0, columnWidths = {}, gap = {}, topSpace = {}, bottomSpace = {} } = attributes;
 
 	const device            = useGlobalResponsiveDevice();
 	const stackCount        = Number( sections ) || 0;
@@ -223,13 +237,30 @@ function Editor( { attributes, setAttributes, clientId } ) {
 		return normalizeSizes( raw, stackCount );
 	}, [ columnWidths, device, stackCount ] );
 
-	const activeGap = Number( gap?.[ device ] ) || 0;
+	const activeGap         = Number( gap?.[ device ] )         || 0;
+	const activeTopSpace    = Number( topSpace?.[ device ] )    || 0;
+	const activeBottomSpace = Number( bottomSpace?.[ device ] ) || 0;
 
 	// ── Setters — only active device branch changes ────────────────────────────
 
 	const setGap = ( value ) => {
 		setAttributes( {
 			gap: { ...gap, [ device ]: Number( value ) || 0 },
+		} );
+	};
+
+	const clampEdgeSpace = ( value ) =>
+		Math.max( MIN_EDGE_SPACE, Math.min( MAX_EDGE_SPACE, Number( value ) || 0 ) );
+
+	const setTopSpace = ( value ) => {
+		setAttributes( {
+			topSpace: { ...topSpace, [ device ]: clampEdgeSpace( value ) },
+		} );
+	};
+
+	const setBottomSpace = ( value ) => {
+		setAttributes( {
+			bottomSpace: { ...bottomSpace, [ device ]: clampEdgeSpace( value ) },
 		} );
 	};
 
@@ -248,7 +279,11 @@ function Editor( { attributes, setAttributes, clientId } ) {
 	const layoutRef      = useRef( null );
 	const resizeStateRef = useRef( null );
 	const rafRef         = useRef( null );   // pending requestAnimationFrame id
-	const handleRefs     = useRef( [] );     // live handle button elements
+	const handleRefs     = useRef( [] );     // live divider handle button elements
+	const topHandleRef   = useRef( null );   // live top edge-space handle element
+	const bottomHandleRef = useRef( null );  // live bottom edge-space handle element
+	const topHandleValueRef    = useRef( null ); // live top edge-space px badge text
+	const bottomHandleValueRef = useRef( null ); // live bottom edge-space px badge text
 	const isDraggingRef  = useRef( false );  // true only during an active drag
 	const handlePositionsRef = useRef( [] ); // last measured handle positions
 
@@ -256,12 +291,18 @@ function Editor( { attributes, setAttributes, clientId } ) {
 	// a drag. Used as the stable pixel budget for getRowPixelHeights() so
 	// row sizing never depends on the browser's own (shared-across-tracks)
 	// grid `fr` resolution. Reset whenever stackCount changes since the
-	// stack sizes themselves reset then too (see effect below).
+	// stack sizes themselves reset then too (see effect below), and whenever
+	// topSpace/bottomSpace change since they shift how much of the measured
+	// height is actually available to rows.
 	const lastMeasuredHeightRef = useRef( null );
 
 	useEffect( () => {
 		lastMeasuredHeightRef.current = null;
 	}, [ stackCount ] );
+
+	useEffect( () => {
+		lastMeasuredHeightRef.current = null;
+	}, [ activeTopSpace, activeBottomSpace ] );
 
 	// ── Inner blocks sync ──────────────────────────────────────────────────────
 
@@ -375,7 +416,8 @@ function Editor( { attributes, setAttributes, clientId } ) {
 		// (resizeStateRef.current.layoutRect) — never `fr`, so this pair's
 		// change can't rescale any other row (see getRowPixelHeights above).
 		const totalHeightPx = resizeStateRef.current?.layoutRect?.height;
-		const rowPx = getRowPixelHeights( sizes, sizes.length, totalHeightPx, activeGap );
+		const paddingPx     = EDITOR_LAYOUT_INSET_PX * 2 + activeTopSpace + activeBottomSpace;
+		const rowPx = getRowPixelHeights( sizes, sizes.length, totalHeightPx, activeGap, paddingPx );
 
 		// Same minmax(px, auto) shape as getEditorGridTemplateRows: the
 		// dragged value is a floor, content is still allowed to grow past it.
@@ -437,6 +479,7 @@ function Editor( { attributes, setAttributes, clientId } ) {
 		if ( typeof topStartSize === 'undefined' || typeof bottomStartSize === 'undefined' ) return;
 
 		resizeStateRef.current = {
+			type: 'divider',
 			layoutRect, startY: event.clientY, startSizes,
 			topIndex, bottomIndex, topStartSize, bottomStartSize,
 			lastSizes: startSizes,
@@ -446,6 +489,82 @@ function Editor( { attributes, setAttributes, clientId } ) {
 		document.body.style.cursor     = 'row-resize';
 		document.body.style.userSelect = 'none';
 		// Kill any transition so rows track the cursor 1:1 while dragging.
+		layoutEl.style.transition = 'none';
+
+		if ( event.currentTarget.setPointerCapture ) {
+			event.currentTarget.setPointerCapture( event.pointerId );
+		}
+	};
+
+	// ── Edge (top/bottom space) resize ────────────────────────────────────────
+	//
+	// Unlike the internal dividers, there's no sibling row to shrink when you
+	// grow the outer edge — dragging it instead adds/removes empty space
+	// (padding) above the first row or below the last row, leaving every row's
+	// own height untouched.
+	//
+	// The drag delta is measured from a fixed screen anchor:
+	//   • top:    the layout box's own top border — it never moves, since our
+	//             own padding can't reposition where the box starts.
+	//   • bottom: the fixed boundary between the last row and the bottom
+	//             padding — padding-bottom only ever extends space *below*
+	//             that point, it never moves it.
+	// So `clientY - anchorY` is the new space value directly, no separate
+	// "compute then convert" step needed.
+
+	const computeEdgeSpace = ( clientY ) => {
+		const state = resizeStateRef.current;
+		if ( ! state || state.type !== 'edge' ) return null;
+		return Math.max( MIN_EDGE_SPACE, Math.min( MAX_EDGE_SPACE, clientY - state.anchorY ) );
+	};
+
+	// Paint the space straight onto the DOM (no React), same rAF strategy as
+	// paintSizes(). The bottom handle needs no repaint: it's pinned via
+	// `bottom: 0` in its own style, which the browser already keeps glued to
+	// the box's bottom edge as padding-bottom grows/shrinks.
+	const paintEdgeSpace = ( space ) => {
+		const layoutEl = layoutRef.current;
+		const state    = resizeStateRef.current;
+		if ( ! layoutEl || ! state || state.type !== 'edge' ) return;
+
+		if ( state.edge === 'top' ) {
+			layoutEl.style.paddingTop = `${ EDITOR_LAYOUT_INSET_PX + space }px`;
+			if ( topHandleRef.current ) {
+				topHandleRef.current.style.top = `${ EDITOR_LAYOUT_INSET_PX + space }px`;
+			}
+			if ( topHandleValueRef.current ) {
+				topHandleValueRef.current.textContent = `${ Math.round( space ) }px`;
+			}
+		} else {
+			layoutEl.style.paddingBottom = `${ EDITOR_LAYOUT_INSET_PX + space }px`;
+			if ( bottomHandleValueRef.current ) {
+				bottomHandleValueRef.current.textContent = `${ Math.round( space ) }px`;
+			}
+		}
+	};
+
+	const startEdgeResize = ( event, edge ) => {
+		if ( event.button !== 0 ) return;
+
+		event.preventDefault();
+		event.stopPropagation();
+
+		const layoutEl = layoutRef.current;
+		if ( ! layoutEl ) return;
+
+		const layoutRect = layoutEl.getBoundingClientRect();
+		const startSpace = edge === 'top' ? activeTopSpace : activeBottomSpace;
+		const anchorY     = edge === 'top'
+			? layoutRect.top + EDITOR_LAYOUT_INSET_PX
+			: layoutRect.bottom - ( EDITOR_LAYOUT_INSET_PX + startSpace );
+
+		resizeStateRef.current = {
+			type: 'edge', edge, anchorY, startSpace, lastSpace: startSpace,
+		};
+		isDraggingRef.current = true;
+
+		document.body.style.cursor     = 'row-resize';
+		document.body.style.userSelect = 'none';
 		layoutEl.style.transition = 'none';
 
 		if ( event.currentTarget.setPointerCapture ) {
@@ -464,10 +583,20 @@ function Editor( { attributes, setAttributes, clientId } ) {
 		const clientY = event.clientY;
 		rafRef.current = requestAnimationFrame( () => {
 			rafRef.current = null;
-			const sizes = computeSizes( clientY );
-			if ( ! sizes ) return;
-			resizeStateRef.current.lastSizes = sizes;
-			paintSizes( sizes );
+			const state = resizeStateRef.current;
+			if ( ! state ) return;
+
+			if ( state.type === 'edge' ) {
+				const space = computeEdgeSpace( clientY );
+				if ( space === null ) return;
+				state.lastSpace = space;
+				paintEdgeSpace( space );
+			} else {
+				const sizes = computeSizes( clientY );
+				if ( ! sizes ) return;
+				state.lastSizes = sizes;
+				paintSizes( sizes );
+			}
 		} );
 	};
 
@@ -477,10 +606,17 @@ function Editor( { attributes, setAttributes, clientId } ) {
 			catch ( e ) { /* already released */ }
 		}
 
-		// Commit the final sizes to the store exactly ONCE.
-		const finalSizes = resizeStateRef.current?.lastSizes;
+		// Commit the final value to the store exactly ONCE.
+		const state = resizeStateRef.current;
 		stopResize();
-		if ( finalSizes ) setActiveWidths( finalSizes );
+		if ( ! state ) return;
+
+		if ( state.type === 'edge' ) {
+			if ( state.edge === 'top' ) setTopSpace( state.lastSpace );
+			else setBottomSpace( state.lastSpace );
+		} else if ( state.lastSizes ) {
+			setActiveWidths( state.lastSizes );
+		}
 	};
 
 	// Safety: if the component unmounts mid-drag, cancel the pending frame.
@@ -504,16 +640,25 @@ function Editor( { attributes, setAttributes, clientId } ) {
 					display:             'grid',
 					gridTemplateColumns: 'minmax(0, 1fr)',
 					// Editor uses active device's widths for preview.
-					gridTemplateRows:    getEditorGridTemplateRows( activeWidths, stackCount, lastMeasuredHeightRef.current, activeGap ),
+					gridTemplateRows:    getEditorGridTemplateRows(
+						activeWidths,
+						stackCount,
+						lastMeasuredHeightRef.current,
+						activeGap,
+						EDITOR_LAYOUT_INSET_PX * 2 + activeTopSpace + activeBottomSpace
+					),
 					gap:                 `${ activeGap }px`,
 					alignItems:          'stretch',
 					width:               '100%',
 					maxWidth:            '100%',
 					boxSizing:           'border-box',
 					overflowWrap:        'break-word',
-					minHeight:           `${ stackCount * EDITOR_MIN_ROW_PX }px`,
+					minHeight:           `${ stackCount * EDITOR_MIN_ROW_PX + EDITOR_LAYOUT_INSET_PX * 2 + activeTopSpace + activeBottomSpace }px`,
 					border:              '1px dashed #c3c4c7',
-					padding:             '4px',
+					paddingTop:          `${ EDITOR_LAYOUT_INSET_PX + activeTopSpace }px`,
+					paddingBottom:       `${ EDITOR_LAYOUT_INSET_PX + activeBottomSpace }px`,
+					paddingLeft:         `${ EDITOR_LAYOUT_INSET_PX }px`,
+					paddingRight:        `${ EDITOR_LAYOUT_INSET_PX }px`,
 					position:            'relative',
 			  }
 			: {
@@ -650,6 +795,84 @@ function Editor( { attributes, setAttributes, clientId } ) {
 
 			<div { ...innerBlocksWrapperProps }>
 				{ innerBlocksChildren }
+
+				<button
+					type="button"
+					aria-label={ __( 'Resize top space', 'uplifters-site-builder-blocks' ) }
+					ref={ topHandleRef }
+					onPointerDown={ ( event ) => startEdgeResize( event, 'top' ) }
+					onPointerMove={ handleResizeMove }
+					onPointerUp={ handleResizeEnd }
+					onPointerCancel={ handleResizeEnd }
+					onLostPointerCapture={ handleResizeEnd }
+					style={ {
+						position:      'absolute',
+						left:          '50%',
+						top:           `${ EDITOR_LAYOUT_INSET_PX + activeTopSpace }px`,
+						minWidth:      '36px',
+						height:        '18px',
+						padding:       '0 6px',
+						border:        '2px solid #1e1e1e',
+						borderRadius:  '999px',
+						background:    '#ffffff',
+						boxShadow:     '0 1px 4px rgba(0,0,0,0.25)',
+						transform:     'translate(-50%, -50%)',
+						cursor:        'row-resize',
+						zIndex:        999,
+						touchAction:   'none',
+						pointerEvents: 'auto',
+						willChange:    'top',
+						display:       'flex',
+						alignItems:    'center',
+						justifyContent: 'center',
+						fontSize:      '10px',
+						fontWeight:    600,
+						lineHeight:    1,
+						color:         '#1e1e1e',
+						whiteSpace:    'nowrap',
+					} }
+				>
+					<span ref={ topHandleValueRef }>{ Math.round( activeTopSpace ) }px</span>
+				</button>
+
+				<button
+					type="button"
+					aria-label={ __( 'Resize bottom space', 'uplifters-site-builder-blocks' ) }
+					ref={ bottomHandleRef }
+					onPointerDown={ ( event ) => startEdgeResize( event, 'bottom' ) }
+					onPointerMove={ handleResizeMove }
+					onPointerUp={ handleResizeEnd }
+					onPointerCancel={ handleResizeEnd }
+					onLostPointerCapture={ handleResizeEnd }
+					style={ {
+						position:      'absolute',
+						left:          '50%',
+						bottom:        0,
+						minWidth:      '36px',
+						height:        '18px',
+						padding:       '0 6px',
+						border:        '2px solid #1e1e1e',
+						borderRadius:  '999px',
+						background:    '#ffffff',
+						boxShadow:     '0 1px 4px rgba(0,0,0,0.25)',
+						transform:     'translate(-50%, 50%)',
+						cursor:        'row-resize',
+						zIndex:        999,
+						touchAction:   'none',
+						pointerEvents: 'auto',
+						willChange:    'bottom',
+						display:       'flex',
+						alignItems:    'center',
+						justifyContent: 'center',
+						fontSize:      '10px',
+						fontWeight:    600,
+						lineHeight:    1,
+						color:         '#1e1e1e',
+						whiteSpace:    'nowrap',
+					} }
+				>
+					<span ref={ bottomHandleValueRef }>{ Math.round( activeBottomSpace ) }px</span>
+				</button>
 
 				{ handlePositions.map( ( position, index ) => (
 					<button

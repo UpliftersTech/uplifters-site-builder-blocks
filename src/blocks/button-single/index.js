@@ -4,11 +4,11 @@ import './editor.scss';
 import './style.scss';
 import Edit from './edit';
 import Save from './save';
-import { FaRegHandPointer } from 'react-icons/fa';
+import { ButtonSingle } from '../../assets-shared/icon-blocks';
 
 registerBlockType(metadata.name, {
 	...metadata,
 	edit: Edit,
 	save: Save,
-	icon: <FaRegHandPointer size={20} color="#5BC3F5" />,
+	icon: <ButtonSingle />,
 });

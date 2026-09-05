@@ -4,11 +4,11 @@ import './editor.scss';
 import './style.scss';
 import Edit from './edit';
 import Save from './save';
-import { BsViewStacked } from 'react-icons/bs';
+import { RowLayout } from '../../assets-shared/icon-blocks';
 
 registerBlockType(metadata.name, {
 	...metadata,
 	edit: Edit,
 	save: Save,
-	icon: <BsViewStacked size={20} color="#5BC3F5" />,
+	icon: <RowLayout />,
 });

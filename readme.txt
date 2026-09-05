@@ -4,7 +4,7 @@ Tags: gutenberg blocks, header footer builder, theme builder, responsive, block 
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -98,6 +98,9 @@ Official WordPress.org support-forum participation is handled by `mwz1`, the mai
 You may also contact Uplifters LLC at upliftersllc.us@gmail.com.
 
 == Changelog ==
+
+= 1.0.1 =
+* Added custom SVG icons for every block, replacing the default block-editor icons in the inserter, list view, and block toolbar.
 
 = 1.0.0 =
 * Initial release of the responsive Uplifters Website Builder block library and dashboard.

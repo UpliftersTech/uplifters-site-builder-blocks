@@ -3,9 +3,9 @@
 	"apiVersion": 3,
 	"name": "uplifters-site-builder-blocks/footer-section",
 	"title": "Footer Section",
-    "version": "1.0.0",
+    "version": "1.0.1",
 	"category": "uplifters-site-builder-blocks-gene",
-	"icon": "smiley",
+	"icon": "<svg stroke='#5BC3F5' fill='#5BC3F5' stroke-width='0' viewBox='0 0 17 17' height='20' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M1 13h15v1h-15v-1zM4 15.993h9v-1h-9v1zM17 1v11h-17v-11h17zM16 2h-15v9h15v-9z'></path></svg>",
 	"description": "A section container inside the Footer Layout block for arranging responsive footer columns.",
 	"example": {
 		"attributes": { "preview": true },

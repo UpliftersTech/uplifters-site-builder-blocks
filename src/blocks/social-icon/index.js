@@ -4,11 +4,11 @@ import './editor.scss';
 import './style.scss';
 import Edit from './edit';
 import Save from './save';
-import { SiMoleculer } from 'react-icons/si';
+import { SocialIcon } from '../../assets-shared/icon-blocks';
 
 registerBlockType(metadata.name, {
 	...metadata,
 	edit: Edit,
 	save: Save,
-	icon: <SiMoleculer size={20} color="#5BC3F5" />,
+	icon: <SocialIcon />,
 });
