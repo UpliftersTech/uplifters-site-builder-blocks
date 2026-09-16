@@ -1,6 +1,112 @@
+.uplifters-site-builder-blocks-row-layout-editor-wrapper {
+	display: flex;
+	flex-direction: column;
+	box-sizing: border-box;
+}
+
 /**
- * This block registers this stylesheet only so WordPress auto-registers a
- * style handle for it (block.json "style"). All actual CSS for this block is
- * generated per instance in render.php and attached to that handle via
- * wp_add_inline_style(), instead of printing a raw <style> tag.
+ * Rows are laid out with the Divider Gap only. The editor otherwise stacks
+ * extra space on top of it: the block margins the editor gives each row and
+ * the leading/trailing margins of the blocks placed inside a row.
  */
+.uplifters-site-builder-blocks-row-layout-editor-wrapper > *,
+.uplifters-site-builder-blocks-row-layout-editor-wrapper > .uplifters-site-builder-blocks-row-layout-section-outer > .uplifters-site-builder-blocks-row-layout-section {
+	margin-top: 0;
+	margin-bottom: 0;
+	margin-block-start: 0;
+	margin-block-end: 0;
+}
+
+.uplifters-site-builder-blocks-row-layout-add-more {
+	display: flex;
+	justify-content: center;
+	margin-top: 8px;
+}
+
+.uplifters-site-builder-blocks-row-layout-device-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	margin-bottom: 12px;
+	padding: 5px 10px;
+	border-radius: 999px;
+	background: #f0f0f1;
+	color: #1e1e1e;
+	font-size: 12px;
+	font-weight: 600;
+}
+
+.uplifters-site-builder-blocks-row-layout-control-label {
+	margin-bottom: 8px;
+	font-weight: 600;
+}
+
+.uplifters-site-builder-blocks-row-layout-section-outer {
+	position: relative;
+	width: 100%;
+}
+
+.uplifters-site-builder-blocks-row-layout-section {
+	box-sizing: border-box;
+	width: 100%;
+	min-width: 0;
+	display: flow-root;
+}
+
+.uplifters-site-builder-blocks-row-layout-editor-wrapper .uplifters-site-builder-blocks-row-layout-section > *:first-child {
+	margin-top: 0;
+	margin-block-start: 0;
+}
+
+.uplifters-site-builder-blocks-row-layout-editor-wrapper .uplifters-site-builder-blocks-row-layout-section > *:last-child {
+	margin-bottom: 0;
+	margin-block-end: 0;
+}
+
+.uplifters-site-builder-blocks-row-layout-editor-wrapper .uplifters-site-builder-blocks-row-layout-section > figure > img {
+	display: block;
+}
+
+.uplifters-site-builder-blocks-row-layout-section.is-empty {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 72px;
+	border: 1px dashed #c3c4c7;
+	border-radius: 6px;
+	background: #f9f9f9;
+}
+
+.uplifters-site-builder-blocks-row-layout-section.is-empty .block-editor-button-block-appender {
+	width: 36px;
+	height: 36px;
+}
+
+.uplifters-site-builder-blocks-row-layout-section.is-empty .block-editor-button-block-appender svg {
+	width: 24px;
+	height: 24px;
+}
+
+.uplifters-site-builder-blocks-row-layout-section-delete {
+	position: absolute;
+	top: 50%;
+	right: 8px;
+	transform: translateY(-50%);
+	z-index: 1;
+	width: 32px;
+	height: 32px;
+	padding: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 50%;
+	background: #fff;
+	border: 1px solid #e0e0e0;
+	color: #b32d2e;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+.uplifters-site-builder-blocks-row-layout-section-delete:hover {
+	background: #b32d2e;
+	color: #fff;
+}

@@ -3,6 +3,8 @@ import { searchContent } from "../../api-requests";
 
 const SEARCH_MIN_WIDTH = "46px";
 const VALID_DEVICES = ["desktop", "tablet", "mobile"];
+const DROPDOWN_GUTTER = 16;
+const DROPDOWN_WIDTH_RATIO = 0.8;
 
 const esc = (s) =>
   String(s ?? "")
@@ -294,8 +296,9 @@ const getDropdownStyle = () =>
     position: "absolute",
     "z-index": "20",
     "margin-top": "8px",
-    left: "50%",
-    transform: "translateX(-50%)",
+    left: "0",
+    right: "auto",
+    transform: "none",
     width: "80vw",
     "max-width": "calc(100vw - 32px)",
     overflow: "hidden",
@@ -322,6 +325,34 @@ const getIconOnlyDropdownStyle = () =>
     "box-shadow": "0 10px 15px rgba(0,0,0,.08)",
     "box-sizing": "border-box",
   });
+
+// Keeps the dropdown inside the viewport no matter how wide or how close to a
+// screen edge the input sits: it stays centred on the input while it fits, then
+// slides back so both edges keep a DROPDOWN_GUTTER gap from the screen.
+const positionDropdown = (relative, dropdown) => {
+  if (!relative || !dropdown) return;
+
+  const viewportWidth =
+    document.documentElement.clientWidth || window.innerWidth || 0;
+
+  if (!viewportWidth) return;
+
+  const available = Math.max(viewportWidth - DROPDOWN_GUTTER * 2, 0);
+  const rect = relative.getBoundingClientRect();
+  const width = Math.min(
+    Math.max(rect.width, viewportWidth * DROPDOWN_WIDTH_RATIO),
+    available
+  );
+  const centered = rect.left + rect.width / 2 - width / 2;
+  const maxLeft = Math.max(viewportWidth - DROPDOWN_GUTTER - width, DROPDOWN_GUTTER);
+  const clamped = Math.min(Math.max(centered, DROPDOWN_GUTTER), maxLeft);
+
+  dropdown.style.width = `${width}px`;
+  dropdown.style.maxWidth = `${available}px`;
+  dropdown.style.left = `${clamped - rect.left}px`;
+  dropdown.style.right = "auto";
+  dropdown.style.transform = "none";
+};
 
 const getItemLinkStyle = () =>
   styleString({
@@ -489,7 +520,13 @@ function mount(el) {
       dropdown.innerHTML = "";
     };
 
+    const relative = dropdown.parentElement;
+
     const show = (html) => {
+      if (!iconOnlySearch) {
+        positionDropdown(relative, dropdown);
+      }
+
       dropdown.style.display = "block";
       dropdown.innerHTML = html;
     };
@@ -668,6 +705,17 @@ function mount(el) {
       if (nextDevice !== currentDevice) {
         currentDevice = nextDevice;
         render();
+        return;
+      }
+
+      const dropdown = el.querySelector(".uplifters-site-builder-blocks-ms-dropdown");
+
+      if (
+        dropdown &&
+        dropdown.style.display !== "none" &&
+        !el.classList.contains("uplifters-site-builder-blocks-m-search-icon-only")
+      ) {
+        positionDropdown(dropdown.parentElement, dropdown);
       }
     }, 150);
   };

@@ -1,7 +1,7 @@
 {
 	"name": "uplifters-site-builder-blocks",
-	"version": "1.0.1",
-	"description": "Build responsive pages and site layouts with customizable Gutenberg blocks, live breakpoint controls, templates, and advanced design tools.",
+	"version": "1.0.2",
+	"description": "Design responsive websites with visual breakpoint controls, templates, custom fonts, and advanced design tools for custom headers, footers, post templates, login pages, and more.",
 	"author": "Uplifters",
 	"license": "GPL-2.0-or-later",
 	"main": "build/index.js",
@@ -24,6 +24,7 @@
 		"@wordpress/scripts": "^34.0.0"
 	},
 	"dependencies": {
+		"@wordpress/icons": "^15.5.0",
 		"motion": "^13.1.1",
 		"react-icons": "^5.7.0"
 	}

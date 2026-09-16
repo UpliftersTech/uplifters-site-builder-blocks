@@ -251,15 +251,18 @@ html.uplifters-site-builder-blocks-device-mobile .editor-styles-wrapper {
 	border-radius: 22px;
 }
 
-/* Inner block canvas */
+/* Inner block canvas.
+   Scoped to the root block list only: nested block lists belong to individual
+   blocks (row/column/header/footer/posts layout inner blocks), and painting
+   them white here would hide their own per-device background color. */
 body.uplifters-site-builder-blocks-device-tablet
-	.block-editor-block-list__layout,
+	.block-editor-block-list__layout.is-root-container,
 body.uplifters-site-builder-blocks-device-mobile
-	.block-editor-block-list__layout,
+	.block-editor-block-list__layout.is-root-container,
 html.uplifters-site-builder-blocks-device-tablet
-	.block-editor-block-list__layout,
+	.block-editor-block-list__layout.is-root-container,
 html.uplifters-site-builder-blocks-device-mobile
-	.block-editor-block-list__layout {
+	.block-editor-block-list__layout.is-root-container {
 	background: #ffffff;
 	max-width: 100% !important;
 	min-height: auto !important;
@@ -465,10 +468,13 @@ body.uplifters-site-builder-blocks-device-mobile
 			border-radius: 22px !important;
 		}
 
-		html.uplifters-site-builder-blocks-device-tablet .block-editor-block-list__layout,
-		body.uplifters-site-builder-blocks-device-tablet .block-editor-block-list__layout,
-		html.uplifters-site-builder-blocks-device-mobile .block-editor-block-list__layout,
-		body.uplifters-site-builder-blocks-device-mobile .block-editor-block-list__layout {
+		/* Root block list only — see the note on the non-iframe rule above.
+		   A blanket rule here would beat the inline per-device background
+		   color the layout blocks set on their own wrapper. */
+		html.uplifters-site-builder-blocks-device-tablet .block-editor-block-list__layout.is-root-container,
+		body.uplifters-site-builder-blocks-device-tablet .block-editor-block-list__layout.is-root-container,
+		html.uplifters-site-builder-blocks-device-mobile .block-editor-block-list__layout.is-root-container,
+		body.uplifters-site-builder-blocks-device-mobile .block-editor-block-list__layout.is-root-container {
 			background: #ffffff !important;
 			max-width: 100% !important;
 			min-height: auto !important;

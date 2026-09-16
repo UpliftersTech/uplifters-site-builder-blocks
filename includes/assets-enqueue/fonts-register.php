@@ -521,6 +521,6 @@ final class FontsRegister {
 	 * @return string
 	 */
 	private static function plugin_version(): string {
-		return defined( 'UPLIFTERS_SITE_BUILDER_BLOCKS_VERSION' ) ? UPLIFTERS_SITE_BUILDER_BLOCKS_VERSION : '1.0.0';
+		return defined( 'UPLIFTERS_SITE_BUILDER_BLOCKS_VERSION' ) ? UPLIFTERS_SITE_BUILDER_BLOCKS_VERSION : '1.0.2';
 	}
 }

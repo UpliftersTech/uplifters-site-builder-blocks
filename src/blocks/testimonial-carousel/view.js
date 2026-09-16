@@ -108,20 +108,51 @@
 		const showArrows = root.dataset.showArrows === '1';
 		const showDots = root.dataset.showDots === '1';
 
-		let index = 0;
+		const total = originalCards.length;
+		const maxPerView = Math.max(
+			clamp(Number(root.dataset.perDesktop || 3), 1, 6),
+			clamp(Number(root.dataset.perTablet || 2), 1, 4),
+			clamp(Number(root.dataset.perMobile || 1), 1, 2)
+		);
+
 		let timer = null;
-		let hovering = false;
 
-		const firstClone = originalCards[0].cloneNode(true);
-		const lastClone = originalCards[originalCards.length - 1].cloneNode(true);
+		/**
+		 * Whole clone sets are placed before and after the real cards, enough of
+		 * them to keep a full screen of cards on either side at every breakpoint.
+		 * Sliding therefore never runs out of cards on the right, and the silent
+		 * jump back onto the real set happens far outside the viewport.
+		 */
+		const cloneSets = Math.max(1, Math.ceil(maxPerView / total));
+		const leadingClones = document.createDocumentFragment();
+		const trailingClones = document.createDocumentFragment();
 
-		firstClone.setAttribute('data-clone', 'first');
-		lastClone.setAttribute('data-clone', 'last');
+		for (let set = 0; set < cloneSets; set++) {
+			originalCards.forEach((card) => {
+				const before = card.cloneNode(true);
+				const after = card.cloneNode(true);
 
-		track.insertBefore(lastClone, track.firstChild);
-		track.appendChild(firstClone);
+				before.setAttribute('data-clone', 'before');
+				after.setAttribute('data-clone', 'after');
+				before.setAttribute('aria-hidden', 'true');
+				after.setAttribute('aria-hidden', 'true');
+
+				leadingClones.appendChild(before);
+				trailingClones.appendChild(after);
+			});
+		}
+
+		track.insertBefore(leadingClones, track.firstChild);
+		track.appendChild(trailingClones);
 
 		const allCards = Array.from(track.querySelectorAll('.uplifters-site-builder-blocks-testimonial-carousel-slider__card'));
+
+		// Slot of the leftmost visible card inside allCards; kept inside the
+		// real set ([baseSlot, baseSlot + total)) by normalizePosition().
+		const baseSlot = total * cloneSets;
+
+		let position = baseSlot;
+		let index = 0;
 
 		let step = 0;
 		let perView = 1;
@@ -150,9 +181,35 @@
 			track.style.transform = `translateX(-${px}px)`;
 		}
 
-		function toRealIndex(currentIndex) {
-			const total = originalCards.length;
-			return ((currentIndex % total) + total) % total;
+		function toRealIndex(slot) {
+			return ((slot % total) + total) % total;
+		}
+
+		function goTo(slot, animate) {
+			position = slot;
+			index = toRealIndex(position);
+
+			setTransform(position * step, animate);
+			updateDots();
+		}
+
+		/**
+		 * Pulls the track back onto the middle (real) set without animating, so an
+		 * endless run of "next" keeps sliding right to left with no visible rewind.
+		 */
+		function normalizePosition() {
+			const normalized = baseSlot + toRealIndex(position);
+
+			if (normalized === position) return;
+
+			// A whole set away shows the very same cards, so this jump is invisible
+			// even when it lands in the middle of a running transition.
+			position = normalized;
+
+			setTransform(position * step, false);
+
+			// Flush the jump so the next animated move starts from the new offset.
+			void track.offsetWidth;
 		}
 
 		function updateDots() {
@@ -201,9 +258,7 @@
 				});
 
 				button.addEventListener('click', () => {
-					index = i;
-					setTransform((index + 1) * step, true);
-					updateDots();
+					goTo(baseSlot + i, true);
 					restart();
 				});
 
@@ -243,19 +298,14 @@
 		}
 
 		function goNext() {
-			if (hovering && pauseHover) return;
-
-			index = toRealIndex(index + 1);
-			setTransform((index + 1) * step, true);
-			updateDots();
+			// Re-anchor first so a burst of clicks can never outrun the clones.
+			normalizePosition();
+			goTo(position + 1, true);
 		}
 
 		function goPrev() {
-			if (hovering && pauseHover) return;
-
-			index = toRealIndex(index - 1);
-			setTransform((index + 1) * step, true);
-			updateDots();
+			normalizePosition();
+			goTo(position - 1, true);
 		}
 
 		function start() {
@@ -278,57 +328,27 @@
 			start();
 		}
 
-		function onTransitionEnd() {
-			const total = originalCards.length;
-			const transform = track.style.transform || '';
-			const match = transform.match(/translateX\(-?([\d.]+)px\)/);
-			const px = match ? Number(match[1]) : NaN;
+		function onTransitionEnd(event) {
+			if (event && event.target !== track) return;
+			if (step <= 0) return;
 
-			if (!isFinite(px) || step <= 0) return;
-
-			const slot = Math.round(px / step);
-
-			if (slot === 0) {
-				track.style.transition = 'none';
-				setTransform(total * step, false);
-			} else if (slot === total + 1) {
-				track.style.transition = 'none';
-				setTransform(step, false);
-			}
+			normalizePosition();
 		}
 
 		function onResize() {
-			const oldStep = step || 1;
 			setCardWidths();
-
-			const px = (index + 1) * step;
-
-			if (!isFinite(px) || Math.abs(step - oldStep) > oldStep * 0.9) {
-				index = 0;
-				setTransform(step, false);
-			} else {
-				setTransform(px, false);
-			}
-
-			updateDots();
+			goTo(position, false);
 		}
 
 		setCardWidths();
-		setTransform(step, false);
+		goTo(position, false);
 		buildArrows();
 		buildDots();
 		track.addEventListener('transitionend', onTransitionEnd);
 
 		if (pauseHover) {
-			root.addEventListener('mouseenter', () => {
-				hovering = true;
-				stop();
-			});
-
-			root.addEventListener('mouseleave', () => {
-				hovering = false;
-				start();
-			});
+			root.addEventListener('mouseenter', stop);
+			root.addEventListener('mouseleave', start);
 		}
 
 		let startX = null;

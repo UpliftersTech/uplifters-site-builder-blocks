@@ -1,5 +1,5 @@
 import './editor.scss';
-import InserterPreview from '../../blocks-inserter-preview/inserter-preview';
+import InserterPreview from '../../blocks-inserter-preview/inserter-preview-shared';
 import { __ } from "@wordpress/i18n";
 import { InspectorControls, RichText, useBlockProps } from "@wordpress/block-editor";
 import {

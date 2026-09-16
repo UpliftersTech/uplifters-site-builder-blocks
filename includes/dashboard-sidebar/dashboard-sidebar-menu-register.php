@@ -43,52 +43,52 @@ final class DashboardSidebarMenuRegister {
 	/* ---------------------------------------------------------------- */
 
 	/*
-	 * The arrow cutout is baked into the outline.
+	 * The sidebar mark, drawn the way WordPress draws menu icons.
 	 *
-	 * Earlier revisions cut the arrow at paint time with an SVG <mask>. That
-	 * relies on a document-scoped id lookup and on the renderer compositing
-	 * the mask before the fill, which is exactly the sort of thing that can
-	 * resolve late. The geometry below is the boolean result of U minus
-	 * arrow, computed once: two closed rings, nothing overlapping, no mask,
-	 * no clipPath, no id references at all. The arrow region is simply not
-	 * part of any ring, so it can never be painted, at any moment of the
-	 * page lifecycle.
+	 * add_menu_page() is handed a base64 SVG data URI, so core tags the item
+	 * with class "svg" and wp-admin/js/svg-painter.js recolours the artwork to
+	 * the user's admin colour scheme on its own: base at rest, focus on hover,
+	 * current on the open item. Nothing here paints the icon by hand, and
+	 * there is no per-item CSS to keep in step with core.
 	 *
-	 * Ring 1 is the left arm. Ring 2 is the right arm plus the bowl. The
-	 * arrow sweeps clean through between them.
+	 * That recolouring is why the file is a single flat path with no gradient,
+	 * mask, drop shadow or animation. svg-painter rewrites every fill
+	 * attribute, every style attribute and every fill property inside a
+	 * <style> block, so nothing else survives it: gradients flatten to one
+	 * solid block, and a luminance mask's white rectangle becomes the icon
+	 * colour, dimming the whole mark.
 	 *
-	 * Deviation from the original curves is under 0.15 units on a 460 unit
-	 * canvas, roughly one hundredth of a pixel at the size this renders.
+	 * The artwork is sized for the 20px slot core gives menu icons
+	 * (background-size:20px auto). The mark is 85% of a square viewBox, so it
+	 * draws about 17px tall, level with the core dashicons above and below it.
+	 * Resize by changing that ratio in the artwork, not with CSS here.
+	 *
+	 * The artwork lives in sidebar-menu-icon.js and is read out of it, so the
+	 * mark has exactly one definition. See that file's header for the shape
+	 * this class depends on.
 	 */
-	private const MARK_PATH = 'M82 76.1L82 330.3L82.3 342.8L83.1 352.6L84.3 362.1L86 371.4L88 380.4L90.6 389.1L93.5 397.5L96.9 405.6L100.7 413.5L120.1 411.6L139.2 408.9L157.9 405.1L176.3 400.4L194.1 394.8L211.5 388.3L228.4 380.8L244.7 372.5L252.4 368.1L250.1 359.1L248.2 348.9L247 337.2L246.2 324.3L246 311.4L246 74.1L245.6 69.1L244.8 64.4L243.4 59.9L241.5 55.8L239.5 52.7L237.2 49.9L234.6 47.4L231.7 45.2L228.5 43.4L225.2 42L221.6 40.9L217.8 40.3L213.2 40L118 40L112.4 40.3L105.9 41.7L99.9 44.2L97.1 45.7L94.6 47.6L90.2 51.8L88.3 54.3L86.7 56.9L85.2 59.8L84.1 62.8L82.5 69.1Z'
-		. 'M172.3 478.6L181 482.2L190 485.5L199.4 488.5L209.1 491.1L219.2 493.4L229.6 495.3L240.4 496.9L251.5 498.2L263.5 499.2L275.7 499.8L288.4 500L301.5 499.9L314.1 499.4L326.2 498.5L337.9 497.4L349.3 495.8L359.3 494.1L369 492.1L378.3 489.8L387.3 487.2L395.9 484.3L404.2 481.1L412.1 477.7L419.6 473.9L426.7 469.9L433.5 465.5L439.9 460.9L446 456L451.7 450.8L457 445.3L462 439.5L466.6 433.4L472.4 424.5L477.5 415L481.8 405L485.4 394.5L488.4 383.4L490.6 371.7L492.1 359.5L492.9 346.8L492.9 73.7L492.6 69.5L491.8 65.3L490.6 61.4L489 57.7L487.1 54.4L484.8 51.3L482.2 48.6L479.3 46.2L475.2 43.8L470.8 42L465.9 40.7L460.8 40.1L375.3 40.1L371.2 40.5L367.1 41.4L363.3 42.6L359.6 44.2L356.4 46.2L353.3 48.6L350.6 51.2L348.2 54.1L345.6 58.5L343.7 63.2L342.5 68.4L342 73.9L342 288.9L347.3 281.6L352.2 274.1L356.9 266.5L361.3 258.7L365.5 250.8L369.4 242.6L373 234.4L376.4 225.9L380.5 215L384 204.6L387 194.6L389.6 185L391.7 175.8L393.3 167.1L394.4 158.7L395 151L350 166L425 63L492 162L448 148L446.8 163.9L444.7 180L441.9 196.2L438.1 212.6L433.6 229.1L428.2 245.8L422 262.6L415.1 279L408.3 293.3L400.9 307.1L392.9 320.6L384.2 333.8L374.9 346.5L364.9 358.9L354.4 370.9L343.2 382.5L334.2 391.1L324.9 399.4L315.2 407.5L305.2 415.4L294.7 423L284 430.3L273.7 436.9L263.2 443L252.6 448.8L241.8 454.1L230.7 459.1L219.5 463.8L208.2 467.9L196.7 471.8L185.4 475.1Z';
+	private const ICON_FILE = 'src/assets-shared/brand-icon/sidebar-menu-icon.js';
 
 	/**
-	 * Bounding box of the artwork in path coordinates.
-	 */
-	private const ART_BOUNDS = ['x1' => 82, 'y1' => 40, 'x2' => 493, 'y2' => 500];
-
-	/**
-	 * Fraction of the icon box the mark fills.
+	 * Pulls the artwork out of ICON_FILE.
 	 *
-	 * Lower value draws a smaller mark with more breathing room. This is the
-	 * only number to touch when resizing; the viewBox is derived from it.
+	 * Anchored on the "var MENU_ICON_SVG =" assignment rather than the
+	 * constant name alone, so prose in that file's header cannot match ahead
+	 * of the real literal. [^'] holds the match to one single-quoted literal.
 	 */
-	private const MARK_SCALE = 0.68;
-
-	/**
-	 * Fill colour of the mark. Solid, no gradient.
-	 */
-	private const MARK_COLOR = '#ffffff';
+	private const ICON_PATTERN = '/var\s+MENU_ICON_SVG\s*=\s*\'(<svg\b[^\']*<\/svg>)\'\s*;/';
 
 	public static function register_menu(): void {
+		$icon = self::menu_icon_data_uri();
+
 		add_menu_page(
 			self::page_title(),
 			self::menu_label(),
 			'manage_options',
 			self::MENU_SLUG,
 			[self::class, 'render_page'],
-			self::menu_icon_data_uri(),
+			// Fall back to a core dashicon if the artwork cannot be read.
+			'' !== $icon ? $icon : 'dashicons-layout',
 			26
 		);
 
@@ -108,68 +108,54 @@ final class DashboardSidebarMenuRegister {
 	}
 
 	/**
-	 * Square viewBox centred on the artwork.
+	 * Build the admin menu icon as a base64 SVG data URI.
 	 *
-	 * @return string viewBox attribute value.
-	 */
-	private static function icon_view_box(): string {
-		$bounds = self::ART_BOUNDS;
-		$width  = $bounds['x2'] - $bounds['x1'];
-		$height = $bounds['y2'] - $bounds['y1'];
-
-		$size = max($width, $height) / self::MARK_SCALE;
-		$x    = (($bounds['x1'] + $bounds['x2']) / 2) - ($size / 2);
-		$y    = (($bounds['y1'] + $bounds['y2']) / 2) - ($size / 2);
-
-		return sprintf('%s %s %s %s', round($x, 1), round($y, 1), round($size, 1), round($size, 1));
-	}
-
-	/**
-	 * Build the admin menu icon as a self-contained SVG data URI.
+	 * The 'data:image/svg+xml;base64,' prefix is the part core matches on: it
+	 * is what makes menu-header.php mark the item as an SVG icon and what
+	 * makes svg-painter.js recolour it. A URL-encoded data URI renders, but
+	 * core ignores it, so the icon would keep one fixed colour in every state.
 	 *
-	 * Two elements total: the svg wrapper and one path. No defs, no ids,
-	 * nothing to resolve. The sidebar colour shows through the arrow.
+	 * svg-painter decodes with window.atob(), which is Latin-1 only. The
+	 * artwork is ASCII, so it round-trips unchanged.
+	 *
+	 * @return string Data URI, or '' when the artwork cannot be read.
 	 */
 	private static function menu_icon_data_uri(): string {
-		$svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="' . self::icon_view_box() . '">'
-			. '<path d="' . self::MARK_PATH . '" fill="' . self::MARK_COLOR . '"/>'
-			. '</svg>';
+		static $uri = null;
 
-		return 'data:image/svg+xml;base64,' . base64_encode($svg);
+		if (null !== $uri) {
+			return $uri;
+		}
+
+		$path   = UPLIFTERS_SITE_BUILDER_BLOCKS_DIR . self::ICON_FILE;
+		$source = is_readable($path) ? (string) file_get_contents($path) : '';
+
+		// No artwork means no icon: register_menu() falls back to a dashicon.
+		if (1 !== preg_match(self::ICON_PATTERN, $source, $matches)) {
+			$uri = '';
+
+			return $uri;
+		}
+
+		$uri = 'data:image/svg+xml;base64,' . base64_encode($matches[1]);
+
+		return $uri;
 	}
 
 	/* ---------------------------------------------------------------- */
 	/* Assets                                                            */
 	/* ---------------------------------------------------------------- */
 
-	/**
-	 * Load the block category logo in the block editor only.
+	/*
+	 * There is no menu-icon CSS and no menu-icon script. The icon reaches the
+	 * page through add_menu_page() above, and core styles and recolours it.
 	 *
-	 * The script talks to wp.blocks, wp.element and wp.domReady, so those
-	 * handles are declared as dependencies rather than assumed present.
-	 *
-	 * Hook: add_action( 'enqueue_block_editor_assets', [ DashboardSidebarMenuRegister::class, 'enqueue_block_editor_assets' ] );
+	 * Editor surfaces that want the animated colour logo load their own
+	 * brand-icon module: blocks-category-icon.js, editor-topbar-icon.js and
+	 * dashboard-brand-icon.js each own one surface.
 	 */
-	public static function enqueue_block_editor_assets(): void {
-		$relative_path = 'src/assets-shared/brand-icon/sidebar-menu-icon.js';
-		$absolute_path = UPLIFTERS_SITE_BUILDER_BLOCKS_DIR . $relative_path;
-
-		if (! file_exists($absolute_path)) {
-			return;
-		}
-
-		wp_enqueue_script(
-			'uplifters-site-builder-blocks-brand-icon',
-			UPLIFTERS_SITE_BUILDER_BLOCKS_URL . $relative_path,
-			['wp-blocks', 'wp-dom-ready', 'wp-element'],
-			(string) filemtime($absolute_path),
-			true
-		);
-	}
 
 	public static function enqueue_assets(string $hook_suffix): void {
-		wp_add_inline_style('admin-menu', self::menu_icon_css());
-
 		if ('toplevel_page_uplifters-site-builder-blocks' !== $hook_suffix) {
 			return;
 		}
@@ -224,51 +210,6 @@ final class DashboardSidebarMenuRegister {
 		);
 
 		wp_set_script_translations('uplifters-site-builder-blocks-dashboard-controller-script', 'uplifters-site-builder-blocks');
-	}
-
-	/**
-	 * Styles for this plugin's menu item only.
-	 *
-	 * The data URI icon is the single intended mark. The suppression rules
-	 * below exist because anything else painted in the same 20px box lines up
-	 * behind the arrow gap and fills it in: the dashicon glyph that
-	 * add_menu_page() leaves behind, or an element injected by a stale copy of
-	 * the brand script. Hiding them keeps the gap genuinely empty from the
-	 * first paint onward, with no flash and no late repaint.
-	 *
-	 * @return string CSS.
-	 */
-	private static function menu_icon_css(): string {
-		$item = '#adminmenu #toplevel_page_uplifters-site-builder-blocks';
-
-		/*
-		 * Core dims menu icons to roughly 0.6 opacity at rest and lifts them
-		 * to full on hover, which is what made the white mark read grey. The
-		 * rules below hold it at full opacity in every state, hover and
-		 * current included, so the fill stays the pure white it is drawn in.
-		 */
-		return $item . ' .wp-menu-image,' .
-			$item . ':hover .wp-menu-image,' .
-			$item . '.opensub .wp-menu-image,' .
-			$item . '.current .wp-menu-image,' .
-			$item . '.wp-has-current-submenu .wp-menu-image {' .
-			'background-size:20px auto;' .
-			'background-position:center center;' .
-			'background-repeat:no-repeat;' .
-			'opacity:1;' .
-			'filter:none;' .
-			'}' .
-
-			// Dashicon placeholder glyph.
-			$item . ' .wp-menu-image::before,' .
-			$item . ' .wp-menu-image::after {' .
-			'content:none;' .
-			'}' .
-
-			// Anything injected into the icon box at runtime.
-			$item . ' .wp-menu-image > * {' .
-			'display:none;' .
-			'}';
 	}
 
 	/* ---------------------------------------------------------------- */

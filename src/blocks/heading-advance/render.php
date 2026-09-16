@@ -87,7 +87,7 @@ if ( ! function_exists( 'uplifters_site_builder_blocks_heading_advance_sanitize_
 
 if ( ! function_exists( 'uplifters_site_builder_blocks_heading_advance_sanitize_tag' ) ) {
 	function uplifters_site_builder_blocks_heading_advance_sanitize_tag( $value ): string {
-		$allowed = array( 'h1', 'h2', 'h3', 'p' );
+		$allowed = array( 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' );
 		$value   = strtolower( (string) $value );
 		return in_array( $value, $allowed, true ) ? $value : 'h1';
 	}
@@ -134,10 +134,20 @@ if ( ! function_exists( 'uplifters_site_builder_blocks_heading_advance_smart_def
 				'tablet'  => array( 'font_size' => 28, 'line_height' => 1.22, 'font_weight' => '700' ),
 				'mobile'  => array( 'font_size' => 24, 'line_height' => 1.28, 'font_weight' => '700' ),
 			),
-			'p'  => array(
-				'desktop' => array( 'font_size' => 18, 'line_height' => 1.75, 'font_weight' => '400' ),
-				'tablet'  => array( 'font_size' => 17, 'line_height' => 1.72, 'font_weight' => '400' ),
-				'mobile'  => array( 'font_size' => 16, 'line_height' => 1.68, 'font_weight' => '400' ),
+			'h4' => array(
+				'desktop' => array( 'font_size' => 26, 'line_height' => 1.24, 'font_weight' => '700' ),
+				'tablet'  => array( 'font_size' => 24, 'line_height' => 1.28, 'font_weight' => '700' ),
+				'mobile'  => array( 'font_size' => 21, 'line_height' => 1.32, 'font_weight' => '700' ),
+			),
+			'h5' => array(
+				'desktop' => array( 'font_size' => 22, 'line_height' => 1.3, 'font_weight' => '600' ),
+				'tablet'  => array( 'font_size' => 20, 'line_height' => 1.34, 'font_weight' => '600' ),
+				'mobile'  => array( 'font_size' => 19, 'line_height' => 1.38, 'font_weight' => '600' ),
+			),
+			'h6' => array(
+				'desktop' => array( 'font_size' => 18, 'line_height' => 1.4, 'font_weight' => '600' ),
+				'tablet'  => array( 'font_size' => 17, 'line_height' => 1.44, 'font_weight' => '600' ),
+				'mobile'  => array( 'font_size' => 16, 'line_height' => 1.48, 'font_weight' => '600' ),
 			),
 		);
 

@@ -1,278 +1,59 @@
 /**
- * Reusable Uplifters Website Builder logo.
+ * Uplifters Website Builder admin sidebar menu icon.
  *
- * One shared SVG definition, rendered either as a native SVG DOM element or
- * as a wp.element tree. It is applied to this plugin's block categories on
- * load, and exported for any other editor surface that needs it.
+ * This file is the only definition of the mark WordPress draws beside the
+ * plugin's admin menu entry. PHP reads this file from disk and pulls
+ * MENU_ICON_SVG straight out of it, then hands it to add_menu_page() as a
+ * base64 data URI
+ * (includes/dashboard-sidebar/dashboard-sidebar-menu-register.php). There is
+ * no .svg beside this file and no PHP copy of the artwork: one literal, read
+ * from one place.
  *
- * The admin sidebar menu icon is NOT handled here. That icon is emitted by
- * PHP as an SVG data URI on add_menu_page(), so it exists before JavaScript
- * runs and no core admin markup is rewritten at runtime. Injecting a second
- * mark into that menu item would sit on top of the PHP one and fill in the
- * arrow gap, so this module deliberately stays out of the sidebar.
+ * THE PHP CONTRACT. dashboard-sidebar-menu-register.php looks for the
+ * "var MENU_ICON_SVG =" assignment below and takes the single-quoted literal
+ * that follows it. Keep that literal on one line, opening with an svg start
+ * tag, closing with its end tag, and holding no single quote of its own.
+ * Break that shape and the menu quietly falls back to a core dashicon.
  *
- * The arrow cutout is baked into MARK_PATH rather than punched out with a
- * <mask> at paint time. The geometry is the boolean result of U minus arrow:
- * two closed rings with the arrow channel running clean between them. Since
- * the arrow region belongs to no ring, nothing can paint it at any point in
- * the render, and there is no id to resolve and no compositing step to wait
- * on.
+ * WHY THE ARTWORK IS FLAT. Core recolours menu icons with
+ * wp-admin/js/svg-painter.js, which rewrites every fill attribute, every
+ * style attribute and every fill property inside a <style> block to one
+ * colour from the user's admin colour scheme. Nothing layered survives that:
+ * a gradient flattens to a solid block, and a luminance mask's white
+ * rectangle becomes the icon colour and dims the whole mark. So this mark is
+ * a single even-odd path - the U outline with the rising arrow punched out of
+ * it, clipped to the U so the arrow's tail cannot spill past the edge - with
+ * no gradient, no gloss, no drop shadow and no animation.
+ *
+ * The three animated colour logos live elsewhere and are untouched by this:
+ * blocks-category-icon.js, editor-topbar-icon.js and dashboard-brand-icon.js
+ * each own one editor surface.
+ *
+ * SIZE. Core gives menu icons a 20px slot (background-size:20px auto). The
+ * mark is 85% of a square viewBox, so it draws about 17px tall, level with
+ * the core dashicons above and below it. Resize by changing that ratio here,
+ * never with CSS on the menu item.
+ *
+ * COLOUR. fill is the default scheme's base icon colour, so the icon is
+ * already right on first paint, before svg-painter runs.
+ *
+ * Nothing enqueues this file today; PHP reads it rather than the browser
+ * loading it. The export below is here so an admin surface that wants the
+ * same mark can use this one instead of pasting a second copy.
  *
  * @package UPLIFTERS_SITE_BUILDER_BLOCKS
  */
-(function (window, document) {
+(function (window) {
 	'use strict';
 
-	if (!window || !document) {
+	if (!window) {
 		return;
 	}
 
-	var SVG_NS = 'http://www.w3.org/2000/svg';
-	var VIEW_BOX = '-50.7 -68.2 676.5 676.5';
-	var CATEGORY_SLUGS = [
-		'uplifters-site-builder-blocks-gene',
-		'uplifters-site-builder-blocks-text',
-		'uplifters-site-builder-blocks-layout',
-	];
+	var MENU_ICON_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="-101 -66 888 888"><defs><clipPath id="b"><use href="#a"/></clipPath><path id="a" d="M343 505q30 0 51-15l3-2q8-6 15-17 15-23 18-56V242l2-184q2-31 21-44c12-9 24-13 45-14h120c23 1 36 6 47 16 13 11 18 23 20 47l-1 368q-1 35-18 80l-15 38-3 6-2 4-7 14-3 7-1 1-12 19-3 5-4 6-3 5-2 1-2 4-6 7-3 4-2 2-2 3-31 31-2 1-4 4-1 1-2 2-6 5-4 3-14 10-3 2a423 423 0 0 1-59 32c-89 35-166 35-255 0a335 335 0 0 1-58-32l-4-2-21-16-3-2-1-2-1-1-5-4-2-1-30-31-2-3-2-2-4-4-3-4-5-7-1-1-3-5-4-6-4-5-11-19-1-1-4-7-9-18-2-6-2-5-13-33Q4 466 1 431V63c1-24 6-36 19-47C31 6 44 1 67 0h120c22 1 34 5 45 14q19 13 22 44l1 184v173q3 33 18 56 8 11 16 17l2 2c13 10 33 15 52 15"/></defs><g clip-path="url(#b)"><path fill="#a7aaad" fill-rule="evenodd" d="M343 505q30 0 51-15l3-2q8-6 15-17 15-23 18-56V242l2-184q2-31 21-44c12-9 24-13 45-14h120c23 1 36 6 47 16 13 11 18 23 20 47l-1 368q-1 35-18 80l-15 38-3 6-2 4-7 14-3 7-1 1-12 19-3 5-4 6-3 5-2 1-2 4-6 7-3 4-2 2-2 3-31 31-2 1-4 4-1 1-2 2-6 5-4 3-14 10-3 2a423 423 0 0 1-59 32c-89 35-166 35-255 0a335 335 0 0 1-58-32l-4-2-21-16-3-2-1-2-1-1-5-4-2-1-30-31-2-3-2-2-4-4-3-4-5-7-1-1-3-5-4-6-4-5-11-19-1-1-4-7-9-18-2-6-2-5-13-33Q4 466 1 431V63c1-24 6-36 19-47C31 6 44 1 67 0h120c22 1 34 5 45 14q19 13 22 44l1 184v173q3 33 18 56 8 11 16 17l2 2c13 10 33 15 52 15m-41 259-8-2q-1-2 21-5l23-4a234 234 0 0 0 102-42l16-14 2-2 5-4 28-29 4-4 2-2 2-2 1-2 1-1 2-2 1-1 3-4 3-3 35-53 1-2 4-9c15-27 30-66 40-100l6-20 3-13a433 433 0 0 0 18-113l1-19v-11l1-8 2 1 1 2 3 2 11 6 13 6 10 5 11 5q3 2 8 1 4-4 2-9l-3-10-6-13-21-43-6-12-13-26-7-13-13-25-6-12-7-13-28-49-3-4h-5l-2 1-1 2-3 3-1 2-2 3-3 3-9 15-1 2-2 3-1 3-2 2-4 9-9 16-2 4-2 2-1 3-2 3-1 2-2 3-1 3-2 3-1 3-8 14-2 3-1 2-2 3-6 12-6 12-2 3-3 5-3 7-3 4-2 4-3 5-1 3-2 3-2 3-1 2-1 3a216 216 0 0 0-19 42v1l1 2v1c-1 1 4 3 6 3l6-3 5-2 11-5 6-2 6-3 16-9 2-1h1l1-1 1-1v19l-3 23c-2 9-3 15-11 37-7 22-9 28-16 41l-6 14-1 4-4 8a257 257 0 0 1-51 77l-8 9-3 3-24 23-6 5-1 1-2 2-4 2-1 1-3 3-7 4-28 16-5 3-16 7-13 5-11 3c-35 11-54 14-88 12a227 227 0 0 1-103-23l-4-2-3-1-2-2h-1l-20-13c-12-8-25-21-30-29l-2 1 2 6 2 5 3 5 7 15 3 6 1 2 12 19 3 5 4 7 4 4 1 2 3 3 2 4 3 3 4 5 2 2 2 2 6 7 25 26 2 1 5 4 1 1 1 1 3 3 4 3 3 3 15 10 3 3 22 13 1 1 2 1 2 1 33 16 17 7 15 6 15 5 13 5 13 3 12 4 10 2z"/></g></svg>';
 
-	/**
-	 * Mark outline with the arrow already subtracted.
-	 *
-	 * Ring 1 is the left arm. Ring 2 is the right arm plus the bowl. Kept
-	 * byte-identical to DashboardSidebarMenuRegister::MARK_PATH in dashboard-sidebar-menu-register.php;
-	 * change both together.
-	 */
-	var MARK_PATH = 'M82 76.1L82 330.3L82.3 342.8L83.1 352.6L84.3 362.1L86 371.4L88 380.4L90.6 389.1L93.5 397.5L96.9 405.6L100.7 413.5L120.1 411.6L139.2 408.9L157.9 405.1L176.3 400.4L194.1 394.8L211.5 388.3L228.4 380.8L244.7 372.5L252.4 368.1L250.1 359.1L248.2 348.9L247 337.2L246.2 324.3L246 311.4L246 74.1L245.6 69.1L244.8 64.4L243.4 59.9L241.5 55.8L239.5 52.7L237.2 49.9L234.6 47.4L231.7 45.2L228.5 43.4L225.2 42L221.6 40.9L217.8 40.3L213.2 40L118 40L112.4 40.3L105.9 41.7L99.9 44.2L97.1 45.7L94.6 47.6L90.2 51.8L88.3 54.3L86.7 56.9L85.2 59.8L84.1 62.8L82.5 69.1Z' +
-		'M172.3 478.6L181 482.2L190 485.5L199.4 488.5L209.1 491.1L219.2 493.4L229.6 495.3L240.4 496.9L251.5 498.2L263.5 499.2L275.7 499.8L288.4 500L301.5 499.9L314.1 499.4L326.2 498.5L337.9 497.4L349.3 495.8L359.3 494.1L369 492.1L378.3 489.8L387.3 487.2L395.9 484.3L404.2 481.1L412.1 477.7L419.6 473.9L426.7 469.9L433.5 465.5L439.9 460.9L446 456L451.7 450.8L457 445.3L462 439.5L466.6 433.4L472.4 424.5L477.5 415L481.8 405L485.4 394.5L488.4 383.4L490.6 371.7L492.1 359.5L492.9 346.8L492.9 73.7L492.6 69.5L491.8 65.3L490.6 61.4L489 57.7L487.1 54.4L484.8 51.3L482.2 48.6L479.3 46.2L475.2 43.8L470.8 42L465.9 40.7L460.8 40.1L375.3 40.1L371.2 40.5L367.1 41.4L363.3 42.6L359.6 44.2L356.4 46.2L353.3 48.6L350.6 51.2L348.2 54.1L345.6 58.5L343.7 63.2L342.5 68.4L342 73.9L342 288.9L347.3 281.6L352.2 274.1L356.9 266.5L361.3 258.7L365.5 250.8L369.4 242.6L373 234.4L376.4 225.9L380.5 215L384 204.6L387 194.6L389.6 185L391.7 175.8L393.3 167.1L394.4 158.7L395 151L350 166L425 63L492 162L448 148L446.8 163.9L444.7 180L441.9 196.2L438.1 212.6L433.6 229.1L428.2 245.8L422 262.6L415.1 279L408.3 293.3L400.9 307.1L392.9 320.6L384.2 333.8L374.9 346.5L364.9 358.9L354.4 370.9L343.2 382.5L334.2 391.1L324.9 399.4L315.2 407.5L305.2 415.4L294.7 423L284 430.3L273.7 436.9L263.2 443L252.6 448.8L241.8 454.1L230.7 459.1L219.5 463.8L208.2 467.9L196.7 471.8L185.4 475.1Z';
-
-	/**
-	 * SVG attribute names that wp.element (React) expects in camelCase.
-	 *
-	 * Names already camelCase in the SVG spec (gradientUnits,
-	 * gradientTransform, stdDeviation, viewBox) pass through unchanged.
-	 */
-	var REACT_PROP_NAMES = {
-		'class': 'className',
-		'color-interpolation-filters': 'colorInterpolationFilters',
-		'flood-color': 'floodColor',
-		'flood-opacity': 'floodOpacity',
-		'stop-color': 'stopColor',
-		'stop-opacity': 'stopOpacity',
+	window.UpliftersSiteBuilderBlocksSidebarMenuIcon = {
+		svg: MENU_ICON_SVG,
 	};
 
-	var logoInstance = 0;
-
-	function getWp() {
-		// Read lazily. This script can parse before wp.blocks is defined.
-		return window.wp || null;
-	}
-
-	function nextIds(prefix) {
-		logoInstance += 1;
-
-		return {
-			gradient: prefix + '-gradient-' + logoInstance,
-			shadow: prefix + '-shadow-' + logoInstance,
-		};
-	}
-
-	/* -------------------------------------------------------------------- */
-	/* Renderer-agnostic node description                                    */
-	/* -------------------------------------------------------------------- */
-
-	function node(name, attributes, children) {
-		return {
-			name: name,
-			attributes: attributes || {},
-			children: children || [],
-		};
-	}
-
-	function stop(offset, color) {
-		return node('stop', { offset: offset, 'stop-color': color });
-	}
-
-	/**
-	 * Describe the complete logo as a plain tree.
-	 *
-	 * @param {Object} ids      Unique id map for this instance.
-	 * @param {Object} settings Size and class options.
-	 * @return {Object} Node tree.
-	 */
-	function buildTree(ids, settings) {
-		var size = String(settings.size || 24);
-		var svgAttributes = {
-			width: size,
-			height: size,
-			viewBox: VIEW_BOX,
-			fill: 'none',
-			xmlns: SVG_NS,
-			// Decorative: the category name carries the meaning.
-			'aria-hidden': 'true',
-			focusable: 'false',
-		};
-
-		if (settings.className) {
-			svgAttributes['class'] = settings.className;
-		}
-
-		var defs = node('defs', null, [
-			node('linearGradient', {
-				id: ids.gradient,
-				x1: '122', y1: '38', x2: '445', y2: '500',
-				gradientUnits: 'userSpaceOnUse',
-			}, [
-				stop('0', '#4fe2ff'),
-				stop('0.27', '#20b7f7'),
-				stop('0.60', '#087ce7'),
-				stop('1', '#043eb8'),
-			]),
-			node('filter', {
-				id: ids.shadow,
-				x: '-25%', y: '-20%', width: '150%', height: '165%',
-				'color-interpolation-filters': 'sRGB',
-			}, [
-				node('feDropShadow', {
-					dx: '0', dy: '6', stdDeviation: '9',
-					'flood-color': '#00349b', 'flood-opacity': '0.28',
-				}),
-			]),
-		]);
-
-		// A single path. The shadow follows the cut outline, including the
-		// inner edges of the arrow channel.
-		var mark = node('path', {
-			d: MARK_PATH,
-			fill: 'url(#' + ids.gradient + ')',
-			filter: 'url(#' + ids.shadow + ')',
-		});
-
-		return node('svg', svgAttributes, [defs, mark]);
-	}
-
-	/* -------------------------------------------------------------------- */
-	/* Renderers                                                             */
-	/* -------------------------------------------------------------------- */
-
-	function toDomElement(tree) {
-		var element = document.createElementNS(SVG_NS, tree.name);
-
-		Object.keys(tree.attributes).forEach(function (name) {
-			element.setAttribute(name, tree.attributes[name]);
-		});
-
-		tree.children.forEach(function (child) {
-			element.appendChild(toDomElement(child));
-		});
-
-		return element;
-	}
-
-	function toWpElement(createElement, tree, key) {
-		var props = {};
-
-		if (typeof key !== 'undefined') {
-			props.key = key;
-		}
-
-		Object.keys(tree.attributes).forEach(function (name) {
-			props[REACT_PROP_NAMES[name] || name] = tree.attributes[name];
-		});
-
-		return createElement(
-			tree.name,
-			props,
-			tree.children.map(function (child, index) {
-				return toWpElement(createElement, child, String(index));
-			})
-		);
-	}
-
-	/**
-	 * Create the logo as a native SVG DOM element.
-	 *
-	 * @param {Object} options Logo options: size, className, idPrefix.
-	 * @return {SVGElement} SVG logo element.
-	 */
-	function createSvgElement(options) {
-		var settings = options || {};
-		var ids = nextIds(settings.idPrefix || 'uplifters-site-builder-blocks-logo');
-
-		return toDomElement(buildTree(ids, settings));
-	}
-
-	/**
-	 * Create the logo as a Gutenberg-compatible element.
-	 *
-	 * @return {Object|null} WordPress element, or null when wp.element is absent.
-	 */
-	function createWpElement() {
-		var wp = getWp();
-
-		if (!wp || !wp.element || typeof wp.element.createElement !== 'function') {
-			return null;
-		}
-
-		var ids = nextIds('uplifters-site-builder-blocks-category');
-
-		return toWpElement(wp.element.createElement, buildTree(ids, { size: 24 }));
-	}
-
-	/* -------------------------------------------------------------------- */
-	/* Block category icons                                                  */
-	/* -------------------------------------------------------------------- */
-
-	/**
-	 * Apply the logo to this plugin's registered block categories.
-	 */
-	function updateBlockCategories() {
-		var wp = getWp();
-
-		if (
-			!wp || !wp.blocks ||
-			typeof wp.blocks.updateCategory !== 'function' ||
-			typeof wp.blocks.getCategories !== 'function'
-		) {
-			return;
-		}
-
-		var registered = wp.blocks.getCategories().map(function (category) {
-			return category.slug;
-		});
-
-		CATEGORY_SLUGS.forEach(function (slug) {
-			if (registered.indexOf(slug) === -1) {
-				return;
-			}
-
-			var icon = createWpElement();
-
-			if (icon) {
-				wp.blocks.updateCategory(slug, { icon: icon });
-			}
-		});
-	}
-
-	window.UpliftersSiteBuilderBlocksLogo = {
-		createSvgElement: createSvgElement,
-		createWpElement: createWpElement,
-	};
-
-	function ready(callback) {
-		var wp = getWp();
-
-		if (wp && typeof wp.domReady === 'function') {
-			wp.domReady(callback);
-			return;
-		}
-
-		if (document.readyState === 'loading') {
-			document.addEventListener('DOMContentLoaded', callback, { once: true });
-			return;
-		}
-
-		callback();
-	}
-
-	ready(updateBlockCategories);
-})(window, document);
+})(window);

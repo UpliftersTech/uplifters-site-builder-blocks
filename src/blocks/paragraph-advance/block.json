@@ -1,0 +1,145 @@
+{
+  "$schema": "https://schemas.wp.org/wp/6.7/block.json",
+  "apiVersion": 3,
+  "name": "uplifters-site-builder-blocks/paragraph-advance",
+  "title": "Advance Text",
+  "category": "uplifters-site-builder-blocks-text",
+  "icon": "<svg stroke='#5BC3F5' fill='#5BC3F5' stroke-width='0' viewBox='0 0 16 16' height='20' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2z'></path><path d='M3 5.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5'></path></svg>",
+  "description": "Add a paragraph and body text with responsive typography and styling controls.",
+  "keywords": [ "paragraph", "text", "body copy", "typography", "content" ],
+  "version": "1.0.2",
+  "textdomain": "uplifters-site-builder-blocks",
+  "editorScript": "file:./index.js",
+  "style": "file:./style-index.css",
+  "editorStyle": "file:./index.css",
+  "viewScript": "file:./view.js",
+  "render": "file:./render.php",
+
+"example": {
+    "viewportWidth": 700,
+    "attributes": {
+      "preview": true,
+      "content": {
+        "desktop": "Advance Text",
+        "tablet": "Advance Text",
+        "mobile": "Advance Text"
+      },
+      "textAlign": { "desktop": "center", "tablet": "center", "mobile": "center" }
+    }
+  },
+
+  "attributes": {
+    "preview": {
+      "type": "boolean",
+      "default": false
+    },
+    "content": {
+      "type": "object",
+      "default": {
+        "desktop": "",
+        "tablet": "",
+        "mobile": ""
+      }
+    },
+    "fontFamily": {
+      "type": "object",
+      "default": {
+        "desktop": "inherit",
+        "tablet": "inherit",
+        "mobile": "inherit"
+      }
+    },
+    "textColor": {
+      "type": "object",
+      "default": {
+        "desktop": "",
+        "tablet": "",
+        "mobile": ""
+      }
+    },
+    "backgroundColor": {
+      "type": "object",
+      "default": {
+        "desktop": "",
+        "tablet": "",
+        "mobile": ""
+      }
+    },
+    "fontSize": {
+      "type": "object",
+      "default": {
+        "desktop": "",
+        "tablet": "",
+        "mobile": ""
+      }
+    },
+    "lineHeight": {
+      "type": "object",
+      "default": {
+        "desktop": "",
+        "tablet": "",
+        "mobile": ""
+      }
+    },
+    "fontWeight": {
+      "type": "object",
+      "default": {
+        "desktop": "",
+        "tablet": "",
+        "mobile": ""
+      }
+    },
+    "textAlign": {
+      "type": "object",
+      "default": {
+        "desktop": "left",
+        "tablet": "left",
+        "mobile": "left"
+      }
+    },
+    "letterSpacing": {
+      "type": "object",
+      "default": {
+        "desktop": "",
+        "tablet": "",
+        "mobile": ""
+      }
+    },
+    "wordSpacing": {
+      "type": "object",
+      "default": {
+        "desktop": "",
+        "tablet": "",
+        "mobile": ""
+      }
+    },
+    "textTransform": {
+      "type": "object",
+      "default": {
+        "desktop": "none",
+        "tablet": "none",
+        "mobile": "none"
+      }
+    },
+    "padding": {
+      "type": "object",
+      "default": {
+        "desktop": {},
+        "tablet": {},
+        "mobile": {}
+      }
+    },
+    "margin": {
+      "type": "object",
+      "default": {
+        "desktop": {},
+        "tablet": {},
+        "mobile": {}
+      }
+    }
+  },
+  "supports": {
+    "anchor": true,
+    "align": true
+  }
+}

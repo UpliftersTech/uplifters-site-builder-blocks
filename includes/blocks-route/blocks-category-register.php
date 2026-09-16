@@ -15,22 +15,30 @@ final class BlocksCategoryRegister {
 	 */
 	private static function defined_custom_categories(): array {
 
-		$uplifters_site_builder_blocks_label = __('Uplifters Website Builder', 'uplifters-site-builder-blocks');
-
 		return [
 			[
-				'slug'  => 'uplifters-site-builder-blocks-gene',
-				'title' => $uplifters_site_builder_blocks_label,
+				'slug'  => 'uplifters-site-builder-blocks-wrapper',
+				'title' => __('Uplifters Wrapper', 'uplifters-site-builder-blocks'),
 				'icon'  => null,
 			],
 			[
 				'slug'  => 'uplifters-site-builder-blocks-text',
-				'title' => sprintf('%s - %s', __('Text', 'uplifters-site-builder-blocks'), $uplifters_site_builder_blocks_label),
+				'title' => __('Uplifters Text', 'uplifters-site-builder-blocks'),
 				'icon'  => null,
 			],
 			[
-				'slug'  => 'uplifters-site-builder-blocks-layout',
-				'title' => sprintf('%s - %s', __('Layout', 'uplifters-site-builder-blocks'), $uplifters_site_builder_blocks_label),
+				'slug'  => 'uplifters-site-builder-blocks-essentials',
+				'title' => __('Uplifters Essentials', 'uplifters-site-builder-blocks'),
+				'icon'  => null,
+			],
+			[
+				'slug'  => 'uplifters-site-builder-blocks-media',
+				'title' => __('Uplifters Media', 'uplifters-site-builder-blocks'),
+				'icon'  => null,
+			],
+			[
+				'slug'  => 'uplifters-site-builder-blocks-post',
+				'title' => __('Uplifters Post', 'uplifters-site-builder-blocks'),
 				'icon'  => null,
 			],
 		];

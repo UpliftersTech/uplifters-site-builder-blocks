@@ -18,7 +18,7 @@ import { Dashicon, SOFT_EASE, TAB_ORDER } from './dashboard-header';
 import { createIcon as createDashboardBrandIcon } from '../assets-shared/brand-icon/dashboard-brand-icon';
 
 const fallbackData = {
-	version: '1.0.0',
+	version: '1.0.2',
 	productName: 'Uplifters Website Builder',
 	siteEditorUrl: '#',
 	formAction: '',

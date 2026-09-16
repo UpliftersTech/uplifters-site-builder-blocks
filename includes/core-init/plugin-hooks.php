@@ -61,20 +61,45 @@ final class PluginHooks {
 			add_action( 'init', array( \UpliftersSiteBuilderBlocks\BlocksRoute\BlocksRegister::class, 'register_all' ) );
 		}
 
+		// Posts Section block (registered manually, no block.json — lives inside Posts Layout).
+		if ( class_exists( \UpliftersSiteBuilderBlocks\BlocksHelper\SectionWrapper\PostsSectionBlockRegister::class ) ) {
+			add_action( 'init', array( \UpliftersSiteBuilderBlocks\BlocksHelper\SectionWrapper\PostsSectionBlockRegister::class, 'register' ) );
+		}
+
+		// Header Section block (registered manually, no block.json — lives inside Header Layout).
+		if ( class_exists( \UpliftersSiteBuilderBlocks\BlocksHelper\SectionWrapper\HeaderSectionBlockRegister::class ) ) {
+			add_action( 'init', array( \UpliftersSiteBuilderBlocks\BlocksHelper\SectionWrapper\HeaderSectionBlockRegister::class, 'register' ) );
+		}
+
+		// Footer Section block (registered manually, no block.json — lives inside Footer Layout).
+		if ( class_exists( \UpliftersSiteBuilderBlocks\BlocksHelper\SectionWrapper\FooterSectionBlockRegister::class ) ) {
+			add_action( 'init', array( \UpliftersSiteBuilderBlocks\BlocksHelper\SectionWrapper\FooterSectionBlockRegister::class, 'register' ) );
+		}
+
+		// Columns Section block (registered manually, no block.json — lives inside Column Layout).
+		if ( class_exists( \UpliftersSiteBuilderBlocks\BlocksHelper\SectionWrapper\ColumnSectionBlockRegister::class ) ) {
+			add_action( 'init', array( \UpliftersSiteBuilderBlocks\BlocksHelper\SectionWrapper\ColumnSectionBlockRegister::class, 'register' ) );
+		}
+
 		// Fonts.
 		if ( class_exists( \UpliftersSiteBuilderBlocks\AssetsEnqueue\FontsRegister::class ) ) {
 			\UpliftersSiteBuilderBlocks\AssetsEnqueue\FontsRegister::register();
 		}
 
-	// Post title style Posts.
-       if ( class_exists( \UpliftersSiteBuilderBlocks\PostsEnhance\PostTitleStyle::class ) ) {
-	       \UpliftersSiteBuilderBlocks\PostsEnhance\PostTitleStyle::register();
-        }
+		// Shared inserter previews (one bundle for all blocks).
+		if ( class_exists( \UpliftersSiteBuilderBlocks\AssetsEnqueue\InserterPreviewRegister::class ) ) {
+			\UpliftersSiteBuilderBlocks\AssetsEnqueue\InserterPreviewRegister::register();
+		}
+
+	    // Post title style Posts.
+         if ( class_exists( \UpliftersSiteBuilderBlocks\BlocksHelper\PostsEnhance\PostTitleStyle::class ) ) {
+	       \UpliftersSiteBuilderBlocks\BlocksHelper\PostsEnhance\PostTitleStyle::register();
+          }
 
 		// Post Featured Image style Posts.
-       if ( class_exists( \UpliftersSiteBuilderBlocks\PostsEnhance\PostFeaturedImageStyle::class ) ) {
-	       \UpliftersSiteBuilderBlocks\PostsEnhance\PostFeaturedImageStyle::register();
-        }
+         if ( class_exists( \UpliftersSiteBuilderBlocks\BlocksHelper\PostsEnhance\PostFeaturedImageStyle::class ) ) {
+	       \UpliftersSiteBuilderBlocks\BlocksHelper\PostsEnhance\PostFeaturedImageStyle::register();
+          }
 
 	}
 }

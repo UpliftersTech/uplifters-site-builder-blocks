@@ -1,5 +1,5 @@
 import './editor.scss';
-import InserterPreview from '../../blocks-inserter-preview/inserter-preview';
+import InserterPreview from '../../blocks-inserter-preview/inserter-preview-shared';
 import { __, sprintf } from '@wordpress/i18n';
 import {
 	InspectorControls,
@@ -856,18 +856,6 @@ function Editor( {
 					/>
 
 					<RangeControl
-						label={ __( 'Margin', 'uplifters-site-builder-blocks' ) }
-						value={ activeMargin }
-						onChange={ ( value ) =>
-							setResponsiveAttribute( 'margin', value || 0 )
-						}
-						min={ 0 }
-						max={ 200 }
-						step={ 1 }
-						__nextHasNoMarginBottom
-					/>
-
-					<RangeControl
 						label={ __( 'Border Radius', 'uplifters-site-builder-blocks' ) }
 						value={ activeBorderRadius }
 						onChange={ ( value ) =>
@@ -875,6 +863,29 @@ function Editor( {
 						}
 						min={ 0 }
 						max={ 100 }
+						step={ 1 }
+						__nextHasNoMarginBottom
+					/>
+				</PanelBody>
+
+				<PanelBody
+					title={ sprintf( __( '%s Layout Spacing', 'uplifters-site-builder-blocks' ), deviceLabel ) }
+					initialOpen={ false }
+					opened={ openStylesPanel === 'layoutSpacing' }
+					onToggle={ () => toggleStylesPanel( 'layoutSpacing' ) }
+				>
+					<div className="uplifters-site-builder-blocks-responsive-device-badge">
+						{ deviceLabel }
+					</div>
+
+					<RangeControl
+						label={ __( 'Margin', 'uplifters-site-builder-blocks' ) }
+						value={ activeMargin }
+						onChange={ ( value ) =>
+							setResponsiveAttribute( 'margin', value || 0 )
+						}
+						min={ 0 }
+						max={ 200 }
 						step={ 1 }
 						__nextHasNoMarginBottom
 					/>

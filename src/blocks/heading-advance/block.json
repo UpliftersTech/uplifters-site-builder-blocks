@@ -2,11 +2,12 @@
   "$schema": "https://schemas.wp.org/wp/6.7/block.json",
   "apiVersion": 3,
   "name": "uplifters-site-builder-blocks/heading-advance",
-  "title": "Heading & Text",
-  "category": "uplifters-site-builder-blocks-gene",
-  "icon": "<svg stroke='#5BC3F5' fill='#5BC3F5' stroke-width='0' viewBox='0 0 16 16' height='20' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2z'></path><path d='M3 8.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5m0-5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5z'></path></svg>",
-  "description": "Add a heading and body text with responsive typography and styling controls.",
-  "version": "1.0.1",
+  "title": "Advance Heading",
+  "category": "uplifters-site-builder-blocks-text",
+  "icon": "<svg stroke='#5BC3F5' fill='#5BC3F5' stroke-width='0' viewBox='0 0 512 512' height='20' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M448 96v320h32a16 16 0 0 1 16 16v32a16 16 0 0 1-16 16H320a16 16 0 0 1-16-16v-32a16 16 0 0 1 16-16h32V288H160v128h32a16 16 0 0 1 16 16v32a16 16 0 0 1-16 16H32a16 16 0 0 1-16-16v-32a16 16 0 0 1 16-16h32V96H32a16 16 0 0 1-16-16V48a16 16 0 0 1 16-16h160a16 16 0 0 1 16 16v32a16 16 0 0 1-16 16h-32v128h192V96h-32a16 16 0 0 1-16-16V48a16 16 0 0 1 16-16h160a16 16 0 0 1 16 16v32a16 16 0 0 1-16 16z'></path></svg>",
+  "description": "Add a heading with responsive typography and styling controls.",
+  "keywords": [ "heading", "title", "headline", "typography", "content" ],
+  "version": "1.0.2",
   "textdomain": "uplifters-site-builder-blocks",
   "editorScript": "file:./index.js",
   "style": "file:./style-index.css",
@@ -19,9 +20,9 @@
     "attributes": {
       "preview": true,
       "content": {
-        "desktop": "Heading &amp; Text",
-        "tablet": "Heading &amp; Text",
-        "mobile": "Heading &amp; Text"
+        "desktop": "Advance Heading",
+        "tablet": "Advance Heading",
+        "mobile": "Advance Heading"
       },
       "textType": { "desktop": "h2", "tablet": "h2", "mobile": "h2" },
       "textAlign": { "desktop": "center", "tablet": "center", "mobile": "center" }

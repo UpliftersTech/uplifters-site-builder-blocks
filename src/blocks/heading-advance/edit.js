@@ -1,4 +1,4 @@
-import InserterPreview from '../../blocks-inserter-preview/inserter-preview';
+import InserterPreview from '../../blocks-inserter-preview/inserter-preview-shared';
 import { useEffect, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 
@@ -35,11 +35,14 @@ import {
 
 const DEVICES = ['desktop', 'tablet', 'mobile'];
 const TYPE_OPTIONS = [
-  { label: 'Title', value: 'h1' },
-  { label: 'Heading', value: 'h2' },
-  { label: 'Subheading', value: 'h3' },
-  { label: 'Paragraph', value: 'p' }
+  { label: 'Title (H1)', value: 'h1' },
+  { label: 'Heading (H2)', value: 'h2' },
+  { label: 'Subtitle (H3)', value: 'h3' },
+  { label: 'Subtitle (H4)', value: 'h4' },
+  { label: 'Subtitle (H5)', value: 'h5' },
+  { label: 'Subtitle (H6)', value: 'h6' }
 ];
+const HEADING_TAGS = TYPE_OPTIONS.map((option) => option.value);
 const WEIGHT_OPTIONS = [
   { label: 'Smart default', value: '' },
   ...[100, 200, 300, 400, 500, 600, 700, 800, 900].map((weight) => ({ label: String(weight), value: String(weight) }))
@@ -105,7 +108,9 @@ function smartDefaults(type, device) {
     h1: [[64, 1.04, '800'], [48, 1.08, '800'], [36, 1.12, '800']],
     h2: [[48, 1.1, '700'], [38, 1.14, '700'], [30, 1.18, '700']],
     h3: [[32, 1.18, '700'], [28, 1.22, '700'], [24, 1.28, '700']],
-    p: [[18, 1.75, '400'], [17, 1.72, '400'], [16, 1.68, '400']]
+    h4: [[26, 1.24, '700'], [24, 1.28, '700'], [21, 1.32, '700']],
+    h5: [[22, 1.3, '600'], [20, 1.34, '600'], [19, 1.38, '600']],
+    h6: [[18, 1.4, '600'], [17, 1.44, '600'], [16, 1.48, '600']]
   };
   const [fontSize, lineHeight, fontWeight] = (defaults[type] || defaults.h1)[DEVICES.indexOf(device)];
   return { fontSize, lineHeight, fontWeight };
@@ -581,7 +586,7 @@ function Editor({ attributes, setAttributes, clientId }) {
         opened={openSettingsPanel === 'content'}
         onToggle={() => toggleSettingsPanel('content')}
       >
-        <SelectControl label="Text role" value={textType} options={TYPE_OPTIONS} onChange={(next) => update('textType', next)} />
+        <SelectControl label="Text role" value={HEADING_TAGS.includes(textType) ? textType : 'h1'} options={TYPE_OPTIONS} onChange={(next) => update('textType', next)} />
       </PanelBody>
       <PanelBody
         title={`Format Selected Text`}
@@ -685,7 +690,7 @@ function Editor({ attributes, setAttributes, clientId }) {
       {...blockProps}
       ref={editorElementRef}
       identifier="content"
-      tagName={['h1', 'h2', 'h3', 'p'].includes(textType) ? textType : 'h1'}
+      tagName={HEADING_TAGS.includes(textType) ? textType : 'h1'}
       value={content}
       onChange={(next) => update('content', next)}
       onSelectionChange={(startOrSelection, maybeEnd) => {
@@ -693,7 +698,7 @@ function Editor({ attributes, setAttributes, clientId }) {
         const end = typeof startOrSelection === 'object' ? Number(startOrSelection?.end ?? start) : Number(maybeEnd ?? start);
         saveSelection(start, end);
       }}
-      placeholder={`Start writing your ${textType === 'p' ? 'paragraph' : 'heading'}…`}
+      placeholder="Start writing your heading…"
       allowedFormats={['core/bold', 'core/italic', 'core/underline', 'core/link', 'core/image', 'core/strikethrough', 'core/subscript', 'core/superscript', 'core/code', INLINE_FOOTNOTE, INLINE_COLOR, INLINE_HIGHLIGHT, INLINE_FONT_FAMILY]}
     />
     </div>

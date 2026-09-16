@@ -1,6 +1,11 @@
 <?php
 /**
- * Server-side rendering for the Video Grid Uploaded block.
+ * Server-side rendering for the Upload Video block.
+ *
+ * The block renders one uploaded video at the full width of its container.
+ * Only the responsive padding, margin and border radius vary per instance, so
+ * those three are generated here and attached to the block's registered style
+ * handle; everything structural lives in style.scss.
  *
  * @package UpliftersSiteBuilderBlocks
  *
@@ -54,49 +59,132 @@ if ( ! function_exists( 'uplifters_site_builder_blocks_video_upload_responsive_v
 	}
 }
 
-if ( ! function_exists( 'uplifters_site_builder_blocks_video_upload_sanitize_cols' ) ) {
+if ( ! function_exists( 'uplifters_site_builder_blocks_video_upload_responsive_box' ) ) {
 	/**
-	 * Clamp the videos-per-row value.
+	 * Resolve a responsive four-sided box value for a device.
 	 *
-	 * @param mixed $value Raw value.
-	 * @param int   $fallback Fallback columns.
-	 * @return int Columns between 1 and 6.
+	 * @param mixed  $value  Attribute value.
+	 * @param string $device Device key.
+	 * @return array Box with every side present.
 	 */
-	function uplifters_site_builder_blocks_video_upload_sanitize_cols(
-		$value,
-		int $fallback = 1
-	): int {
-		$number = absint( $value );
+	function uplifters_site_builder_blocks_video_upload_responsive_box( $value, string $device ): array {
+		$empty = array(
+			'top'    => '',
+			'right'  => '',
+			'bottom' => '',
+			'left'   => '',
+		);
 
-		if ( $number < 1 ) {
-			$number = $fallback;
+		if ( empty( $value ) || ! is_array( $value ) ) {
+			return $empty;
 		}
 
-		return max( 1, min( 6, $number ) );
+		if ( isset( $value['desktop'] ) || isset( $value['tablet'] ) || isset( $value['mobile'] ) ) {
+			$branch = array();
+
+			/*
+			 * An all-empty branch falls through to the next one, so tablet and
+			 * mobile inherit the desktop box unless they set one of their own.
+			 * The editor resolves these the same way.
+			 */
+			foreach ( array( $device, 'desktop', 'tablet', 'mobile' ) as $key ) {
+				if ( empty( $value[ $key ] ) || ! is_array( $value[ $key ] ) ) {
+					continue;
+				}
+
+				foreach ( array( 'top', 'right', 'bottom', 'left' ) as $side ) {
+					if ( isset( $value[ $key ][ $side ] ) && '' !== trim( (string) $value[ $key ][ $side ] ) ) {
+						$branch = $value[ $key ];
+						break 2;
+					}
+				}
+			}
+
+			return array_merge( $empty, $branch );
+		}
+
+		return array_merge( $empty, $value );
 	}
 }
 
-if ( ! function_exists( 'uplifters_site_builder_blocks_video_upload_spacing_rem' ) ) {
+if ( ! function_exists( 'uplifters_site_builder_blocks_video_upload_box_to_css' ) ) {
 	/**
-	 * Convert a spacing unit ( 1 = 0.25rem ) into a CSS rem string.
+	 * Turn a four-sided box into CSS declarations.
 	 *
-	 * @param mixed $value Raw spacing unit.
-	 * @return string CSS length.
+	 * @param string $prefix CSS property prefix ( padding or margin ).
+	 * @param array  $box    Box values.
+	 * @return string CSS declarations.
 	 */
-	function uplifters_site_builder_blocks_video_upload_spacing_rem( $value ): string {
-		$unit = absint( $value );
+	function uplifters_site_builder_blocks_video_upload_box_to_css( string $prefix, array $box ): string {
+		$css = '';
 
-		return rtrim( rtrim( number_format( $unit * 0.25, 2, '.', '' ), '0' ), '.' ) . 'rem';
+		foreach ( array( 'top', 'right', 'bottom', 'left' ) as $side ) {
+			$value = isset( $box[ $side ] ) ? trim( (string) $box[ $side ] ) : '';
+
+			if ( '' === $value ) {
+				continue;
+			}
+
+			$value = str_replace( array( '<', '>', '{', '}', ';' ), '', wp_strip_all_tags( $value ) );
+
+			// A unitless number is not valid CSS, so treat it as pixels the
+			// same way the editor does rather than emitting a dead rule.
+			if ( preg_match( '/^-?\d*\.?\d+$/', $value ) ) {
+				$value .= 'px';
+			}
+
+			$css .= sprintf( '%1$s-%2$s:%3$s;', $prefix, $side, $value );
+		}
+
+		return $css;
 	}
 }
 
-$uplifters_site_builder_blocks_uplifters_videos = isset( $attributes['videos'] ) && is_array( $attributes['videos'] )
-	? $attributes['videos']
-	: array();
+if ( ! function_exists( 'uplifters_site_builder_blocks_video_upload_length' ) ) {
+	/**
+	 * Sanitise a single CSS length such as "12px".
+	 *
+	 * @param mixed $value Raw value.
+	 * @return string Safe CSS length, or an empty string.
+	 */
+	function uplifters_site_builder_blocks_video_upload_length( $value ): string {
+		$value = is_scalar( $value ) ? trim( (string) $value ) : '';
 
-if ( empty( $uplifters_site_builder_blocks_uplifters_videos ) ) {
+		if ( '' === $value ) {
+			return '';
+		}
+
+		$value = str_replace( array( '<', '>', '{', '}', ';' ), '', wp_strip_all_tags( $value ) );
+
+		return preg_match( '/^-?\d*\.?\d+(px|em|rem|%|vw|vh)?$/', $value ) ? $value : '';
+	}
+}
+
+$uplifters_site_builder_blocks_uplifters_url = isset( $attributes['url'] )
+	? esc_url_raw( (string) $attributes['url'] )
+	: '';
+
+/**
+ * Legacy fallback.
+ *
+ * This block used to hold a grid of videos in a `videos` array. Posts saved
+ * back then are migrated to `url` the next time the block is opened in the
+ * editor, so until that happens the first saved item is rendered here.
+ */
+if (
+	'' === $uplifters_site_builder_blocks_uplifters_url &&
+	! empty( $attributes['videos'] ) &&
+	is_array( $attributes['videos'] ) &&
+	! empty( $attributes['videos'][0]['url'] )
+) {
+	$uplifters_site_builder_blocks_uplifters_url = esc_url_raw( (string) $attributes['videos'][0]['url'] );
+}
+
+if ( '' === $uplifters_site_builder_blocks_uplifters_url ) {
 	return;
 }
+
+$uplifters_site_builder_blocks_uplifters_unique_id = wp_unique_id( 'uplifters-site-builder-blocks-video-upload-' );
 
 $uplifters_site_builder_blocks_uplifters_devices = array(
 	'desktop' => '',
@@ -104,134 +192,57 @@ $uplifters_site_builder_blocks_uplifters_devices = array(
 	'mobile'  => '(max-width:767px)',
 );
 
-$uplifters_site_builder_blocks_uplifters_rows_raw = isset( $attributes['rows'] ) ? $attributes['rows'] : null;
-
-$uplifters_site_builder_blocks_uplifters_cols = array();
-
-$uplifters_site_builder_blocks_uplifters_cols['desktop'] = uplifters_site_builder_blocks_video_upload_sanitize_cols(
-	uplifters_site_builder_blocks_video_upload_responsive_value( $uplifters_site_builder_blocks_uplifters_rows_raw, 'desktop', 1 ),
-	1
-);
-
-$uplifters_site_builder_blocks_uplifters_cols['tablet'] = uplifters_site_builder_blocks_video_upload_sanitize_cols(
-	uplifters_site_builder_blocks_video_upload_responsive_value( $uplifters_site_builder_blocks_uplifters_rows_raw, 'tablet', $uplifters_site_builder_blocks_uplifters_cols['desktop'] ),
-	$uplifters_site_builder_blocks_uplifters_cols['desktop']
-);
-
-$uplifters_site_builder_blocks_uplifters_cols['mobile'] = uplifters_site_builder_blocks_video_upload_sanitize_cols(
-	uplifters_site_builder_blocks_video_upload_responsive_value( $uplifters_site_builder_blocks_uplifters_rows_raw, 'mobile', $uplifters_site_builder_blocks_uplifters_cols['desktop'] ),
-	$uplifters_site_builder_blocks_uplifters_cols['desktop']
-);
-
-/**
- * Normalise every video into a per-device value set before any markup is
- * printed, so the generated CSS and the rendered items share one index.
- */
-$uplifters_site_builder_blocks_uplifters_items = array();
-
-foreach ( $uplifters_site_builder_blocks_uplifters_videos as $uplifters_site_builder_blocks_uplifters_video ) {
-	if ( ! is_array( $uplifters_site_builder_blocks_uplifters_video ) ) {
-		continue;
-	}
-
-	$uplifters_site_builder_blocks_uplifters_video_url = isset( $uplifters_site_builder_blocks_uplifters_video['url'] ) ? esc_url_raw( $uplifters_site_builder_blocks_uplifters_video['url'] ) : '';
-
-	if ( '' === $uplifters_site_builder_blocks_uplifters_video_url ) {
-		continue;
-	}
-
-	$uplifters_site_builder_blocks_uplifters_item = array(
-		'url' => $uplifters_site_builder_blocks_uplifters_video_url,
-	);
-
-	foreach ( array_keys( $uplifters_site_builder_blocks_uplifters_devices ) as $uplifters_site_builder_blocks_uplifters_device ) {
-		$uplifters_site_builder_blocks_uplifters_is_desktop = ( 'desktop' === $uplifters_site_builder_blocks_uplifters_device );
-
-		$uplifters_site_builder_blocks_uplifters_width = max(
-			1,
-			absint(
-				uplifters_site_builder_blocks_video_upload_responsive_value(
-					isset( $uplifters_site_builder_blocks_uplifters_video['width'] ) ? $uplifters_site_builder_blocks_uplifters_video['width'] : null,
-					$uplifters_site_builder_blocks_uplifters_device,
-					$uplifters_site_builder_blocks_uplifters_is_desktop ? 320 : $uplifters_site_builder_blocks_uplifters_item['desktop']['width']
-				)
-			)
-		);
-
-		$uplifters_site_builder_blocks_uplifters_height = max(
-			1,
-			absint(
-				uplifters_site_builder_blocks_video_upload_responsive_value(
-					isset( $uplifters_site_builder_blocks_uplifters_video['height'] ) ? $uplifters_site_builder_blocks_uplifters_video['height'] : null,
-					$uplifters_site_builder_blocks_uplifters_device,
-					$uplifters_site_builder_blocks_uplifters_is_desktop ? 180 : $uplifters_site_builder_blocks_uplifters_item['desktop']['height']
-				)
-			)
-		);
-
-		$uplifters_site_builder_blocks_uplifters_padding = uplifters_site_builder_blocks_video_upload_responsive_value(
-			isset( $uplifters_site_builder_blocks_uplifters_video['padding'] ) ? $uplifters_site_builder_blocks_uplifters_video['padding'] : null,
-			$uplifters_site_builder_blocks_uplifters_device,
-			$uplifters_site_builder_blocks_uplifters_is_desktop ? 0 : $uplifters_site_builder_blocks_uplifters_item['desktop']['padding_unit']
-		);
-
-		$uplifters_site_builder_blocks_uplifters_margin = uplifters_site_builder_blocks_video_upload_responsive_value(
-			isset( $uplifters_site_builder_blocks_uplifters_video['margin'] ) ? $uplifters_site_builder_blocks_uplifters_video['margin'] : null,
-			$uplifters_site_builder_blocks_uplifters_device,
-			$uplifters_site_builder_blocks_uplifters_is_desktop ? 0 : $uplifters_site_builder_blocks_uplifters_item['desktop']['margin_unit']
-		);
-
-		$uplifters_site_builder_blocks_uplifters_item[ $uplifters_site_builder_blocks_uplifters_device ] = array(
-			'width'        => $uplifters_site_builder_blocks_uplifters_width,
-			'height'       => $uplifters_site_builder_blocks_uplifters_height,
-			'padding_unit' => absint( $uplifters_site_builder_blocks_uplifters_padding ),
-			'margin_unit'  => absint( $uplifters_site_builder_blocks_uplifters_margin ),
-			'padding'      => uplifters_site_builder_blocks_video_upload_spacing_rem( $uplifters_site_builder_blocks_uplifters_padding ),
-			'margin'       => uplifters_site_builder_blocks_video_upload_spacing_rem( $uplifters_site_builder_blocks_uplifters_margin ),
-		);
-	}
-
-	$uplifters_site_builder_blocks_uplifters_items[] = $uplifters_site_builder_blocks_uplifters_item;
-}
-
-if ( empty( $uplifters_site_builder_blocks_uplifters_items ) ) {
-	return;
-}
-
-$uplifters_site_builder_blocks_uplifters_unique_id = wp_unique_id( 'uplifters-site-builder-blocks-video-upload-' );
-
 $uplifters_site_builder_blocks_uplifters_css = '';
 
 foreach ( $uplifters_site_builder_blocks_uplifters_devices as $uplifters_site_builder_blocks_uplifters_device => $uplifters_site_builder_blocks_uplifters_media_query ) {
-	$uplifters_site_builder_blocks_uplifters_device_css = '';
+	$uplifters_site_builder_blocks_uplifters_declarations = '';
 
-	$uplifters_site_builder_blocks_uplifters_device_css .= '#' . $uplifters_site_builder_blocks_uplifters_unique_id . ' .uplifters-video-upload__grid{';
-	$uplifters_site_builder_blocks_uplifters_device_css .= 'grid-template-columns:repeat(' . $uplifters_site_builder_blocks_uplifters_cols[ $uplifters_site_builder_blocks_uplifters_device ] . ',minmax(0,1fr));';
-	$uplifters_site_builder_blocks_uplifters_device_css .= '}';
+	$uplifters_site_builder_blocks_uplifters_declarations .= uplifters_site_builder_blocks_video_upload_box_to_css(
+		'padding',
+		uplifters_site_builder_blocks_video_upload_responsive_box(
+			isset( $attributes['padding'] ) ? $attributes['padding'] : null,
+			$uplifters_site_builder_blocks_uplifters_device
+		)
+	);
 
-	foreach ( $uplifters_site_builder_blocks_uplifters_items as $uplifters_site_builder_blocks_uplifters_index => $uplifters_site_builder_blocks_uplifters_item ) {
-		$uplifters_site_builder_blocks_uplifters_values = $uplifters_site_builder_blocks_uplifters_item[ $uplifters_site_builder_blocks_uplifters_device ];
+	$uplifters_site_builder_blocks_uplifters_declarations .= uplifters_site_builder_blocks_video_upload_box_to_css(
+		'margin',
+		uplifters_site_builder_blocks_video_upload_responsive_box(
+			isset( $attributes['margin'] ) ? $attributes['margin'] : null,
+			$uplifters_site_builder_blocks_uplifters_device
+		)
+	);
 
-		$uplifters_site_builder_blocks_uplifters_device_css .= '#' . $uplifters_site_builder_blocks_uplifters_unique_id . ' .uplifters-video-upload__item--' . (int) $uplifters_site_builder_blocks_uplifters_index . '{';
-		$uplifters_site_builder_blocks_uplifters_device_css .= '--uplifters-video-upload-item-padding:' . $uplifters_site_builder_blocks_uplifters_values['padding'] . ';';
-		$uplifters_site_builder_blocks_uplifters_device_css .= '--uplifters-video-upload-item-margin:' . $uplifters_site_builder_blocks_uplifters_values['margin'] . ';';
-		$uplifters_site_builder_blocks_uplifters_device_css .= '--uplifters-video-upload-item-ratio:' . $uplifters_site_builder_blocks_uplifters_values['width'] . ' / ' . $uplifters_site_builder_blocks_uplifters_values['height'] . ';';
-		$uplifters_site_builder_blocks_uplifters_device_css .= '}';
+	$uplifters_site_builder_blocks_uplifters_radius = uplifters_site_builder_blocks_video_upload_length(
+		uplifters_site_builder_blocks_video_upload_responsive_value(
+			isset( $attributes['borderRadius'] ) ? $attributes['borderRadius'] : null,
+			$uplifters_site_builder_blocks_uplifters_device,
+			''
+		)
+	);
+
+	if ( '' !== $uplifters_site_builder_blocks_uplifters_radius ) {
+		$uplifters_site_builder_blocks_uplifters_declarations .= '--uplifters-video-upload-radius:' . $uplifters_site_builder_blocks_uplifters_radius . ';';
 	}
 
-	if ( '' === $uplifters_site_builder_blocks_uplifters_media_query ) {
-		$uplifters_site_builder_blocks_uplifters_css .= $uplifters_site_builder_blocks_uplifters_device_css;
+	if ( '' === $uplifters_site_builder_blocks_uplifters_declarations ) {
 		continue;
 	}
 
-	$uplifters_site_builder_blocks_uplifters_css .= '@media ' . $uplifters_site_builder_blocks_uplifters_media_query . '{';
-	$uplifters_site_builder_blocks_uplifters_css .= $uplifters_site_builder_blocks_uplifters_device_css;
-	$uplifters_site_builder_blocks_uplifters_css .= '}';
+	$uplifters_site_builder_blocks_uplifters_rule = '#' . $uplifters_site_builder_blocks_uplifters_unique_id . '.uplifters-video-upload{' . $uplifters_site_builder_blocks_uplifters_declarations . '}';
+
+	if ( '' === $uplifters_site_builder_blocks_uplifters_media_query ) {
+		$uplifters_site_builder_blocks_uplifters_css .= $uplifters_site_builder_blocks_uplifters_rule;
+		continue;
+	}
+
+	$uplifters_site_builder_blocks_uplifters_css .= '@media ' . $uplifters_site_builder_blocks_uplifters_media_query . '{' . $uplifters_site_builder_blocks_uplifters_rule . '}';
 }
 
-$uplifters_site_builder_blocks_uplifters_css = wp_strip_all_tags( $uplifters_site_builder_blocks_uplifters_css );
-
-\UpliftersSiteBuilderBlocks\BlocksRoute\BlocksDynamicStyleGenerator::enqueue( $block, $uplifters_site_builder_blocks_uplifters_css );
+\UpliftersSiteBuilderBlocks\BlocksRoute\BlocksDynamicStyleGenerator::enqueue(
+	$block,
+	wp_strip_all_tags( $uplifters_site_builder_blocks_uplifters_css )
+);
 
 $uplifters_site_builder_blocks_uplifters_wrapper_attributes = get_block_wrapper_attributes(
 	array(
@@ -246,16 +257,10 @@ $uplifters_site_builder_blocks_uplifters_wrapper_attributes = get_block_wrapper_
 	// leaves that string unchanged and satisfies static analysis.
 	echo wp_kses( $uplifters_site_builder_blocks_uplifters_wrapper_attributes, array() );
 ?>>
-	<div class="uplifters-video-upload__grid">
-		<?php foreach ( $uplifters_site_builder_blocks_uplifters_items as $uplifters_site_builder_blocks_uplifters_index => $uplifters_site_builder_blocks_uplifters_item ) : ?>
-			<div class="uplifters-video-upload__item uplifters-video-upload__item--<?php echo (int) $uplifters_site_builder_blocks_uplifters_index; ?>">
-				<video
-					class="uplifters-video-upload__video"
-					src="<?php echo esc_url( $uplifters_site_builder_blocks_uplifters_item['url'] ); ?>"
-					controls
-					preload="metadata"
-				></video>
-			</div>
-		<?php endforeach; ?>
-	</div>
+	<video
+		class="uplifters-video-upload__video"
+		src="<?php echo esc_url( $uplifters_site_builder_blocks_uplifters_url ); ?>"
+		controls
+		preload="metadata"
+	></video>
 </div>

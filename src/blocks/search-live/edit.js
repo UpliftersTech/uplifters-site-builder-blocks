@@ -1,4 +1,4 @@
-import InserterPreview from '../../blocks-inserter-preview/inserter-preview';
+import InserterPreview from '../../blocks-inserter-preview/inserter-preview-shared';
 import { searchContent } from "../../api-requests";
 import { __ } from '@wordpress/i18n';
 

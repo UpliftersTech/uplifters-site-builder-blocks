@@ -1,4 +1,4 @@
-import InserterPreview from '../../blocks-inserter-preview/inserter-preview';
+import InserterPreview from '../../blocks-inserter-preview/inserter-preview-shared';
 import './editor.scss';
 import { __ } from '@wordpress/i18n';
 import { InspectorControls, useBlockProps } from "@wordpress/block-editor";

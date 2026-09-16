@@ -1,24 +1,27 @@
-import InserterPreview from '../../blocks-inserter-preview/inserter-preview';
-import { __, sprintf } from '@wordpress/i18n';
+import InserterPreview from '../../blocks-inserter-preview/inserter-preview-shared';
+import { __ } from '@wordpress/i18n';
 import {
 	useBlockProps,
 	InspectorControls,
 	MediaUpload,
 	MediaUploadCheck,
+	BlockControls,
 } from '@wordpress/block-editor';
 import {
 	PanelBody,
 	Button,
-	RangeControl,
-	TextControl,
 	Placeholder,
-	Flex,
-	FlexItem,
 	Icon,
+	ToolbarGroup,
+	ToolbarButton,
+	BoxControl,
+	RangeControl,
 } from '@wordpress/components';
-import { useEffect, useMemo, useState } from '@wordpress/element';
+import { useEffect, useState } from '@wordpress/element';
 
 import './editor.scss';
+
+const EMPTY_BOX = { top: '', right: '', bottom: '', left: '' };
 
 function getCurrentDevice() {
 	if (
@@ -51,14 +54,22 @@ function getResponsiveValue(value, device, fallback) {
 		return value;
 	}
 
-	const resolved =
-		value[device] ?? value.desktop ?? value.tablet ?? value.mobile;
+	/*
+	 * An unset branch must fall through to the next one rather than resolve to
+	 * an empty string, so the canvas inherits the desktop value on tablet and
+	 * mobile exactly the way render.php does. Nullish coalescing would stop at
+	 * the empty string and show 0 here while the front end showed the desktop
+	 * value.
+	 */
+	const branch = [device, 'desktop', 'tablet', 'mobile'].find((key) => {
+		const candidate = value[key];
 
-	if (resolved === undefined || resolved === null || resolved === '') {
-		return fallback;
-	}
+		return (
+			candidate !== undefined && candidate !== null && candidate !== ''
+		);
+	});
 
-	return resolved;
+	return branch ? value[branch] : fallback;
 }
 
 /**
@@ -91,6 +102,157 @@ function setResponsiveValue(value, device, next) {
 	};
 }
 
+function normalizeBox(box) {
+	return {
+		...EMPTY_BOX,
+		...(box && typeof box === 'object' && !Array.isArray(box) ? box : {}),
+	};
+}
+
+/**
+ * Normalise one side of a box into a CSS length.
+ *
+ * BoxControl normally hands back strings such as "12px", but a bare number can
+ * reach the attribute too. render.php casts with (string), which accepts those,
+ * so anything stricter here would drop values the front end still renders and
+ * leave the canvas out of sync with the published page.
+ *
+ * @param {*} value Raw side value.
+ * @return {string} CSS length, or an empty string when unset.
+ */
+function toCssLength(value) {
+	if (typeof value === 'number') {
+		return Number.isFinite(value) ? `${value}px` : '';
+	}
+
+	if (typeof value !== 'string') {
+		return '';
+	}
+
+	const trimmed = value.trim();
+
+	if (trimmed === '') {
+		return '';
+	}
+
+	return /^-?\d*\.?\d+$/.test(trimmed) ? `${trimmed}px` : trimmed;
+}
+
+/**
+ * True when at least one side of a box carries a value.
+ *
+ * @param {*} box Box to test.
+ * @return {boolean} Whether the box is set.
+ */
+function hasBoxValue(box) {
+	if (!box || typeof box !== 'object') {
+		return false;
+	}
+
+	return ['top', 'right', 'bottom', 'left'].some(
+		(side) => toCssLength(box[side]) !== ''
+	);
+}
+
+/**
+ * Read a responsive four-sided box value for the current device.
+ *
+ * An all-empty branch falls through to the next one, so the canvas inherits
+ * the desktop box on tablet and mobile the same way render.php does.
+ *
+ * @param {*}      value  Attribute value.
+ * @param {string} device Current device.
+ * @return {Object} Box with every side present.
+ */
+function getResponsiveBox(value, device) {
+	if (value && typeof value === 'object' && !Array.isArray(value)) {
+		if ('desktop' in value || 'tablet' in value || 'mobile' in value) {
+			const branch = [device, 'desktop', 'tablet', 'mobile'].find((key) =>
+				hasBoxValue(value[key])
+			);
+
+			return branch ? normalizeBox(value[branch]) : normalizeBox();
+		}
+
+		return normalizeBox(value);
+	}
+
+	return normalizeBox();
+}
+
+/**
+ * Write a responsive four-sided box value for the current device only.
+ *
+ * @param {*}      value  Current attribute value.
+ * @param {string} device Current device.
+ * @param {Object} next   New box for that device.
+ * @return {Object} Updated responsive object.
+ */
+function setResponsiveBox(value, device, next) {
+	const base =
+		value &&
+		typeof value === 'object' &&
+		!Array.isArray(value) &&
+		('desktop' in value || 'tablet' in value || 'mobile' in value)
+			? value
+			: { desktop: normalizeBox(value) };
+
+	return {
+		...base,
+		[device]: normalizeBox(next),
+	};
+}
+
+/**
+ * Turn a box into wrapper styles.
+ *
+ * Each side is emitted twice: once as an inline longhand, and once as a custom
+ * property that editor.scss reads back. The longhand alone is enough on the
+ * front end, but in the canvas the custom property is the path that reliably
+ * survives — it is how the border radius already reaches the element — so both
+ * are written and whichever applies wins with the same value.
+ *
+ * @param {string} prefix    Inline style prefix ( padding or margin ).
+ * @param {Object} box       Box values.
+ * @param {string} varPrefix Custom property prefix.
+ * @return {Object} React style object.
+ */
+function boxToStyle(prefix, box, varPrefix) {
+	if (!box) {
+		return {};
+	}
+
+	const style = {};
+	const map = { top: 'Top', right: 'Right', bottom: 'Bottom', left: 'Left' };
+
+	Object.keys(map).forEach((side) => {
+		const value = toCssLength(box[side]);
+
+		if (value === '') {
+			return;
+		}
+
+		style[`${prefix}${map[side]}`] = value;
+		style[`${varPrefix}-${side}`] = value;
+	});
+
+	return style;
+}
+
+/**
+ * Turn a stored CSS length such as "12px" into the plain number a
+ * RangeControl works with.
+ *
+ * @param {*}      value    Stored value.
+ * @param {number} fallback Fallback number.
+ * @return {number} Parsed number.
+ */
+function lengthToNumber(value, fallback = 0) {
+	const parsed = parseFloat(value);
+
+	return Number.isFinite(parsed) ? parsed : fallback;
+}
+
 function DeviceBadge({ device }) {
 	let label = __('Desktop variant', 'uplifters-site-builder-blocks');
 
@@ -102,17 +264,34 @@ function DeviceBadge({ device }) {
 		label = __('Mobile variant', 'uplifters-site-builder-blocks');
 	}
 
-	return (
-		<div className="uplifters-video-upload__device-badge">{label}</div>
-	);
+	return <div className="uplifters-video-upload__device-badge">{label}</div>;
 }
 
 function Editor({ attributes, setAttributes }) {
-	const { videos = [], rows } = attributes;
+	const { url, videos, padding, margin, borderRadius } = attributes;
 
 	const [device, setDevice] = useState(getCurrentDevice());
-	const [openSettingsPanel, setOpenSettingsPanel] = useState(null);
 	const [openStylesPanel, setOpenStylesPanel] = useState(null);
+
+	/**
+	 * Legacy migration.
+	 *
+	 * This block used to hold a grid of videos in a `videos` array. It now
+	 * shows a single full-width video, so the first saved item is promoted
+	 * into `url` and the old array is emptied. The `videos` attribute is kept
+	 * registered purely so already-saved posts still reach this code path.
+	 */
+	useEffect(() => {
+		if (url || !Array.isArray(videos) || videos.length === 0) {
+			return;
+		}
+
+		setAttributes({
+			url: videos[0]?.url || '',
+			videos: [],
+		});
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	useEffect(() => {
 		function handleDeviceChange(event) {
@@ -133,9 +312,7 @@ function Editor({ attributes, setAttributes }) {
 			const nextDevice = getCurrentDevice();
 
 			setDevice((currentDevice) => {
-				return currentDevice !== nextDevice
-					? nextDevice
-					: currentDevice;
+				return currentDevice !== nextDevice ? nextDevice : currentDevice;
 			});
 		}, 500);
 
@@ -149,83 +326,167 @@ function Editor({ attributes, setAttributes }) {
 		};
 	}, []);
 
+	const currentPadding = getResponsiveBox(padding, device);
+	const currentMargin = getResponsiveBox(margin, device);
+	const currentRadius = getResponsiveValue(borderRadius, device, '');
+
+	/*
+	 * The has-* classes gate the editor.scss rules that read the custom
+	 * properties below. Without them an unset margin would resolve to 0 and
+	 * flatten the theme's own block spacing in the canvas.
+	 */
 	const blockProps = useBlockProps({
-		className: `uplifters-video-upload uplifters-video-upload--device-${device}`,
+		className: [
+			'uplifters-video-upload',
+			`uplifters-video-upload--device-${device}`,
+			hasBoxValue(currentPadding)
+				? 'has-uplifters-video-upload-padding'
+				: '',
+			hasBoxValue(currentMargin)
+				? 'has-uplifters-video-upload-margin'
+				: '',
+		]
+			.filter(Boolean)
+			.join(' '),
+		style: {
+			...boxToStyle(
+				'padding',
+				currentPadding,
+				'--uplifters-video-upload-padding'
+			),
+			...boxToStyle(
+				'margin',
+				currentMargin,
+				'--uplifters-video-upload-margin'
+			),
+			'--uplifters-video-upload-radius': currentRadius || '0px',
+		},
 	});
 
-	const unitToRem = (unit) => {
-		const n = Number(unit);
-		if (!Number.isFinite(n) || n < 0) {
-			return 0;
-		}
-		return n * 0.25;
-	};
-
-	const currentRows = getResponsiveValue(rows, device, 1);
-
-	const cols = useMemo(
-		() => Math.max(1, Math.min(6, Number(currentRows) || 1)),
-		[currentRows]
-	);
-
-	/**
-	 * Update a responsive key on a single video item.
-	 *
-	 * @param {number} index Video index.
-	 * @param {string} key   Attribute key.
-	 * @param {*}      value New value for the current device.
-	 */
-	const updateVideoResponsive = (index, key, value) => {
-		const newVideos = [...videos];
-
-		newVideos[index] = {
-			...newVideos[index],
-			[key]: setResponsiveValue(
-				newVideos[index]?.[key],
-				device,
-				value
-			),
-		};
-
-		setAttributes({ videos: newVideos });
-	};
-
-	const removeVideo = (index) => {
-		const newVideos = videos.filter((_, i) => i !== index);
-		setAttributes({ videos: newVideos });
-	};
-
-	const addVideo = (media) => {
+	const selectVideo = (media) => {
 		if (!media || !media.url) {
 			return;
 		}
 
-		setAttributes({
-			videos: [
-				...videos,
-				{
-					url: media.url,
-					width: { desktop: 320, tablet: 320, mobile: 320 },
-					height: { desktop: 180, tablet: 180, mobile: 180 },
-					padding: { desktop: 2, tablet: 2, mobile: 2 },
-					margin: { desktop: 2, tablet: 2, mobile: 2 },
-				},
-			],
-		});
+		setAttributes({ url: media.url });
+	};
+
+	const removeVideo = () => {
+		setAttributes({ url: '' });
 	};
 
 	return (
 		<>
+			{url ? (
+				<BlockControls group="other">
+					<ToolbarGroup>
+						<MediaUploadCheck>
+							<MediaUpload
+								onSelect={selectVideo}
+								allowedTypes={['video']}
+								render={({ open }) => (
+									<ToolbarButton onClick={open}>
+										{__(
+											'Replace',
+											'uplifters-site-builder-blocks'
+										)}
+									</ToolbarButton>
+								)}
+							/>
+						</MediaUploadCheck>
+					</ToolbarGroup>
+				</BlockControls>
+			) : null}
+
 			<InspectorControls group="settings">
 				<PanelBody
-					title={__('Settings', 'uplifters-site-builder-blocks')}
+					title={__('Video', 'uplifters-site-builder-blocks')}
+					initialOpen={true}
+				>
+					<MediaUploadCheck>
+						<MediaUpload
+							onSelect={selectVideo}
+							allowedTypes={['video']}
+							render={({ open }) => (
+								<Button onClick={open} variant="primary">
+									{url
+										? __(
+												'Replace video',
+												'uplifters-site-builder-blocks'
+										  )
+										: __(
+												'Select video',
+												'uplifters-site-builder-blocks'
+										  )}
+								</Button>
+							)}
+						/>
+					</MediaUploadCheck>
+
+					{url ? (
+						<div className="uplifters-video-upload__control-actions">
+							<Button
+								variant="secondary"
+								isDestructive
+								onClick={removeVideo}
+							>
+								{__(
+									'Remove video',
+									'uplifters-site-builder-blocks'
+								)}
+							</Button>
+						</div>
+					) : null}
+				</PanelBody>
+			</InspectorControls>
+
+			<InspectorControls group="styles">
+				<PanelBody
+					title={__('Spacing', 'uplifters-site-builder-blocks')}
 					initialOpen={false}
-					opened={openSettingsPanel === 'settings'}
+					opened={openStylesPanel === 'spacing'}
 					onToggle={() =>
-						setOpenSettingsPanel(
-							openSettingsPanel === 'settings'
-								? null
-								: 'settings'
+						setOpenStylesPanel(
+							openStylesPanel === 'spacing' ? null : 'spacing'
+						)
+					}
+				>
+					<DeviceBadge device={device} />
+
+					<BoxControl
+						label={__('Padding', 'uplifters-site-builder-blocks')}
+						values={currentPadding}
+						onChange={(next) =>
+							setAttributes({
+								padding: setResponsiveBox(
+									padding,
+									device,
+									next
+								),
+							})
+						}
+					/>
+
+					<div className="uplifters-video-upload__control-gap" />
+
+					<BoxControl
+						label={__('Margin', 'uplifters-site-builder-blocks')}
+						values={currentMargin}
+						onChange={(next) =>
+							setAttributes({
+								margin: setResponsiveBox(margin, device, next),
+							})
+						}
+					/>
+				</PanelBody>
+
+				<PanelBody
+					title={__('Border', 'uplifters-site-builder-blocks')}
+					initialOpen={false}
+					opened={openStylesPanel === 'border'}
+					onToggle={() =>
+						setOpenStylesPanel(
+							openStylesPanel === 'border' ? null : 'border'
 						)
 					}
 				>
@@ -233,246 +494,58 @@ function Editor({ attributes, setAttributes }) {
 
 					<RangeControl
 						label={__(
-							'Videos per row',
+							'Border Radius',
 							'uplifters-site-builder-blocks'
 						)}
-						value={Number(currentRows) || 1}
+						value={lengthToNumber(currentRadius, 0)}
 						onChange={(value) =>
 							setAttributes({
-								rows: setResponsiveValue(
-									rows,
+								borderRadius: setResponsiveValue(
+									borderRadius,
 									device,
-									Math.max(
-										1,
-										Math.min(6, Number(value) || 1)
-									)
+									value && value > 0 ? `${value}px` : ''
 								),
 							})
 						}
-						min={1}
-						max={6}
+						min={0}
+						max={300}
+						step={1}
+						allowReset
+						resetFallbackValue={0}
+						withInputField
 						help={__(
 							'This value is saved for the selected responsive variant.',
 							'uplifters-site-builder-blocks'
 						)}
 					/>
 				</PanelBody>
-
-				{videos.length > 0 &&
-					videos.map((video, index) => (
-						<PanelBody
-							key={index}
-							title={sprintf(
-								/* translators: %d: video number. */
-								__(
-									'Video %d Settings',
-									'uplifters-site-builder-blocks'
-								),
-								index + 1
-							)}
-							initialOpen={false}
-							opened={openSettingsPanel === index}
-							onToggle={() =>
-								setOpenSettingsPanel(
-									openSettingsPanel === index ? null : index
-								)
-							}
-						>
-							<DeviceBadge device={device} />
-
-							<TextControl
-								label={__(
-									'Aspect Ratio Width',
-									'uplifters-site-builder-blocks'
-								)}
-								help={__(
-									'Used to calculate aspect ratio',
-									'uplifters-site-builder-blocks'
-								)}
-								type="number"
-								value={getResponsiveValue(
-									video?.width,
-									device,
-									320
-								)}
-								onChange={(val) =>
-									updateVideoResponsive(
-										index,
-										'width',
-										Math.max(1, parseInt(val, 10) || 1)
-									)
-								}
-							/>
-							<TextControl
-								label={__(
-									'Aspect Ratio Height',
-									'uplifters-site-builder-blocks'
-								)}
-								help={__(
-									'Used to calculate aspect ratio',
-									'uplifters-site-builder-blocks'
-								)}
-								type="number"
-								value={getResponsiveValue(
-									video?.height,
-									device,
-									180
-								)}
-								onChange={(val) =>
-									updateVideoResponsive(
-										index,
-										'height',
-										Math.max(1, parseInt(val, 10) || 1)
-									)
-								}
-							/>
-
-							<div className="uplifters-video-upload__control-actions">
-								<Button
-									variant="secondary"
-									isDestructive
-									onClick={() => removeVideo(index)}
-								>
-									{__(
-										'Remove this video',
-										'uplifters-site-builder-blocks'
-									)}
-								</Button>
-							</div>
-						</PanelBody>
-					))}
-
-				<PanelBody
-					title={__('Add Video', 'uplifters-site-builder-blocks')}
-					initialOpen={false}
-					opened={openSettingsPanel === 'add'}
-					onToggle={() =>
-						setOpenSettingsPanel(
-							openSettingsPanel === 'add' ? null : 'add'
-						)
-					}
-				>
-					<MediaUploadCheck>
-						<MediaUpload
-							onSelect={addVideo}
-							allowedTypes={['video']}
-							render={({ open }) => (
-								<Button onClick={open} variant="primary">
-									{__(
-										'Add Video',
-										'uplifters-site-builder-blocks'
-									)}
-								</Button>
-							)}
-						/>
-					</MediaUploadCheck>
-				</PanelBody>
-			</InspectorControls>
-
-			<InspectorControls group="styles">
-				<PanelBody
-					title={__('Dimentions', 'uplifters-site-builder-blocks')}
-					initialOpen={false}
-				>
-					<DeviceBadge device={device} />
-
-					{videos.length > 0 ? (
-						videos.map((video, index) => (
-							<PanelBody
-								key={index}
-								title={sprintf(
-									/* translators: %d: video number. */
-									__(
-										'Video %d Styles',
-										'uplifters-site-builder-blocks'
-									),
-									index + 1
-								)}
-								initialOpen={false}
-								opened={openStylesPanel === index}
-								onToggle={() =>
-									setOpenStylesPanel(
-										openStylesPanel === index ? null : index
-									)
-								}
-							>
-								<TextControl
-									label={__(
-										'Padding (spacing unit)',
-										'uplifters-site-builder-blocks'
-									)}
-									help={__(
-										'1 = 0.25rem',
-										'uplifters-site-builder-blocks'
-									)}
-									type="number"
-									value={getResponsiveValue(
-										video?.padding,
-										device,
-										2
-									)}
-									onChange={(val) =>
-										updateVideoResponsive(
-											index,
-											'padding',
-											Math.max(0, parseInt(val, 10) || 0)
-										)
-									}
-								/>
-								<TextControl
-									label={__(
-										'Margin (spacing unit)',
-										'uplifters-site-builder-blocks'
-									)}
-									help={__(
-										'1 = 0.25rem',
-										'uplifters-site-builder-blocks'
-									)}
-									type="number"
-									value={getResponsiveValue(
-										video?.margin,
-										device,
-										2
-									)}
-									onChange={(val) =>
-										updateVideoResponsive(
-											index,
-											'margin',
-											Math.max(0, parseInt(val, 10) || 0)
-										)
-									}
-								/>
-							</PanelBody>
-						))
-					) : (
-						<p className="components-base-control__help">
-							{__(
-								'Add videos first from the Settings tab.',
-								'uplifters-site-builder-blocks'
-							)}
-						</p>
-					)}
-				</PanelBody>
 			</InspectorControls>
 
 			<div {...blockProps}>
-				{videos.length === 0 ? (
+				{url ? (
+					<video
+						className="uplifters-video-upload__video"
+						src={url}
+						controls
+						preload="metadata"
+					/>
+				) : (
 					<Placeholder
 						icon={<Icon icon="video-alt3" />}
 						label={__('Video', 'uplifters-site-builder-blocks')}
 						instructions={__(
-							'Add one or more videos from the Settings panel.',
+							'Select a video from the media library.',
 							'uplifters-site-builder-blocks'
 						)}
 					>
 						<MediaUploadCheck>
 							<MediaUpload
-								onSelect={addVideo}
+								onSelect={selectVideo}
 								allowedTypes={['video']}
 								render={({ open }) => (
 									<Button onClick={open} variant="primary">
 										{__(
-											'Add your first video',
+											'Select video',
 											'uplifters-site-builder-blocks'
 										)}
 									</Button>
@@ -480,78 +553,6 @@ function Editor({ attributes, setAttributes }) {
 							/>
 						</MediaUploadCheck>
 					</Placeholder>
-				) : (
-					<div
-						className="uplifters-video-upload__grid"
-						style={{ '--uplifters-video-upload-cols': cols }}
-					>
-						{videos.map((video, index) => {
-							const w = Math.max(
-								1,
-								Number(
-									getResponsiveValue(
-										video?.width,
-										device,
-										320
-									)
-								) || 320
-							);
-							const h = Math.max(
-								1,
-								Number(
-									getResponsiveValue(
-										video?.height,
-										device,
-										180
-									)
-								) || 180
-							);
-
-							const padRem = unitToRem(
-								getResponsiveValue(video?.padding, device, 0)
-							);
-							const marRem = unitToRem(
-								getResponsiveValue(video?.margin, device, 0)
-							);
-
-							return (
-								<div
-									key={index}
-									className="uplifters-video-upload__item"
-									style={{
-										'--uplifters-video-upload-item-padding': `${padRem}rem`,
-										'--uplifters-video-upload-item-margin': `${marRem}rem`,
-										'--uplifters-video-upload-item-ratio': `${w} / ${h}`,
-									}}
-								>
-									<video
-										className="uplifters-video-upload__video"
-										src={video?.url}
-										controls
-										preload="metadata"
-									/>
-
-									<Flex className="uplifters-video-upload__item-actions">
-										<FlexItem>
-											<Button
-												variant="secondary"
-												size="small"
-												onClick={() =>
-													removeVideo(index)
-												}
-												isDestructive
-											>
-												{__(
-													'Remove',
-													'uplifters-site-builder-blocks'
-												)}
-											</Button>
-										</FlexItem>
-									</Flex>
-								</div>
-							);
-						})}
-					</div>
 				)}
 			</div>
 		</>

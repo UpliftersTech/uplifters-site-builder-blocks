@@ -126,7 +126,7 @@ function Hero({ siteEditorUrl = '#', setActiveTab = () => {}, reduceMotion = fal
 						<Dashicon icon="edit-page" />{__('Open Site Editor', 'uplifters-site-builder-blocks')}
 					</motion.a>
 					<motion.button className="uplifters-site-builder-blocks-button uplifters-site-builder-blocks-button-secondary" type="button" onClick={() => setActiveTab('blocks')} whileHover={reduceMotion ? undefined : { y: -2 }} whileTap={reduceMotion ? undefined : { scale: 0.965 }}>
-						{__('Explore 41 Blocks', 'uplifters-site-builder-blocks')}<Dashicon icon="arrow-right-alt2" />
+						{__('Explore 42 Blocks', 'uplifters-site-builder-blocks')}<Dashicon icon="arrow-right-alt2" />
 					</motion.button>
 				</motion.div>
 			</motion.div>

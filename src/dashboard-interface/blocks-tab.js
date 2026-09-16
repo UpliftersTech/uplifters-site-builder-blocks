@@ -1,7 +1,7 @@
 import { useMemo, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { AnimatePresence, motion } from 'motion/react';
-import { AccordionIconCustom, BlockOnBackground, ButtonSingle, ColumnLayout, CopyrightComponentRearrange, CountdownWithMsg, CountupAutoAnimate, FooterLayout, HeaderLayout, HeadingAdvance, ImageGallery, ImageIntervalCover, ImageMarquee, ImageSingle, LoadingScreenAnimate, LocationMap, PageGrid, PageNav, PopupScrollModal, PostsCommentForm, PostsCommentList, PostsFeaturedImage, PostsLayout, PostsList, PostsMetadata, PostsPreviousNext, PostsRelated, PostsSocialShare, PostsTitle, RowLayout, ScrollToTop, SearchLive, ShapeDivider, SiteLogo, SocialIcon, SpaceAround, TeamMember, TestimonialCarousel, TextListIcon, VideoEmbed, VideoUpload } from '../assets-shared/icon-blocks';
+import { AccordionIconCustom, BlockOnBackground, ButtonSingle, ColumnLayout, CopyrightComponentRearrange, CountdownWithMsg, CountupAutoAnimate, FooterLayout, HeaderLayout, HeadingAdvance, ImageGallery, ImageIntervalCover, ImageMarquee, ImageSingle, LoadingScreenAnimate, LocationMap, PageGrid, PageNav, ParagraphAdvance, PopupScrollModal, PostsCommentForm, PostsCommentList, PostsFeaturedImage, PostsLayout, PostsList, PostsMetadata, PostsPreviousNext, PostsRelated, PostsSocialShare, PostsTitle, RowLayout, ScrollToTop, SearchLive, ShapeDivider, SiteLogo, SocialIcon, SpaceAround, TeamMember, TestimonialCarousel, TextListIcon, VideoEmbed, VideoUpload } from '../assets-shared/icon-blocks';
 
 import { Dashicon, EASE, panelEnterProps } from './dashboard-header';
 
@@ -35,13 +35,14 @@ export const defaultBlocks = [
 	createBlock({ slug: 'countup-auto-animate', name: 'Countup Animation', description: 'Present multiple statistics with numbers that animate automatically into view.', icon: <CountupAutoAnimate /> }),
 	createBlock({ slug: 'image-interval-cover', name: 'Cover Slideshow', description: 'Display a responsive animated image grid with captions and slide indicators.', icon: <ImageIntervalCover /> }),
 	createBlock({ slug: 'footer-layout', name: 'Footer Layout', description: 'Build a responsive site footer using logo, page links, social icons, and copyright content.', icon: <FooterLayout />, parent: true }),
-	createBlock({ slug: 'heading-advance', name: 'Heading & Text', description: 'Add a heading and body text with responsive typography and styling controls.', icon: <HeadingAdvance /> }),
+	createBlock({ slug: 'heading-advance', name: 'Advance Heading', description: 'Add a heading with responsive typography and styling controls.', icon: <HeadingAdvance /> }),
 	createBlock({ slug: 'image-single', name: 'Custom Image', description: 'Display a responsive image with caption, link, sizing, and styling options.', icon: <ImageSingle /> }),
 	createBlock({ slug: 'image-gallery', name: 'Image Gallery', description: 'Create a responsive gallery with clickable images and preview links.', icon: <ImageGallery /> }),
 	createBlock({ slug: 'image-marquee', name: 'Image Ticker', description: 'Display images in a continuously scrolling, responsive marquee.', icon: <ImageMarquee /> }),
 	createBlock({ slug: 'loading-screen-animate', name: 'Animated Loading Screen', description: 'Show a customizable loading overlay while the page is being prepared.', icon: <LoadingScreenAnimate /> }),
 	createBlock({ slug: 'page-grid', name: 'Selected Pages Grid', description: 'Display selected site pages as a responsive grid of linked page titles.', icon: <PageGrid /> }),
 	createBlock({ slug: 'page-nav', name: 'Page Menu', description: 'Create a responsive navigation menu from selected WordPress pages.', icon: <PageNav /> }),
+	createBlock({ slug: 'paragraph-advance', name: 'Advance Text', description: 'Add a paragraph and body text with responsive typography and styling controls.', icon: <ParagraphAdvance /> }),
 	createBlock({ slug: 'popup-scroll-modal', name: 'Scroll Popup Modal', description: 'Display customizable block content in a popup after the visitor scrolls a set distance.', icon: <PopupScrollModal /> }),
 	createBlock({ slug: 'posts-featured-image', name: 'Post Featured Image', description: 'Style the featured image of the post this block is placed in.', icon: <PostsFeaturedImage /> }),
 	createBlock({ slug: 'posts-list', name: 'Post List', description: 'Display WordPress posts in customizable list, grid, or compact layouts.', icon: <PostsList /> }),
@@ -59,8 +60,8 @@ export const defaultBlocks = [
 	createBlock({ slug: 'team-member', name: 'Team Members', description: 'Present team member photos, names, and roles in customizable profile cards.', icon: <TeamMember /> }),
 	createBlock({ slug: 'testimonial-carousel', name: 'Testimonial Carousel', description: 'Display customer testimonials in a responsive carousel with autoplay and navigation.', icon: <TestimonialCarousel /> }),
 	createBlock({ slug: 'text-list-icon', name: 'Text List Icon', description: 'Create a responsive text list with customizable icons, symbols, or markers.', icon: <TextListIcon /> }),
-	createBlock({ slug: 'video-embed', name: 'Video Embed', description: 'Display multiple embedded videos (YouTube, Vimeo, etc.) in a responsive grid.', icon: <VideoEmbed /> }),
-	createBlock({ slug: 'video-upload', name: 'Upload Video', description: 'Multiple videos grid with per-item sizing and spacing.', icon: <VideoUpload /> }),
+	createBlock({ slug: 'video-embed', name: 'Video Embed', description: 'A single embedded video (YouTube, Vimeo, etc.) shown at the full width of its container.', icon: <VideoEmbed /> }),
+	createBlock({ slug: 'video-upload', name: 'Upload Video', description: 'A single uploaded video shown at the full width of its container.', icon: <VideoUpload /> }),
 	createBlock({ slug: 'posts-layout', name: 'Posts Layout', description: 'A dynamic parent layout block for building post templates with responsive inner blocks.', icon: <PostsLayout />, parent: true }),
 	];
 

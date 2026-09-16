@@ -1,6 +1,56 @@
 /**
- * This block registers this stylesheet only so WordPress auto-registers a
- * style handle for it (block.json "style"). All actual CSS for this block is
- * generated per instance in render.php and attached to that handle via
- * wp_add_inline_style(), instead of printing a raw <style> tag.
+ * Frontend styles for the Video Embed block.
+ *
+ * The block shows a single embed at the full width of its container, with no
+ * card frame around it. Only structural CSS lives here: the responsive
+ * (desktop/tablet/mobile) padding, margin and border radius are generated per
+ * block instance in render.php and attached with wp_add_inline_style() through
+ * BlocksDynamicStyle, so no raw <style> tag is printed and each instance keeps
+ * its own variant values.
  */
+
+.wp-block-uplifters-site-builder-blocks-video-embed,
+.uplifters-site-builder-blocks-video-embed {
+	--uplifters-site-builder-blocks-video-embed-radius: 0px;
+
+	/*
+	 * The wrapper is a block-level element, so it already fills its container
+	 * and does not need an explicit width. Setting width:100% here made the
+	 * Styles panel overflow the page, because a left/right margin pushes a
+	 * full-width box past its container whatever box-sizing says.
+	 */
+	box-sizing: border-box;
+	max-width: 100%;
+
+	*,
+	*::before,
+	*::after {
+		box-sizing: border-box;
+	}
+
+	.uplifters-site-builder-blocks-video-embed-frame {
+		position: relative;
+		overflow: hidden;
+		width: 100%;
+		padding-top: 56.25%;
+		border-radius: var(--uplifters-site-builder-blocks-video-embed-radius);
+		background: #0b1220;
+
+		iframe,
+		video,
+		embed,
+		object {
+			position: absolute !important;
+			inset: 0 !important;
+			display: block !important;
+			width: 100% !important;
+			height: 100% !important;
+			border: 0 !important;
+		}
+	}
+
+	.uplifters-site-builder-blocks-video-embed-fallback-link {
+		overflow-wrap: anywhere;
+		color: currentColor;
+	}
+}

@@ -1,47 +1,40 @@
 /**
- * Frontend and editor shared styles for the Video Grid Uploaded block.
+ * Frontend and editor shared styles for the Upload Video block.
  *
- * Only structural CSS lives here. All responsive (desktop/tablet/mobile)
- * values are generated per block instance in render.php and attached with
- * wp_add_inline_style() through BlocksDynamicStyle, so no raw <style> tag
- * is printed and each instance keeps its own variant values.
+ * The block shows a single video at the full width of its container, with no
+ * card frame around it. Only structural CSS lives here: the responsive
+ * (desktop/tablet/mobile) padding, margin and border radius are generated per
+ * block instance in render.php and attached with wp_add_inline_style() through
+ * BlocksDynamicStyle, so no raw <style> tag is printed and each instance keeps
+ * its own variant values.
  */
 
 .wp-block-uplifters-site-builder-blocks-video-upload,
 .uplifters-video-upload {
-	width: 100%;
+	--uplifters-video-upload-radius: 0px;
 
-	.uplifters-video-upload__grid {
-		--uplifters-video-upload-cols: 1;
-		--uplifters-video-upload-gap: 1rem;
+	/*
+	 * The wrapper is a block-level element, so it already fills its container
+	 * and does not need an explicit width. Setting width:100% here made the
+	 * Styles panel overflow the page: padding was added on top of a full width
+	 * without border-box, and a left/right margin pushed a full-width box past
+	 * its container no matter what box-sizing said. max-width keeps it capped.
+	 */
+	box-sizing: border-box;
+	max-width: 100%;
 
-		display: grid;
-		gap: var(--uplifters-video-upload-gap);
-		grid-template-columns: repeat(
-			var(--uplifters-video-upload-cols),
-			minmax(0, 1fr)
-		);
-	}
-
-	.uplifters-video-upload__item {
-		--uplifters-video-upload-item-padding: 0rem;
-		--uplifters-video-upload-item-margin: 0rem;
-		--uplifters-video-upload-item-ratio: 320 / 180;
-		--uplifters-video-upload-item-radius: 0.375rem;
-		--uplifters-video-upload-item-border: 1px solid #e5e5e5;
-
-		overflow: hidden;
-		padding: var(--uplifters-video-upload-item-padding);
-		margin: var(--uplifters-video-upload-item-margin);
-		border: var(--uplifters-video-upload-item-border);
-		border-radius: var(--uplifters-video-upload-item-radius);
+	*,
+	*::before,
+	*::after {
+		box-sizing: border-box;
 	}
 
 	.uplifters-video-upload__video {
 		display: block;
+		overflow: hidden;
 		width: 100%;
 		max-width: 100%;
 		height: auto;
-		aspect-ratio: var(--uplifters-video-upload-item-ratio);
+		border-radius: var(--uplifters-video-upload-radius);
 	}
 }

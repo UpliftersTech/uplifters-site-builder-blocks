@@ -1,4 +1,4 @@
-import InserterPreview from '../../blocks-inserter-preview/inserter-preview';
+import InserterPreview from '../../blocks-inserter-preview/inserter-preview-shared';
 import { __ } from '@wordpress/i18n';
 
 import {
@@ -9,6 +9,7 @@ import {
 
 import {
 	Button,
+	ColorPalette,
 	PanelBody,
 	RangeControl,
 	SelectControl,
@@ -124,6 +125,39 @@ const resolveGap = ( raw ) => {
 	}
 	const n = Number( raw ) || 0;
 	return { desktop: n, tablet: n, mobile: n };
+};
+
+/**
+ * Given the raw padding/margin attribute (number or { desktop, tablet, mobile }),
+ * return a stable { desktop, tablet, mobile } object of numbers.
+ * @param {number|Object} raw Raw padding/margin attribute value.
+ */
+const resolveSpacing = ( raw ) => {
+	if ( raw !== null && typeof raw === 'object' && ! Array.isArray( raw ) ) {
+		return {
+			desktop: Number( raw.desktop ) || 0,
+			tablet: Number( raw.tablet ) || 0,
+			mobile: Number( raw.mobile ) || 0,
+		};
+	}
+	const n = Number( raw ) || 0;
+	return { desktop: n, tablet: n, mobile: n };
+};
+
+/**
+ * Given the raw backgroundColor attribute ({ desktop, tablet, mobile }),
+ * return a stable { desktop, tablet, mobile } object of color strings.
+ * @param {Object|undefined} raw Raw backgroundColor attribute value.
+ */
+const resolveBackgroundColor = ( raw ) => {
+	if ( raw !== null && typeof raw === 'object' && ! Array.isArray( raw ) ) {
+		return {
+			desktop: raw.desktop || '',
+			tablet: raw.tablet || '',
+			mobile: raw.mobile || '',
+		};
+	}
+	return { desktop: '', tablet: '', mobile: '' };
 };
 
 // ─── Global Responsive Device Hook ───────────────────────────────────────────
@@ -253,6 +287,9 @@ function Editor( { attributes, setAttributes, clientId } ) {
 		sections = 0,
 		gap = { desktop: 0, tablet: 0, mobile: 0 },
 		columnWidths = { desktop: [], tablet: [], mobile: [] },
+		padding = { desktop: 0, tablet: 0, mobile: 0 },
+		margin = { desktop: 0, tablet: 0, mobile: 0 },
+		backgroundColor = { desktop: '', tablet: '', mobile: '' },
 	} = attributes;
 
 	const device = useGlobalResponsiveDevice();
@@ -277,9 +314,24 @@ function Editor( { attributes, setAttributes, clientId } ) {
 
 	const gapKey = JSON.stringify( gap );
 	const columnWidthsKey = JSON.stringify( columnWidths );
+	const paddingKey = JSON.stringify( padding );
+	const marginKey = JSON.stringify( margin );
+	const backgroundColorKey = JSON.stringify( backgroundColor );
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const gapObj = useMemo( () => resolveGap( gap ), [ gapKey ] );
+
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	const paddingObj = useMemo( () => resolveSpacing( padding ), [ paddingKey ] );
+
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	const marginObj = useMemo( () => resolveSpacing( margin ), [ marginKey ] );
+
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	const backgroundColorObj = useMemo(
+		() => resolveBackgroundColor( backgroundColor ),
+		[ backgroundColorKey ]
+	);
 
 	const columnWidthsObj = useMemo(
 		() => resolveColumnWidths( columnWidths, columnCount ),
@@ -289,6 +341,9 @@ function Editor( { attributes, setAttributes, clientId } ) {
 
 	// Active-device slices (primitive / stable references)
 	const currentGap = gapObj[ device ] ?? 0;
+	const currentPadding = paddingObj[ device ] ?? 0;
+	const currentMargin = marginObj[ device ] ?? 0;
+	const currentBackgroundColor = backgroundColorObj[ device ] ?? '';
 	const activeWidths =
 		columnWidthsObj[ device ] ?? getEqualWidths( columnCount );
 	const normalizedWidths = useMemo(
@@ -304,6 +359,24 @@ function Editor( { attributes, setAttributes, clientId } ) {
 	const setGapForDevice = ( value ) => {
 		setAttributes( {
 			gap: { ...gapObj, [ device ]: Number( value ) || 0 },
+		} );
+	};
+
+	const setPaddingForDevice = ( value ) => {
+		setAttributes( {
+			padding: { ...paddingObj, [ device ]: Number( value ) || 0 },
+		} );
+	};
+
+	const setMarginForDevice = ( value ) => {
+		setAttributes( {
+			margin: { ...marginObj, [ device ]: Number( value ) || 0 },
+		} );
+	};
+
+	const setBackgroundColorForDevice = ( value ) => {
+		setAttributes( {
+			backgroundColor: { ...backgroundColorObj, [ device ]: value || '' },
 		} );
 	};
 
@@ -562,7 +635,9 @@ function Editor( { attributes, setAttributes, clientId } ) {
 				wordBreak: 'break-word',
 				minHeight: '140px',
 				border: '1px dashed #c3c4c7',
-				padding: '12px',
+				padding: `${ currentPadding }px`,
+				margin: `${ currentMargin }px`,
+				backgroundColor: currentBackgroundColor || undefined,
 				position: 'relative',
 		  }
 		: {
@@ -678,13 +753,35 @@ function Editor( { attributes, setAttributes, clientId } ) {
 
 			<InspectorControls group="styles">
 				<PanelBody
-					title={ `${ __(
-						'Layout',
+					title={ `${ deviceLabel } ${ __(
+						'Spacing',
 						'uplifters-site-builder-blocks'
-					) } – ${ deviceLabel }` }
+					) }` }
 					initialOpen={ false }
-					opened={ openStylesPanel === 'layout' }
-					onToggle={ () => toggleStylesPanel( 'layout' ) }
+					opened={ openStylesPanel === 'spacing' }
+					onToggle={ () => toggleStylesPanel( 'spacing' ) }
+				>
+					<RangeControl
+						label={ __( 'Padding', 'uplifters-site-builder-blocks' ) }
+						value={ currentPadding }
+						onChange={ setPaddingForDevice }
+						min={ 0 }
+						max={ 200 }
+						help={ __(
+							'Padding for current device.',
+							'uplifters-site-builder-blocks'
+						) }
+					/>
+				</PanelBody>
+
+				<PanelBody
+					title={ `${ deviceLabel } ${ __(
+						'Layout Spacing',
+						'uplifters-site-builder-blocks'
+					) }` }
+					initialOpen={ false }
+					opened={ openStylesPanel === 'layoutSpacing' }
+					onToggle={ () => toggleStylesPanel( 'layoutSpacing' ) }
 				>
 					<RangeControl
 						label={ __( 'Gap', 'uplifters-site-builder-blocks' ) }
@@ -696,6 +793,36 @@ function Editor( { attributes, setAttributes, clientId } ) {
 							'Gap between columns for current device.',
 							'uplifters-site-builder-blocks'
 						) }
+					/>
+
+					<RangeControl
+						label={ __( 'Margin', 'uplifters-site-builder-blocks' ) }
+						value={ currentMargin }
+						onChange={ setMarginForDevice }
+						min={ 0 }
+						max={ 200 }
+						help={ __(
+							'Margin for current device.',
+							'uplifters-site-builder-blocks'
+						) }
+					/>
+				</PanelBody>
+
+				<PanelBody
+					title={ `${ deviceLabel } ${ __(
+						'Colors',
+						'uplifters-site-builder-blocks'
+					) }` }
+					initialOpen={ false }
+					opened={ openStylesPanel === 'colors' }
+					onToggle={ () => toggleStylesPanel( 'colors' ) }
+				>
+					<p>{ __( 'Background Color', 'uplifters-site-builder-blocks' ) }</p>
+
+					<ColorPalette
+						value={ currentBackgroundColor }
+						onChange={ setBackgroundColorForDevice }
+						enableAlpha
 					/>
 				</PanelBody>
 			</InspectorControls>
@@ -710,8 +837,10 @@ function Editor( { attributes, setAttributes, clientId } ) {
 						style={ {
 							position: 'absolute',
 							left: `${ columnStarts[ index ] + width / 2 }%`,
-							top: '8px',
-							transform: 'translateX(-50%)',
+							// Sit above the block's top edge so the badge does not
+							// cover the column's inserter (plus) icon.
+							top: 0,
+							transform: 'translate(-50%, calc(-100% - 6px))',
 							padding: '3px 8px',
 							borderRadius: '999px',
 							background: 'rgba(30, 30, 30, 0.85)',

@@ -1,9 +1,57 @@
 /**
- * Editor-only styles for the Video Grid Uploaded block.
+ * Editor-only styles for the Upload Video block.
+ *
+ * The canvas rules below intentionally repeat style.scss rather than relying on
+ * it. style.scss reaches the front end through the block's "style" handle, but
+ * inside the editor's iframed canvas that handle is not something this block
+ * controls, and the Styles panel writes the radius as a custom property that
+ * only a rule like this one can read. Declaring them here, in the stylesheet
+ * block.json loads as "editorStyle", is what makes the panel preview live.
  */
+
+.wp-block-uplifters-site-builder-blocks-video-upload {
+	// Mirrors style.scss: no explicit width, so padding and horizontal margin
+	// cannot push the block past its container.
+	box-sizing: border-box;
+	max-width: 100%;
+
+	/*
+	 * Spacing is applied from custom properties rather than relying on the
+	 * inline longhands alone, matching how the radius already reaches the
+	 * canvas. Each rule is gated behind a class the block only adds once that
+	 * side is actually set, so an untouched margin keeps whatever spacing the
+	 * theme gives the block instead of being forced to zero.
+	 */
+	&.has-uplifters-video-upload-padding {
+		padding-top: var(--uplifters-video-upload-padding-top, 0px);
+		padding-right: var(--uplifters-video-upload-padding-right, 0px);
+		padding-bottom: var(--uplifters-video-upload-padding-bottom, 0px);
+		padding-left: var(--uplifters-video-upload-padding-left, 0px);
+	}
+
+	&.has-uplifters-video-upload-margin {
+		margin-top: var(--uplifters-video-upload-margin-top, 0px);
+		margin-right: var(--uplifters-video-upload-margin-right, 0px);
+		margin-bottom: var(--uplifters-video-upload-margin-bottom, 0px);
+		margin-left: var(--uplifters-video-upload-margin-left, 0px);
+	}
+
+	.uplifters-video-upload__video {
+		display: block;
+		overflow: hidden;
+		width: 100%;
+		max-width: 100%;
+		height: auto;
+		border-radius: var(--uplifters-video-upload-radius, 0px);
+	}
+}
 
 .uplifters-video-upload__control-actions {
 	margin-top: 8px;
+}
+
+.uplifters-video-upload__control-gap {
+	height: 12px;
 }
 
 .uplifters-video-upload__device-badge {
@@ -17,10 +65,4 @@
 	color: #1e1e1e;
 	font-size: 12px;
 	font-weight: 600;
-}
-
-.wp-block-uplifters-site-builder-blocks-video-upload {
-	.uplifters-video-upload__item-actions {
-		margin-top: 0.5rem;
-	}
 }

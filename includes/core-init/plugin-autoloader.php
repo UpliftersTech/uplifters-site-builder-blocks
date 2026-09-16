@@ -40,10 +40,10 @@ final class PluginAutoloader {
 		$directories    = array(
 			'DashboardSidebar' => 'dashboard-sidebar',
 			'AssetsEnqueue'    => 'assets-enqueue',
+			'BlocksHelper'     => 'blocks-helper',
 			'BlocksRoute'      => 'blocks-route',
 			'CoreInit'         => 'core-init',
 			'EditorInject'     => 'editor-inject',
-			'PostsEnhance'     => 'posts-enhance',
 			'ResponsiveGlobal' => 'responsive-global',
 			'SecurityLayer' => 'security-layer',
 		);

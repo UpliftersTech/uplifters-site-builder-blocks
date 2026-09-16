@@ -1,5 +1,63 @@
+/**
+ * Editor-only styles for the Video Embed block.
+ *
+ * The frame rules below intentionally repeat style.scss rather than relying on
+ * it. style.scss reaches the front end through the block's "style" handle, but
+ * inside the editor's iframed canvas that handle is not something this block
+ * controls, and the Styles panel writes the radius as a custom property that
+ * only a rule like this one can read. Declaring them here, in the stylesheet
+ * block.json loads as "editorStyle", is what makes the panel preview live.
+ */
+
+.wp-block-uplifters-site-builder-blocks-video-embed .uplifters-site-builder-blocks-video-embed-frame {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  padding-top: 56.25%;
+  border-radius: var(--uplifters-site-builder-blocks-video-embed-radius, 0px);
+  background: #0b1220;
+}
+
+.wp-block-uplifters-site-builder-blocks-video-embed .uplifters-site-builder-blocks-video-embed-frame iframe,
+.wp-block-uplifters-site-builder-blocks-video-embed .uplifters-site-builder-blocks-video-embed-frame video,
+.wp-block-uplifters-site-builder-blocks-video-embed .uplifters-site-builder-blocks-video-embed-frame embed,
+.wp-block-uplifters-site-builder-blocks-video-embed .uplifters-site-builder-blocks-video-embed-frame object {
+  position: absolute !important;
+  inset: 0 !important;
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  border: 0 !important;
+}
+
+/*
+ * Mirrors style.scss: no explicit width, so padding and horizontal margin
+ * cannot push the block past its container.
+ */
 .wp-block-uplifters-site-builder-blocks-video-embed {
   box-sizing: border-box;
+  max-width: 100%;
+}
+
+/*
+ * Spacing is applied from custom properties rather than relying on the inline
+ * longhands alone, matching how the radius already reaches the canvas. Each
+ * rule is gated behind a class the block only adds once that side is actually
+ * set, so an untouched margin keeps whatever spacing the theme gives the block
+ * instead of being forced to zero.
+ */
+.wp-block-uplifters-site-builder-blocks-video-embed.has-uplifters-site-builder-blocks-video-embed-padding {
+  padding-top: var(--uplifters-site-builder-blocks-video-embed-padding-top, 0px);
+  padding-right: var(--uplifters-site-builder-blocks-video-embed-padding-right, 0px);
+  padding-bottom: var(--uplifters-site-builder-blocks-video-embed-padding-bottom, 0px);
+  padding-left: var(--uplifters-site-builder-blocks-video-embed-padding-left, 0px);
+}
+
+.wp-block-uplifters-site-builder-blocks-video-embed.has-uplifters-site-builder-blocks-video-embed-margin {
+  margin-top: var(--uplifters-site-builder-blocks-video-embed-margin-top, 0px);
+  margin-right: var(--uplifters-site-builder-blocks-video-embed-margin-right, 0px);
+  margin-bottom: var(--uplifters-site-builder-blocks-video-embed-margin-bottom, 0px);
+  margin-left: var(--uplifters-site-builder-blocks-video-embed-margin-left, 0px);
 }
 
 .wp-block-uplifters-site-builder-blocks-video-embed *,
@@ -8,7 +66,12 @@
   box-sizing: border-box;
 }
 
-.wp-block-uplifters-site-builder-blocks-video-embed .uplifters-site-builder-blocks-video-embed-device-badge {
+/**
+ * The device badge is rendered inside InspectorControls, which mounts into the
+ * editor sidebar rather than inside the block wrapper, so this selector must
+ * stay unscoped to reach it.
+ */
+.uplifters-site-builder-blocks-video-embed-device-badge {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -21,108 +84,26 @@
   font-weight: 600;
 }
 
-.wp-block-uplifters-site-builder-blocks-video-embed .uplifters-site-builder-blocks-video-embed-editor-shell {
-  border: 1px solid #e2e8f0;
-  border-radius: 16px;
-  background: #ffffff;
+.wp-block-uplifters-site-builder-blocks-video-embed .uplifters-site-builder-blocks-video-embed-setup {
+  border: 1px dashed #cbd5e1;
+  border-radius: 8px;
+  background: #f8fafc;
   padding: 16px;
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
-}
-
-.wp-block-uplifters-site-builder-blocks-video-embed .uplifters-site-builder-blocks-video-embed-editor-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.wp-block-uplifters-site-builder-blocks-video-embed .uplifters-site-builder-blocks-video-embed-editor-title {
-  margin: 0;
-  color: #0f172a;
-  font-size: 16px;
-  font-weight: 600;
-  line-height: 1.4;
-}
-
-.wp-block-uplifters-site-builder-blocks-video-embed .uplifters-site-builder-blocks-video-embed-editor-subtitle {
-  margin: 2px 0 0;
-  color: #64748b;
-  font-size: 12px;
-  line-height: 1.4;
-}
-
-.wp-block-uplifters-site-builder-blocks-video-embed .uplifters-site-builder-blocks-video-embed-control-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
 }
 
 .wp-block-uplifters-site-builder-blocks-video-embed .uplifters-site-builder-blocks-video-embed-control-help {
   margin: 0;
-  color: rgba(15, 23, 42, 0.8);
-  font-size: 13px;
-  line-height: 1.4;
-}
-
-.wp-block-uplifters-site-builder-blocks-video-embed .uplifters-site-builder-blocks-video-embed-empty {
-  margin-top: 16px;
-  border: 1px dashed #cbd5e1;
-  border-radius: 16px;
-  background: #f8fafc;
-  padding: 24px;
   color: #475569;
-  font-size: 13px;
+  font-size: 12px;
   line-height: 1.5;
-  text-align: center;
 }
 
-.wp-block-uplifters-site-builder-blocks-video-embed .uplifters-site-builder-blocks-video-embed-grid {
-  display: grid;
-  gap: 16px;
-  grid-template-columns: repeat(var(--uplifters-site-builder-blocks-video-embed-cols, 1), minmax(0, 1fr));
-  margin-top: 16px;
-}
-
-.wp-block-uplifters-site-builder-blocks-video-embed .uplifters-site-builder-blocks-video-embed-card {
-  min-width: 0;
-  border: 1px solid #e2e8f0;
-  border-radius: 16px;
-  background: #ffffff;
-  padding: 12px;
-}
-
-.wp-block-uplifters-site-builder-blocks-video-embed .uplifters-site-builder-blocks-video-embed-card.is-selected {
-  border-color: #3b82f6;
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
-}
-
-.wp-block-uplifters-site-builder-blocks-video-embed .uplifters-site-builder-blocks-video-embed-card-header {
+.wp-block-uplifters-site-builder-blocks-video-embed .uplifters-site-builder-blocks-video-embed-meta {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
   margin-bottom: 8px;
-}
-
-.wp-block-uplifters-site-builder-blocks-video-embed .uplifters-site-builder-blocks-video-embed-card-title {
-  color: #0f172a;
-  font-size: 13px;
-  font-weight: 500;
-  line-height: 1.4;
-}
-
-.wp-block-uplifters-site-builder-blocks-video-embed .uplifters-site-builder-blocks-video-embed-card-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.wp-block-uplifters-site-builder-blocks-video-embed .uplifters-site-builder-blocks-video-embed-card-meta {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  margin-top: 4px;
 }
 
 .wp-block-uplifters-site-builder-blocks-video-embed .uplifters-site-builder-blocks-video-embed-provider {
@@ -141,26 +122,15 @@
 }
 
 .wp-block-uplifters-site-builder-blocks-video-embed .uplifters-site-builder-blocks-video-embed-notice-wrap {
-  margin-top: 12px;
-}
-
-.wp-block-uplifters-site-builder-blocks-video-embed .uplifters-site-builder-blocks-video-embed-preview-box {
-  overflow: hidden;
-  margin-top: 12px;
-  border: 1px solid #e2e8f0;
-  border-radius: 16px;
-  background: #0b1220;
-}
-
-.wp-block-uplifters-site-builder-blocks-video-embed .uplifters-site-builder-blocks-video-embed-preview-box.has-inner-padding {
-  background: #f8fafc;
-  padding: 12px;
+  margin-bottom: 12px;
 }
 
 .wp-block-uplifters-site-builder-blocks-video-embed .uplifters-site-builder-blocks-video-embed-thumb {
   position: relative;
+  overflow: hidden;
   width: 100%;
   padding-top: 56.25%;
+  border-radius: var(--uplifters-site-builder-blocks-video-embed-radius, 0px);
   background: #0b1220;
 }
 
@@ -197,28 +167,9 @@
   fill: #ffffff;
 }
 
-.wp-block-uplifters-site-builder-blocks-video-embed .uplifters-site-builder-blocks-video-embed-frame {
-  position: relative;
-  width: 100%;
-  padding-top: 56.25%;
-}
-
-.wp-block-uplifters-site-builder-blocks-video-embed .uplifters-site-builder-blocks-video-embed-frame iframe,
-.wp-block-uplifters-site-builder-blocks-video-embed .uplifters-site-builder-blocks-video-embed-frame video,
-.wp-block-uplifters-site-builder-blocks-video-embed .uplifters-site-builder-blocks-video-embed-frame embed,
-.wp-block-uplifters-site-builder-blocks-video-embed .uplifters-site-builder-blocks-video-embed-frame object {
-  position: absolute !important;
-  inset: 0 !important;
-  display: block !important;
-  width: 100% !important;
-  height: 100% !important;
-  border: 0 !important;
-}
-
 .wp-block-uplifters-site-builder-blocks-video-embed .uplifters-site-builder-blocks-video-embed-placeholder {
-  margin-top: 12px;
   border: 1px dashed #cbd5e1;
-  border-radius: 16px;
+  border-radius: 8px;
   background: #f8fafc;
   padding: 16px;
   color: #475569;

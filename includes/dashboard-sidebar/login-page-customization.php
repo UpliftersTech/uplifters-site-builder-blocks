@@ -59,7 +59,7 @@ final class LoginPageCustomization {
 			$css .= 'body.login h1 a{background-image:url(' . esc_url($logo_url) . ')!important;background-size:contain!important;width:100%!important;max-width:320px!important;height:80px!important;}';
 		}
 
-		$version = defined('UPLIFTERS_SITE_BUILDER_BLOCKS_VERSION') ? UPLIFTERS_SITE_BUILDER_BLOCKS_VERSION : '1.0.0';
+		$version = defined('UPLIFTERS_SITE_BUILDER_BLOCKS_VERSION') ? UPLIFTERS_SITE_BUILDER_BLOCKS_VERSION : '1.0.2';
 
 		wp_register_style('uplifters-site-builder-blocks-login-customization', false, [], $version);
 		wp_enqueue_style('uplifters-site-builder-blocks-login-customization');
