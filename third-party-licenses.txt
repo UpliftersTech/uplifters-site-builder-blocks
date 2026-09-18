@@ -2,7 +2,7 @@ Uplifters Website Builder Third-Party Software and Asset Notices
 ================================================
 
 This file covers the direct packages, development tools, fonts, and icon
-families identified in the Uplifters Website Builder 1.0.2 source tree. Uplifters Website Builder itself is
+families identified in the Uplifters Website Builder 1.0.3 source tree. Uplifters Website Builder itself is
 Copyright (C) 2026 Uplifters LLC and is licensed under GNU GPL version 2
 or, at your option, any later version. See license.txt.
 
@@ -36,10 +36,12 @@ The icon families used by Uplifters Website Builder are listed in section 4.
 
 WordPress Icons (@wordpress/icons)
 Declared version: ^15.5.0
-Usage: The delete (trash) icon on each row of the Row Layout block in the
-block editor. The icon definitions used are bundled into build/; the SVG
-primitives they render with come from the WordPress-provided wp.primitives
-global.
+Usage: Block editor controls in the Header, Footer, Column, Row, and Posts
+Layout blocks: the add (plus) and delete (trash) buttons for columns and rows,
+and the move up, move down (chevronUp, chevronDown), and reset (undo) buttons
+of the per-device order control. The icon definitions used are bundled into
+build/; the SVG primitives they render with come from the WordPress-provided
+wp.primitives global.
 Copyright: The WordPress Contributors
 License: GNU GPL version 2 or later
 Source: https://github.com/WordPress/gutenberg/tree/trunk/packages/icons
@@ -53,9 +55,9 @@ archive: @wordpress/env and @wordpress/scripts are local tooling only, and
 the four @wordpress/* packages declared below (block-editor, components,
 element, i18n) are externalized by the wp-scripts build to the
 WordPress-provided `wp.*` globals rather than bundled into build/. The source
-also imports api-fetch, blocks, core-data, data, dom-ready, editor, and
-rich-text from @wordpress/*; these are not declared in package.json and are
-externalized to WordPress core globals in the same way.
+also imports api-fetch, blocks, compose, core-data, data, dom-ready, editor,
+and rich-text from @wordpress/*; these are not declared in package.json and
+are externalized to WordPress core globals in the same way.
 
 @wordpress/env
 Declared version: ^11.12.0
@@ -138,12 +140,14 @@ The SIL Open Font License 1.1 text appears in section 8.
 4. Icons used through React Icons
 ---------------------------------
 
-Only the Simple Icons glyphs are imported from the react-icons package at
-runtime (Social Icons block editor). The block, inserter, and dashboard icons
-reproduce artwork from the icon families below as inline SVG, so the upstream
-notices still apply. Repeated uses are listed once. Some icons are reserved
-for the dashboard block catalog even when a particular icon is not rendered
-by the current catalog configuration.
+The Social Icons block editor imports its brand icons from the react-icons
+package: Font Awesome 5 (FaFacebookF, FaGoogle, FaInstagram, FaLinkedinIn,
+FaPinterestP, FaTwitter, FaYoutube) and Simple Icons (SiGithub, SiTiktok,
+SiWhatsapp). The block, inserter, and dashboard icons reproduce artwork from
+the icon families below as inline SVG, so the upstream notices still apply.
+Repeated uses are listed once. Some icons are reserved for the dashboard
+block catalog even when a particular icon is not rendered by the current
+catalog configuration.
 
 Bootstrap Icons (react-icons/bs)
 License: MIT
@@ -241,7 +245,7 @@ upstream notice above applies.
 Uplifters Website Builder brand artwork
 The Uplifters Website Builder admin-sidebar, dashboard, editor-topbar, plugin-page, and
 block-category brand icons are original Uplifters Website Builder assets and are covered by the
-plugin's GNU GPL version 2 or later license. The mark was redrawn in 1.0.2.
+plugin's GNU GPL version 2 or later license. The mark was redrawn in 1.0.3.
 The dashboard, editor-topbar, and block-category copies animate the rising
 arrow with plugin-authored CSS keyframes, which are skipped under
 prefers-reduced-motion; the admin-sidebar copy is a single flat path with no
@@ -372,4 +376,3 @@ ANY CLAIM, DAMAGES OR OTHER LIABILITY, INCLUDING ANY GENERAL, SPECIAL,
 INDIRECT, INCIDENTAL, OR CONSEQUENTIAL DAMAGES, WHETHER IN AN ACTION OF
 CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF THE USE OR INABILITY TO USE
 THE FONT SOFTWARE OR FROM OTHER DEALINGS IN THE FONT SOFTWARE.
-

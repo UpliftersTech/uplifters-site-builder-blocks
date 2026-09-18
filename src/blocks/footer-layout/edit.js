@@ -1,28 +1,53 @@
 import './editor.scss';
-import InserterPreview from '../../blocks-inserter-preview/inserter-preview-shared';
+import InserterPreview from '../../blocks-inserter-preview/inserter-preview-register';
+import ResponsiveOrderControl, {
+	getDocumentMove,
+	getNaturalOrder,
+	getSlotOrder,
+	remapSequence,
+	resolveOrder,
+	useChildOrder,
+	withSlotMoved,
+	withSlotRemoved,
+} from '../../blocks-section-responsive-order/responsive-order';
+
+// eslint-disable-next-line import/no-extraneous-dependencies -- provided by WordPress core at runtime, not an npm dependency
+import { useMergeRefs } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
+
+// eslint-disable-next-line import/no-extraneous-dependencies -- provided by WordPress core at runtime, not an npm dependency
+import { getBlockType } from '@wordpress/blocks';
 import {
 	InspectorControls,
-	InnerBlocks,
+	Inserter,
 	useBlockProps,
+	useInnerBlocksProps,
 } from '@wordpress/block-editor';
 import {
 	ColorPalette,
 	PanelBody,
 	RangeControl,
+	SelectControl,
+	ToggleControl,
 	Button,
-	Modal,
+	Tooltip,
 } from '@wordpress/components';
-import { useEffect, useRef, useState } from '@wordpress/element';
+import { plus, trash } from '@wordpress/icons';
+import { useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { createBlocksFromInnerBlocksTemplate } from '@wordpress/blocks';
 
 const DEVICES = [ 'desktop', 'tablet', 'mobile' ];
 const RESPONSIVE_DEVICE_STORAGE_KEY = 'upliftersSiteBuilderBlocksResponsiveDevice';
 
+const MIN_COLUMN_WIDTH_PX = 8; // about one alphabet/1ch on most fonts
+const MIN_COLUMNS = 1;
+const MAX_COLUMNS = 6;
+
 const RESPONSIVE_DEFAULTS = {
 	padding: 0,
 	margin: 0,
+	gap: 16,
+	height: 0,
 	backgroundColor: '',
 	borderRadius: 0,
 	shadow: 0,
@@ -33,6 +58,35 @@ const DEVICE_LABELS = {
 	tablet: __( 'Tablet', 'uplifters-site-builder-blocks' ),
 	mobile: __( 'Mobile', 'uplifters-site-builder-blocks' ),
 };
+
+const COLUMN_OPTIONS = [
+	{ label: __( '1 Column', 'uplifters-site-builder-blocks' ), value: 1 },
+	{ label: __( '2 Columns', 'uplifters-site-builder-blocks' ), value: 2 },
+	{ label: __( '3 Columns', 'uplifters-site-builder-blocks' ), value: 3 },
+	{ label: __( '4 Columns', 'uplifters-site-builder-blocks' ), value: 4 },
+	{ label: __( '5 Columns', 'uplifters-site-builder-blocks' ), value: 5 },
+	{ label: __( '6 Columns', 'uplifters-site-builder-blocks' ), value: 6 },
+];
+
+const VERTICAL_ALIGNMENT_OPTIONS = [
+	{ label: __( 'Top', 'uplifters-site-builder-blocks' ), value: 'start' },
+	{ label: __( 'Middle', 'uplifters-site-builder-blocks' ), value: 'center' },
+	{ label: __( 'Bottom', 'uplifters-site-builder-blocks' ), value: 'end' },
+];
+
+/**
+ * The columns a Footer Layout starts with. A starting point, not a
+ * restriction: any of them can be deleted and any other block can be added as
+ * a column. The template is re-applied only when the layout is fully empty.
+ */
+const FOOTER_TEMPLATE = [
+	[ 'uplifters-site-builder-blocks/site-logo', {} ],
+	[ 'uplifters-site-builder-blocks/social-icon', {} ],
+	[ 'uplifters-site-builder-blocks/page-grid', {} ],
+	[ 'uplifters-site-builder-blocks/copyright-component-rearrange', {} ],
+];
+
+// ─── Responsive device ────────────────────────────────────────────────────────
 
 const normalizeDevice = ( value ) => {
 	if ( ! value ) {
@@ -79,38 +133,6 @@ const getResponsiveWindowCandidates = () => {
 	return candidates;
 };
 
-const getCurrentResponsiveDeviceFromLocalStorage = () => {
-	if ( typeof window === 'undefined' ) {
-		return null;
-	}
-
-	try {
-		const device = normalizeDevice(
-			window.localStorage.getItem( RESPONSIVE_DEVICE_STORAGE_KEY )
-		);
-
-		if ( device ) {
-			return device;
-		}
-	} catch ( error ) {}
-
-	try {
-		if ( window.parent && window.parent !== window ) {
-			const device = normalizeDevice(
-				window.parent.localStorage.getItem(
-					RESPONSIVE_DEVICE_STORAGE_KEY
-				)
-			);
-
-			if ( device ) {
-				return device;
-			}
-		}
-	} catch ( error ) {}
-
-	return null;
-};
-
 const getCurrentResponsiveDeviceFromWindow = () => {
 	const windows = getResponsiveWindowCandidates();
 
@@ -129,19 +151,20 @@ const getCurrentResponsiveDeviceFromWindow = () => {
 				}
 			}
 
-			if ( currentWindow.upliftersSiteBuilderBlocksResponsiveDevice ) {
-				const device = normalizeDevice(
-					currentWindow.upliftersSiteBuilderBlocksResponsiveDevice
-				);
+			const device = normalizeDevice(
+				currentWindow.upliftersSiteBuilderBlocksResponsiveDevice ||
+					currentWindow.localStorage.getItem(
+						RESPONSIVE_DEVICE_STORAGE_KEY
+					)
+			);
 
-				if ( device ) {
-					return device;
-				}
+			if ( device ) {
+				return device;
 			}
 		} catch ( error ) {}
 	}
 
-	return getCurrentResponsiveDeviceFromLocalStorage();
+	return null;
 };
 
 const useGlobalResponsiveDevice = () => {
@@ -213,6 +236,8 @@ const useGlobalResponsiveDevice = () => {
 	return device;
 };
 
+// ─── Responsive attribute helpers ────────────────────────────────────────────
+
 const getResponsiveObject = ( value, fallback ) => {
 	if ( value && typeof value === 'object' && ! Array.isArray( value ) ) {
 		return DEVICES.reduce( ( result, device ) => {
@@ -241,577 +266,585 @@ const getResponsiveValue = ( value, device, fallback ) => {
 		: fallback;
 };
 
-const FOOTER_TEMPLATE_OPTIONS = [
-	{
-		key: 'logo-page-grid-social-copyright',
-		label: __( 'Logo Page Grid Social Copyright', 'uplifters-site-builder-blocks' ),
-		demoType: 'logo-page-grid-social-copyright',
-		template: [
-			[
-				'uplifters-site-builder-blocks/footer-section',
-				{
-					className:
-						'uplifters-site-builder-blocks-footer-layout__row uplifters-site-builder-blocks-footer-layout__row--logo-page-grid-social-copyright',
-					layout: {
-						type: 'flex',
-						flexWrap: 'wrap',
-						justifyContent: 'space-between',
-						verticalAlignment: 'center',
-					},
-				},
-				[
-					[
-						'uplifters-site-builder-blocks/site-logo',
-						{
-							width: 64,
-							className: 'uplifters-site-builder-blocks-footer-layout__site-logo',
-						},
-					],
-					[
-						'uplifters-site-builder-blocks/page-grid',
-						{
-							className: 'uplifters-site-builder-blocks-footer-layout__page-grid',
-						},
-					],
-					[
-						'uplifters-site-builder-blocks/social-icon',
-						{
-							className: 'uplifters-site-builder-blocks-footer-layout__social-icon',
-						},
-					],
-					[
-						'uplifters-site-builder-blocks/copyright-component-rearrange',
-						{
-							className: 'uplifters-site-builder-blocks-footer-layout__copyright',
-						},
-					],
-				],
-			],
-		],
-	},
-	{
-		key: 'logo-social-page-grid-copyright',
-		label: __( 'Logo Social Page Grid Copyright', 'uplifters-site-builder-blocks' ),
-		demoType: 'logo-social-page-grid-copyright',
-		template: [
-			[
-				'uplifters-site-builder-blocks/footer-section',
-				{
-					className:
-						'uplifters-site-builder-blocks-footer-layout__row uplifters-site-builder-blocks-footer-layout__row--logo-social-page-grid-copyright',
-					layout: {
-						type: 'flex',
-						flexWrap: 'wrap',
-						justifyContent: 'space-between',
-						verticalAlignment: 'center',
-					},
-				},
-				[
-					[
-						'uplifters-site-builder-blocks/site-logo',
-						{
-							width: 64,
-							className: 'uplifters-site-builder-blocks-footer-layout__site-logo',
-						},
-					],
-					[
-						'uplifters-site-builder-blocks/social-icon',
-						{
-							className: 'uplifters-site-builder-blocks-footer-layout__social-icon',
-						},
-					],
-					[
-						'uplifters-site-builder-blocks/page-grid',
-						{
-							className: 'uplifters-site-builder-blocks-footer-layout__page-grid',
-						},
-					],
-					[
-						'uplifters-site-builder-blocks/copyright-component-rearrange',
-						{
-							className: 'uplifters-site-builder-blocks-footer-layout__copyright',
-						},
-					],
-				],
-			],
-		],
-	},
-	{
-		key: 'logo-social-copyright',
-		label: __( 'Logo Social Copyright', 'uplifters-site-builder-blocks' ),
-		demoType: 'logo-social-copyright',
-		template: [
-			[
-				'uplifters-site-builder-blocks/footer-section',
-				{
-					className:
-						'uplifters-site-builder-blocks-footer-layout__row uplifters-site-builder-blocks-footer-layout__row--logo-social-copyright',
-					layout: {
-						type: 'flex',
-						flexWrap: 'wrap',
-						justifyContent: 'space-between',
-						verticalAlignment: 'center',
-					},
-				},
-				[
-					[
-						'uplifters-site-builder-blocks/site-logo',
-						{
-							width: 64,
-							className: 'uplifters-site-builder-blocks-footer-layout__site-logo',
-						},
-					],
-					[
-						'uplifters-site-builder-blocks/social-icon',
-						{
-							className: 'uplifters-site-builder-blocks-footer-layout__social-icon',
-						},
-					],
-					[
-						'uplifters-site-builder-blocks/copyright-component-rearrange',
-						{
-							className: 'uplifters-site-builder-blocks-footer-layout__copyright',
-						},
-					],
-				],
-			],
-		],
-	},
-	{
-		key: 'logo-social',
-		label: __( 'Logo Social', 'uplifters-site-builder-blocks' ),
-		demoType: 'logo-social',
-		template: [
-			[
-				'uplifters-site-builder-blocks/footer-section',
-				{
-					className:
-						'uplifters-site-builder-blocks-footer-layout__row uplifters-site-builder-blocks-footer-layout__row--logo-social',
-					layout: {
-						type: 'flex',
-						flexWrap: 'wrap',
-						justifyContent: 'space-between',
-						verticalAlignment: 'center',
-					},
-				},
-				[
-					[
-						'uplifters-site-builder-blocks/site-logo',
-						{
-							width: 64,
-							className: 'uplifters-site-builder-blocks-footer-layout__site-logo',
-						},
-					],
-					[
-						'uplifters-site-builder-blocks/social-icon',
-						{
-							className: 'uplifters-site-builder-blocks-footer-layout__social-icon',
-						},
-					],
-				],
-			],
-		],
-	},
-];
+// ─── Column width helpers ────────────────────────────────────────────────────
 
-const topDotStyle = {
-	width: '7px',
-	height: '7px',
-	display: 'block',
-	borderRadius: '50%',
-	background: '#b6b6b8',
+const getEqualWidths = ( count ) => {
+	if ( ! count ) {
+		return [];
+	}
+
+	return Array.from( { length: count }, () => 100 / count );
 };
 
-const pageGridBlockStyle = {
-	width: '54px',
-	height: '34px',
-	borderRadius: '8px',
-	border: '1px solid #c4c9cf',
-	background: '#ffffff',
-	display: 'flex',
-	flexDirection: 'column',
-	justifyContent: 'center',
-	gap: '3px',
-	padding: '6px',
-	boxSizing: 'border-box',
-	boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
+const normalizeWidths = ( widths, count ) => {
+	if ( ! count ) {
+		return [];
+	}
+
+	if ( ! Array.isArray( widths ) || widths.length !== count ) {
+		return getEqualWidths( count );
+	}
+
+	const nums = widths.map( ( w ) => Number( w ) || 0 );
+	const total = nums.reduce( ( sum, w ) => sum + w, 0 );
+
+	if ( total <= 0 ) {
+		return getEqualWidths( count );
+	}
+
+	return nums.map( ( w ) => ( w / total ) * 100 );
 };
 
-const pageGridMarkStyle = {
-	height: '4px',
-	borderRadius: '999px',
-	background: '#7d858d',
-	display: 'block',
+const getGridTemplateColumns = ( widths, count ) =>
+	normalizeWidths( widths, count )
+		.map( ( w ) => `minmax(1ch, ${ w }fr)` )
+		.join( ' ' );
+
+const getHandlePositions = ( widths ) => {
+	let total = 0;
+
+	return widths.slice( 0, -1 ).map( ( w ) => {
+		total += w;
+		return total;
+	} );
 };
 
-const socialIconBaseStyle = {
-	width: '24px',
-	height: '24px',
-	borderRadius: '50%',
-	background: '#1d2327',
-	color: '#ffffff',
-	display: 'inline-flex',
-	alignItems: 'center',
-	justifyContent: 'center',
-	fontSize: '10px',
-	fontWeight: 700,
-	lineHeight: 1,
-	fontFamily:
-		'-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-	boxShadow: '0 1px 3px rgba(0,0,0,0.18)',
+/**
+ * Normalise every device's widths array to exactly `count` entries.
+ *
+ * @param {Object|Array|undefined} raw   Raw columnWidths attribute value.
+ * @param {number}                 count Number of columns.
+ */
+const resolveColumnWidths = ( raw, count ) => {
+	if ( Array.isArray( raw ) ) {
+		const norm = normalizeWidths( raw, count );
+
+		return { desktop: norm, tablet: [ ...norm ], mobile: [ ...norm ] };
+	}
+
+	if ( raw && typeof raw === 'object' ) {
+		return DEVICES.reduce( ( acc, key ) => {
+			acc[ key ] = normalizeWidths(
+				Array.isArray( raw[ key ] ) ? raw[ key ] : [],
+				count
+			);
+
+			return acc;
+		}, {} );
+	}
+
+	const eq = getEqualWidths( count );
+
+	return { desktop: eq, tablet: [ ...eq ], mobile: [ ...eq ] };
 };
 
-function DemoLogo() {
-	return (
-		<span
-			aria-hidden="true"
-			style={ {
-				width: '34px',
-				height: '34px',
-				border: '2px solid #1d2327',
-				borderRadius: '50%',
-				background: '#fff',
-				display: 'inline-flex',
-				alignItems: 'center',
-				justifyContent: 'center',
-				boxSizing: 'border-box',
-				flex: '0 0 auto',
-			} }
-		>
-			<span
-				style={ {
-					width: '13px',
-					height: '13px',
-					borderRadius: '4px',
-					background: '#1d2327',
-					display: 'block',
-				} }
-			/>
-		</span>
-	);
-}
+/**
+ * Append one column to every device. The existing columns keep their relative
+ * proportions and give up an equal share to the new one.
+ *
+ * @param {Object} widthsObj Per-device widths, already normalised to `count`.
+ * @param {number} count     Current number of columns.
+ */
+const withColumnAdded = ( widthsObj, count ) => {
+	const share = 100 / ( count + 1 );
 
-function DemoPageGridBlock( { firstWidth = '100%', secondWidth = '76%' } ) {
-	return (
-		<span style={ pageGridBlockStyle }>
-			<span
-				style={ {
-					...pageGridMarkStyle,
-					width: firstWidth,
-				} }
-			/>
-			<span
-				style={ {
-					...pageGridMarkStyle,
-					width: secondWidth,
-					background: '#a5abb1',
-				} }
-			/>
-			<span
-				style={ {
-					...pageGridMarkStyle,
-					width: '54%',
-					background: '#c0c5ca',
-				} }
-			/>
-		</span>
-	);
-}
+	return DEVICES.reduce( ( acc, key ) => {
+		const scaled = normalizeWidths( widthsObj[ key ], count ).map(
+			( w ) => w * ( 1 - share / 100 )
+		);
 
-function DemoPageGrid() {
-	return (
-		<span
-			aria-hidden="true"
-			style={ {
-				display: 'grid',
-				gridTemplateColumns: 'repeat(2, 54px)',
-				gap: '8px',
-				flex: '0 0 auto',
-				width: '116px',
-			} }
-		>
-			<DemoPageGridBlock firstWidth="94%" secondWidth="70%" />
-			<DemoPageGridBlock firstWidth="82%" secondWidth="64%" />
-			<DemoPageGridBlock firstWidth="88%" secondWidth="74%" />
-			<DemoPageGridBlock firstWidth="76%" secondWidth="58%" />
-		</span>
-	);
-}
+		acc[ key ] = normalizeWidths( [ ...scaled, share ], count + 1 );
 
-function DemoSocialIcon( { children, shape = 'circle' } ) {
-	return (
-		<span
-			style={ {
-				...socialIconBaseStyle,
-				borderRadius: shape === 'rounded' ? '7px' : '50%',
-			} }
-		>
-			{ children }
-		</span>
-	);
-}
+		return acc;
+	}, {} );
+};
 
-function DemoSocialIconGroup() {
-	return (
-		<span
-			aria-hidden="true"
-			style={ {
-				display: 'inline-flex',
-				alignItems: 'center',
-				justifyContent: 'center',
-				gap: '7px',
-				flex: '0 0 auto',
-				padding: '4px 6px',
-				borderRadius: '999px',
-				background: '#f0f2f4',
-				border: '1px solid #d7dce1',
-				boxSizing: 'border-box',
-			} }
-		>
-			<DemoSocialIcon>f</DemoSocialIcon>
-			<DemoSocialIcon>𝕏</DemoSocialIcon>
-			<DemoSocialIcon shape="rounded">in</DemoSocialIcon>
-			<DemoSocialIcon>▶</DemoSocialIcon>
-		</span>
-	);
-}
+/**
+ * Drop one column from every device. The remaining columns keep their relative
+ * proportions and share the freed space between them.
+ *
+ * @param {Object} widthsObj Per-device widths, already normalised to `count`.
+ * @param {number} count     Current number of columns.
+ * @param {number} index     Index of the column being removed.
+ */
+const withColumnRemoved = ( widthsObj, count, index ) =>
+	DEVICES.reduce( ( acc, key ) => {
+		const next = normalizeWidths( widthsObj[ key ], count ).filter(
+			( ignored, i ) => i !== index
+		);
 
-function DemoCopyright() {
-	return (
-		<span
-			aria-hidden="true"
-			style={ {
-				width: '128px',
-				height: '8px',
-				borderRadius: '999px',
-				background: '#b6b6b8',
-				display: 'inline-flex',
-				flex: '0 1 auto',
-			} }
-		/>
-	);
-}
+		acc[ key ] = normalizeWidths( next, count - 1 );
 
-function FooterLayoutDemoCard( { option, onChoose } ) {
-	const hasLogo = [
-		'logo-page-grid-social-copyright',
-		'logo-social-page-grid-copyright',
-		'logo-social-copyright',
-		'logo-social',
-	].includes( option.demoType );
+		return acc;
+	}, {} );
 
-	const hasPageGrid = [
-		'logo-page-grid-social-copyright',
-		'logo-social-page-grid-copyright',
-	].includes( option.demoType );
+// ─── Edit Component ───────────────────────────────────────────────────────────
 
-	const hasSocialIcon = [
-		'logo-page-grid-social-copyright',
-		'logo-social-page-grid-copyright',
-		'logo-social-copyright',
-		'logo-social',
-	].includes( option.demoType );
-
-	const hasCopyright = [
-		'logo-page-grid-social-copyright',
-		'logo-social-page-grid-copyright',
-		'logo-social-copyright',
-	].includes( option.demoType );
-
-	const isSocialSecond = [
-		'logo-social-page-grid-copyright',
-		'logo-social-copyright',
-		'logo-social',
-	].includes( option.demoType );
-
-	return (
-		<button
-			type="button"
-			onClick={ () => onChoose( option ) }
-			aria-label={ option.label }
-			style={ {
-				display: 'block',
-				width: '100%',
-				height: '150px',
-				padding: 0,
-				margin: 0,
-				border: '1px solid #d9d9d9',
-				borderRadius: '12px',
-				background: '#ffffff',
-				cursor: 'pointer',
-				boxSizing: 'border-box',
-				overflow: 'hidden',
-				boxShadow: '0 1px 1px rgba(0,0,0,0.04)',
-				textAlign: 'left',
-			} }
-			onMouseEnter={ ( event ) => {
-				event.currentTarget.style.borderColor = '#007cba';
-				event.currentTarget.style.boxShadow =
-					'0 0 0 1px #007cba, 0 8px 20px rgba(0,0,0,0.10)';
-			} }
-			onMouseLeave={ ( event ) => {
-				event.currentTarget.style.borderColor = '#d9d9d9';
-				event.currentTarget.style.boxShadow =
-					'0 1px 1px rgba(0,0,0,0.04)';
-			} }
-		>
-			<div
-				style={ {
-					height: '28px',
-					display: 'flex',
-					alignItems: 'center',
-					gap: '4px',
-					padding: '0 12px',
-					background: '#eeeeef',
-					borderBottom: '1px solid #d8d8d8',
-					boxSizing: 'border-box',
-				} }
-			>
-				<span style={ topDotStyle } />
-				<span style={ topDotStyle } />
-				<span style={ topDotStyle } />
-			</div>
-
-			<div
-				style={ {
-					height: '122px',
-					display: 'flex',
-					alignItems: 'center',
-					justifyContent: 'space-between',
-					gap: '18px',
-					padding: '0 24px',
-					background:
-						'linear-gradient(180deg, #ffffff 0%, #fbfbfb 100%)',
-					boxSizing: 'border-box',
-				} }
-			>
-				{ hasLogo && <DemoLogo /> }
-
-				{ hasSocialIcon && isSocialSecond && <DemoSocialIconGroup /> }
-
-				{ hasPageGrid && <DemoPageGrid /> }
-
-				{ hasSocialIcon && ! isSocialSecond && <DemoSocialIconGroup /> }
-
-				{ hasCopyright && <DemoCopyright /> }
-			</div>
-		</button>
-	);
-}
-
-function Editor( {
-	attributes,
-	setAttributes,
-	clientId,
-	isSelected,
-} ) {
+function Editor( { attributes, setAttributes, clientId } ) {
 	const {
-		footerTemplate = '',
+		sections = 0,
+		columnWidths = {},
+		verticalAlignment = {},
 		padding,
 		margin,
+		gap,
+		height,
 		backgroundColor,
 		borderRadius,
 		shadow,
+		childOrder = { desktop: [], tablet: [], mobile: [] },
+		mobileStack = false,
 	} = attributes;
 
 	const device = useGlobalResponsiveDevice();
 	const deviceLabel = DEVICE_LABELS[ device ] || DEVICE_LABELS.desktop;
 
-	const activePadding = getResponsiveValue(
-		padding,
-		device,
-		RESPONSIVE_DEFAULTS.padding
-	);
-
-	const activeMargin = getResponsiveValue(
-		margin,
-		device,
-		RESPONSIVE_DEFAULTS.margin
-	);
-
-	const activeBackgroundColor = getResponsiveValue(
-		backgroundColor,
-		device,
-		RESPONSIVE_DEFAULTS.backgroundColor
-	);
-
-	const activeBorderRadius = getResponsiveValue(
-		borderRadius,
-		device,
-		RESPONSIVE_DEFAULTS.borderRadius
-	);
-
-	const activeShadow = getResponsiveValue(
-		shadow,
-		device,
-		RESPONSIVE_DEFAULTS.shadow
-	);
-
-	const setResponsiveAttribute = ( attributeName, value ) => {
-		const fallback = RESPONSIVE_DEFAULTS[ attributeName ];
-		const current = getResponsiveObject(
-			attributes[ attributeName ],
-			fallback
-		);
-
-		setAttributes( {
-			[ attributeName ]: {
-				...current,
-				[ device ]:
-					value !== undefined && value !== null ? value : fallback,
-			},
-		} );
-	};
-
-	const [ isChooserOpen, setIsChooserOpen ] = useState( false );
-	const hasOpenedInitialChooser = useRef( false );
+	const columnsRef = useRef( null );
+	const resizeStateRef = useRef( null );
+	const [ resizePreview, setResizePreview ] = useState( null );
 
 	const [ openSettingsPanel, setOpenSettingsPanel ] = useState( null );
 	const [ openStylesPanel, setOpenStylesPanel ] = useState( null );
 	const toggleSettingsPanel = ( key ) => setOpenSettingsPanel( ( current ) => ( current === key ? null : key ) );
 	const toggleStylesPanel = ( key ) => setOpenStylesPanel( ( current ) => ( current === key ? null : key ) );
 
-	const { replaceInnerBlocks, selectBlock } = useDispatch(
-		'core/block-editor'
-	);
+	// ── Columns ───────────────────────────────────────────────────────────────
+	// Every inner block is one column. `sections` can run ahead of the inner
+	// blocks: the surplus columns are the empty ones still waiting for content.
 
-	const innerBlockCount = useSelect(
-		( select ) => {
-			const block = select( 'core/block-editor' ).getBlock( clientId );
-			return block?.innerBlocks?.length || 0;
-		},
+	const innerBlocks = useSelect(
+		( select ) => select( 'core/block-editor' ).getBlocks( clientId ),
 		[ clientId ]
 	);
 
-	useEffect( () => {
-		if (
-			isSelected &&
-			! hasOpenedInitialChooser.current &&
-			! footerTemplate &&
-			innerBlockCount === 0
-		) {
-			hasOpenedInitialChooser.current = true;
-			setIsChooserOpen( true );
+	const {
+		removeBlock,
+		moveBlocksToPosition,
+		__unstableMarkNextChangeAsNotPersistent,
+	} = useDispatch( 'core/block-editor' );
+
+	const filledCount = innerBlocks.length;
+	const columnCount = Math.max(
+		Number( sections ) || 0,
+		filledCount,
+		MIN_COLUMNS
+	);
+	const emptyCount = columnCount - filledCount;
+
+	const columnWidthsKey = JSON.stringify( columnWidths );
+
+	const columnWidthsObj = useMemo(
+		() => resolveColumnWidths( columnWidths, columnCount ),
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[ columnWidthsKey, columnCount ]
+	);
+
+	const activeWidths = columnWidthsObj[ device ] ?? getEqualWidths( columnCount );
+
+	const normalizedWidths = useMemo(
+		() => normalizeWidths( activeWidths, columnCount ),
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[ JSON.stringify( activeWidths ), columnCount ]
+	);
+
+	/*
+	 * Column order for the active device. Every column is one slot, the filled
+	 * ones first and the empty placeholders after them, so a track that has no
+	 * block in it yet still holds a position.
+	 */
+	const orderObject = useMemo(
+		() => resolveOrder( childOrder, columnCount ),
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[ JSON.stringify( childOrder ), columnCount ]
+	);
+
+	const orderSequence = orderObject[ device ];
+
+	const columnLabels = useMemo(
+		() => innerBlocks.map( ( block ) => getBlockType( block.name )?.title || '' ),
+		[ innerBlocks ]
+	);
+
+	/*
+	 * Desktop is the document order itself, so a desktop reorder moves the real
+	 * blocks and leaves childOrder.desktop natural. Only the narrower devices
+	 * keep a saved order of their own.
+	 */
+	const setOrderForDevice = ( nextSequence ) => {
+		if ( 'desktop' !== device ) {
+			setAttributes( {
+				childOrder: { ...orderObject, [ device ]: nextSequence },
+			} );
+
+			return;
 		}
-	}, [ isSelected, footerTemplate, innerBlockCount ] );
+
+		const move = getDocumentMove(
+			getNaturalOrder( nextSequence.length ),
+			nextSequence
+		);
+
+		if ( ! move ) {
+			return;
+		}
+
+		const movedBlock = innerBlocks[ move.from ];
+
+		if ( movedBlock ) {
+			moveBlocksToPosition(
+				[ movedBlock.clientId ],
+				clientId,
+				clientId,
+				move.to
+			);
+		}
+	};
+
+	/*
+	 * A move in the canvas — Gutenberg's own arrows or drag-and-drop — arrives
+	 * here as a changed block list, with nothing to say which device the person
+	 * was looking at. On desktop the move is the point, so it stands and the
+	 * other devices are renumbered to keep showing what they showed. On tablet
+	 * and mobile the document order has to stay put, so the move is undone and
+	 * recorded as that device's own order instead.
+	 */
+	const documentOrderRef = useRef( null );
+
+	useEffect( () => {
+		const currentIds = innerBlocks.map( ( block ) => block.clientId );
+		const previousIds = documentOrderRef.current;
+
+		documentOrderRef.current = currentIds;
+
+		// First run, or a column was added or removed rather than moved.
+		if ( ! previousIds || previousIds.length !== currentIds.length ) {
+			return;
+		}
+
+		const move = getDocumentMove( previousIds, currentIds );
+
+		if ( ! move ) {
+			return;
+		}
+
+		if ( 'desktop' === device ) {
+			setAttributes( {
+				childOrder: {
+					desktop: getNaturalOrder( currentIds.length ),
+					tablet: remapSequence(
+						orderObject.tablet,
+						previousIds,
+						currentIds
+					),
+					mobile: remapSequence(
+						orderObject.mobile,
+						previousIds,
+						currentIds
+					),
+				},
+			} );
+
+			return;
+		}
+
+		const sequence = orderObject[ device ];
+		const position = sequence.indexOf( move.from + 1 );
+
+		if ( -1 === position ) {
+			return;
+		}
+
+		// The arrows step through the document, so the same step is applied to
+		// what this device shows rather than to the document position.
+		const target = Math.max(
+			0,
+			Math.min(
+				sequence.length - 1,
+				position + ( move.to - move.from )
+			)
+		);
+
+		documentOrderRef.current = previousIds;
+
+		if ( typeof __unstableMarkNextChangeAsNotPersistent === 'function' ) {
+			__unstableMarkNextChangeAsNotPersistent();
+		}
+
+		moveBlocksToPosition(
+			[ move.clientId ],
+			clientId,
+			clientId,
+			move.from
+		);
+
+		setAttributes( {
+			childOrder: {
+				...orderObject,
+				[ device ]: withSlotMoved( sequence, position, target ),
+			},
+		} );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ innerBlocks, device ] );
+
+	// The frontend renders `sections` grid tracks, so keep the saved count in
+	// step with what the editor is showing.
+	useEffect( () => {
+		if ( ( Number( sections ) || 0 ) !== columnCount ) {
+			setAttributes( { sections: columnCount } );
+		}
+	}, [ sections, columnCount, setAttributes ] );
+
+	// ── Active device values ──────────────────────────────────────────────────
+
+	const activePadding = getResponsiveValue( padding, device, RESPONSIVE_DEFAULTS.padding );
+	const activeMargin = getResponsiveValue( margin, device, RESPONSIVE_DEFAULTS.margin );
+	const activeGap = getResponsiveValue( gap, device, RESPONSIVE_DEFAULTS.gap );
+	const activeHeight = getResponsiveValue( height, device, RESPONSIVE_DEFAULTS.height );
+	const activeBackgroundColor = getResponsiveValue( backgroundColor, device, RESPONSIVE_DEFAULTS.backgroundColor );
+	const activeBorderRadius = getResponsiveValue( borderRadius, device, RESPONSIVE_DEFAULTS.borderRadius );
+	const activeShadow = getResponsiveValue( shadow, device, RESPONSIVE_DEFAULTS.shadow );
+	const activeVerticalAlignment = getResponsiveValue( verticalAlignment, device, 'center' );
+
+	const setResponsiveAttribute = ( attributeName, value, fallback ) => {
+		const resolvedFallback =
+			fallback !== undefined ? fallback : RESPONSIVE_DEFAULTS[ attributeName ];
+
+		setAttributes( {
+			[ attributeName ]: {
+				...getResponsiveObject(
+					attributes[ attributeName ],
+					resolvedFallback
+				),
+				[ device ]:
+					value !== undefined && value !== null
+						? value
+						: resolvedFallback,
+			},
+		} );
+	};
+
+	const setColumnWidthsForDevice = ( nextWidths ) => {
+		setAttributes( {
+			columnWidths: { ...columnWidthsObj, [ device ]: nextWidths },
+		} );
+	};
+
+	// ── Add / remove columns ──────────────────────────────────────────────────
+
+	const addColumn = () => {
+		if ( columnCount >= MAX_COLUMNS ) {
+			return;
+		}
+
+		setAttributes( {
+			sections: columnCount + 1,
+			columnWidths: withColumnAdded( columnWidthsObj, columnCount ),
+		} );
+	};
+
+	const deleteColumn = ( index ) => {
+		if ( columnCount <= MIN_COLUMNS ) {
+			return;
+		}
+
+		// A column that still holds a block has to lose the block too; an empty
+		// one only exists as a grid track, so dropping the track is enough.
+		const block = innerBlocks[ index ];
+
+		if ( block ) {
+			removeBlock( block.clientId, false );
+		}
+
+		setAttributes( {
+			sections: columnCount - 1,
+			columnWidths: withColumnRemoved( columnWidthsObj, columnCount, index ),
+			childOrder: withSlotRemoved( orderObject, index + 1 ),
+		} );
+	};
+
+	const setColumnCount = ( value ) => {
+		const next = Math.min(
+			MAX_COLUMNS,
+			Math.max( MIN_COLUMNS, Number( value ) || MIN_COLUMNS )
+		);
+
+		if ( next === columnCount ) {
+			return;
+		}
+
+		// Columns dropped off the end take their blocks with them.
+		innerBlocks
+			.slice( next )
+			.forEach( ( block ) => removeBlock( block.clientId, false ) );
+
+		const eq = getEqualWidths( next );
+		const naturalOrder = getNaturalOrder( next );
+
+		setAttributes( {
+			sections: next,
+			columnWidths: { desktop: eq, tablet: [ ...eq ], mobile: [ ...eq ] },
+			childOrder: {
+				desktop: naturalOrder,
+				tablet: [ ...naturalOrder ],
+				mobile: [ ...naturalOrder ],
+			},
+		} );
+	};
+
+	// ── Resize logic ──────────────────────────────────────────────────────────
+
+	const stopResize = () => {
+		resizeStateRef.current = null;
+		setResizePreview( null );
+		document.body.style.cursor = '';
+		document.body.style.userSelect = '';
+	};
+
+	const resizeColumns = ( clientX ) => {
+		const state = resizeStateRef.current;
+
+		if ( ! state ) {
+			return;
+		}
+
+		const {
+			columnsRect,
+			startX,
+			startWidths,
+			leftIndex,
+			rightIndex,
+			leftStart,
+			rightStart,
+		} = state;
+
+		if ( columnsRect.width <= 0 ) {
+			stopResize();
+			return;
+		}
+
+		const minColumnPercent = Math.max(
+			( MIN_COLUMN_WIDTH_PX / columnsRect.width ) * 100,
+			0.1
+		);
+		const clampedX = Math.min(
+			Math.max( clientX, columnsRect.left ),
+			columnsRect.right
+		);
+		const combined = leftStart + rightStart;
+		const deltaPercent = ( ( clampedX - startX ) / columnsRect.width ) * 100;
+
+		if ( combined < minColumnPercent * 2 ) {
+			return;
+		}
+
+		let nextLeft = leftStart + deltaPercent;
+		let nextRight = rightStart - deltaPercent;
+
+		if ( nextLeft < minColumnPercent ) {
+			nextLeft = minColumnPercent;
+			nextRight = combined - minColumnPercent;
+		}
+
+		if ( nextRight < minColumnPercent ) {
+			nextRight = minColumnPercent;
+			nextLeft = combined - minColumnPercent;
+		}
+
+		if ( nextLeft < minColumnPercent || nextRight < minColumnPercent ) {
+			return;
+		}
+
+		const next = [ ...startWidths ];
+
+		next[ leftIndex ] = nextLeft;
+		next[ rightIndex ] = nextRight;
+
+		const nextNormalized = normalizeWidths( next, columnCount );
+
+		setResizePreview( { handleIndex: leftIndex, widths: nextNormalized } );
+		setColumnWidthsForDevice( nextNormalized );
+	};
+
+	const startResize = ( event, handleIndex ) => {
+		if ( event.button !== 0 ) {
+			return;
+		}
+
+		event.preventDefault();
+		event.stopPropagation();
+
+		const columnsEl = columnsRef.current;
+
+		if ( ! columnsEl ) {
+			return;
+		}
+
+		const startWidths = [ ...normalizedWidths ];
+		const leftStart = startWidths[ handleIndex ];
+		const rightStart = startWidths[ handleIndex + 1 ];
+
+		if (
+			typeof leftStart === 'undefined' ||
+			typeof rightStart === 'undefined'
+		) {
+			return;
+		}
+
+		resizeStateRef.current = {
+			columnsRect: columnsEl.getBoundingClientRect(),
+			startX: event.clientX,
+			startWidths,
+			leftIndex: handleIndex,
+			rightIndex: handleIndex + 1,
+			leftStart,
+			rightStart,
+		};
+
+		setResizePreview( { handleIndex, widths: startWidths } );
+
+		document.body.style.cursor = 'col-resize';
+		document.body.style.userSelect = 'none';
+
+		if ( event.currentTarget.setPointerCapture ) {
+			event.currentTarget.setPointerCapture( event.pointerId );
+		}
+	};
+
+	const handleResizeMove = ( event ) => {
+		if ( ! resizeStateRef.current ) {
+			return;
+		}
+
+		event.preventDefault();
+		event.stopPropagation();
+		resizeColumns( event.clientX );
+	};
+
+	const handleResizeEnd = ( event ) => {
+		if ( event.currentTarget.releasePointerCapture ) {
+			try {
+				event.currentTarget.releasePointerCapture( event.pointerId );
+			} catch {}
+		}
+
+		stopResize();
+	};
+
+	// ── Block props ───────────────────────────────────────────────────────────
+
+	// One column per row on mobile, so narrow screens are not asked to fit
+	// four footer columns side by side.
+	const isMobileStacked = mobileStack && device === 'mobile';
 
 	const wrapperWidth =
 		activeMargin > 0 ? `calc(100% - ${ activeMargin * 2 }px)` : '100%';
 
-	const chooseTemplate = ( option ) => {
-		const blocks = createBlocksFromInnerBlocksTemplate( option.template );
-
-		replaceInnerBlocks( clientId, blocks, false );
-
-		setAttributes( {
-			footerTemplate: option.key,
-		} );
-
-		setIsChooserOpen( false );
-		selectBlock( clientId );
-	};
+	// Previews the active device's column order in the canvas.
+	const orderRef = useChildOrder( orderSequence );
+	const wrapperRef = useMergeRefs( [ columnsRef, orderRef ] );
 
 	const blockProps = useBlockProps( {
+		ref: wrapperRef,
 		className: [
 			'uplifters-site-builder-blocks-footer-layout',
 			'uplifters-site-builder-blocks-footer-layout-editor',
@@ -821,7 +854,13 @@ function Editor( {
 		style: {
 			width: wrapperWidth,
 			maxWidth: wrapperWidth,
-			minWidth: '0',
+
+			gridTemplateColumns: isMobileStacked
+				? 'minmax(0, 1fr)'
+				: getGridTemplateColumns( normalizedWidths, columnCount ),
+			alignItems: activeVerticalAlignment,
+			gap: `${ activeGap }px`,
+			minHeight: activeHeight > 0 ? `${ activeHeight }px` : undefined,
 
 			padding: `${ activePadding }px`,
 			margin: `${ activeMargin }px`,
@@ -831,17 +870,35 @@ function Editor( {
 				? `0 ${ activeShadow }px ${ activeShadow * 3 }px rgba(0,0,0,0.18)`
 				: 'none',
 
-			boxSizing: 'border-box',
-			overflow: 'visible',
 			position: 'relative',
 
-			display: 'flex',
-			alignItems: 'center',
-			justifyContent: 'flex-start',
-
-			'--wp--style--block-gap': '0px',
+			'--wp--style--block-gap': `${ activeGap }px`,
 		},
 	} );
+
+	const innerBlocksProps = useInnerBlocksProps( blockProps, {
+		template: FOOTER_TEMPLATE,
+		templateLock: false,
+		orientation: 'horizontal',
+		renderAppender: false,
+	} );
+
+	const { children: innerBlocksChildren, ...innerBlocksWrapperProps } =
+		innerBlocksProps;
+
+	// ── Column overlay geometry ───────────────────────────────────────────────
+
+	const previewWidths = resizePreview?.widths || normalizedWidths;
+	const handlePositions = getHandlePositions( previewWidths );
+
+	const formatPercent = ( value ) =>
+		( Number( value ) || 0 ).toFixed( 1 ).replace( /\.0$/, '' );
+
+	// Cumulative start offset (in %) for each column, used to centre its badge.
+	const columnStarts = previewWidths.reduce( ( acc, w, i ) => {
+		acc.push( i === 0 ? 0 : acc[ i - 1 ] + previewWidths[ i - 1 ] );
+		return acc;
+	}, [] );
 
 	return (
 		<>
@@ -852,20 +909,75 @@ function Editor( {
 					opened={ openSettingsPanel === 'structure' }
 					onToggle={ () => toggleSettingsPanel( 'structure' ) }
 				>
-					<Button
-						variant="secondary"
-						onClick={ () => setIsChooserOpen( true ) }
-					>
-						{ innerBlockCount > 0
-							? __( 'Change Footer Layout', 'uplifters-site-builder-blocks' )
-							: __( 'Choose Footer Layout', 'uplifters-site-builder-blocks' ) }
-					</Button>
+					<SelectControl
+						label={ __( 'Columns', 'uplifters-site-builder-blocks' ) }
+						value={ columnCount }
+						options={ COLUMN_OPTIONS }
+						onChange={ setColumnCount }
+						help={ __(
+							'Changing columns will reset column widths and order.',
+							'uplifters-site-builder-blocks'
+						) }
+					/>
+
+					<ResponsiveOrderControl
+						sequence={ orderSequence }
+						labels={ columnLabels }
+						deviceLabel={ deviceLabel }
+						onChange={ setOrderForDevice }
+						help={ __(
+							'Moving a column in the canvas does the same thing. With Tablet or Mobile active the move applies to that device only; on Desktop it moves the column for every device.',
+							'uplifters-site-builder-blocks'
+						) }
+					/>
+
+					<SelectControl
+						label={ __( 'Vertical Alignment', 'uplifters-site-builder-blocks' ) }
+						value={ activeVerticalAlignment }
+						options={ VERTICAL_ALIGNMENT_OPTIONS }
+						onChange={ ( value ) =>
+							setResponsiveAttribute(
+								'verticalAlignment',
+								value,
+								'center'
+							)
+						}
+						help={ sprintf(
+							/* translators: %s: the active responsive device — Desktop, Tablet or Mobile. */
+							__( 'Applies to %s.', 'uplifters-site-builder-blocks' ),
+							deviceLabel
+						) }
+					/>
+				</PanelBody>
+
+				<PanelBody
+					title={ __( 'Behavior', 'uplifters-site-builder-blocks' ) }
+					initialOpen={ false }
+					opened={ openSettingsPanel === 'behavior' }
+					onToggle={ () => toggleSettingsPanel( 'behavior' ) }
+				>
+					<ToggleControl
+						label={ __( 'Stack on Mobile', 'uplifters-site-builder-blocks' ) }
+						checked={ !! mobileStack }
+						onChange={ ( value ) =>
+							setAttributes( { mobileStack: value } )
+						}
+						help={ __(
+							'Put every column on its own row below 767px.',
+							'uplifters-site-builder-blocks'
+						) }
+						__nextHasNoMarginBottom
+					/>
 				</PanelBody>
 			</InspectorControls>
 
 			<InspectorControls group="styles">
 				<PanelBody
-					title={ sprintf( __( '%s Spacing', 'uplifters-site-builder-blocks' ), deviceLabel ) }
+					title={ sprintf(
+						/* translators: %s: the active responsive device — Desktop, Tablet or Mobile. */
+						__( '%s Spacing', 'uplifters-site-builder-blocks' ),
+						deviceLabel
+					) }
 					initialOpen={ false }
 					opened={ openStylesPanel === 'spacing' }
 					onToggle={ () => toggleStylesPanel( 'spacing' ) }
@@ -877,9 +989,7 @@ function Editor( {
 					<RangeControl
 						label={ __( 'Padding', 'uplifters-site-builder-blocks' ) }
 						value={ activePadding }
-						onChange={ ( value ) =>
-							setResponsiveAttribute( 'padding', value || 0 )
-						}
+						onChange={ ( value ) => setResponsiveAttribute( 'padding', value || 0 ) }
 						min={ 0 }
 						max={ 200 }
 						step={ 1 }
@@ -889,9 +999,7 @@ function Editor( {
 					<RangeControl
 						label={ __( 'Border Radius', 'uplifters-site-builder-blocks' ) }
 						value={ activeBorderRadius }
-						onChange={ ( value ) =>
-							setResponsiveAttribute( 'borderRadius', value || 0 )
-						}
+						onChange={ ( value ) => setResponsiveAttribute( 'borderRadius', value || 0 ) }
 						min={ 0 }
 						max={ 100 }
 						step={ 1 }
@@ -900,7 +1008,11 @@ function Editor( {
 				</PanelBody>
 
 				<PanelBody
-					title={ sprintf( __( '%s Layout Spacing', 'uplifters-site-builder-blocks' ), deviceLabel ) }
+					title={ sprintf(
+						/* translators: %s: the active responsive device — Desktop, Tablet or Mobile. */
+						__( '%s Layout Spacing', 'uplifters-site-builder-blocks' ),
+						deviceLabel
+					) }
 					initialOpen={ false }
 					opened={ openStylesPanel === 'layoutSpacing' }
 					onToggle={ () => toggleStylesPanel( 'layoutSpacing' ) }
@@ -912,9 +1024,7 @@ function Editor( {
 					<RangeControl
 						label={ __( 'Margin', 'uplifters-site-builder-blocks' ) }
 						value={ activeMargin }
-						onChange={ ( value ) =>
-							setResponsiveAttribute( 'margin', value || 0 )
-						}
+						onChange={ ( value ) => setResponsiveAttribute( 'margin', value || 0 ) }
 						min={ 0 }
 						max={ 200 }
 						step={ 1 }
@@ -922,11 +1032,37 @@ function Editor( {
 					/>
 
 					<RangeControl
+						label={ __( 'Column Gap', 'uplifters-site-builder-blocks' ) }
+						value={ activeGap }
+						onChange={ ( value ) => setResponsiveAttribute( 'gap', value || 0 ) }
+						min={ 0 }
+						max={ 100 }
+						step={ 1 }
+						help={ __(
+							'Space between each column in this footer.',
+							'uplifters-site-builder-blocks'
+						) }
+						__nextHasNoMarginBottom
+					/>
+
+					<RangeControl
+						label={ __( 'Minimum Height', 'uplifters-site-builder-blocks' ) }
+						value={ activeHeight }
+						onChange={ ( value ) => setResponsiveAttribute( 'height', value || 0 ) }
+						min={ 0 }
+						max={ 400 }
+						step={ 1 }
+						help={ __(
+							'0 lets the footer take the height of its content.',
+							'uplifters-site-builder-blocks'
+						) }
+						__nextHasNoMarginBottom
+					/>
+
+					<RangeControl
 						label={ __( 'Background Shadow', 'uplifters-site-builder-blocks' ) }
 						value={ activeShadow }
-						onChange={ ( value ) =>
-							setResponsiveAttribute( 'shadow', value || 0 )
-						}
+						onChange={ ( value ) => setResponsiveAttribute( 'shadow', value || 0 ) }
 						min={ 0 }
 						max={ 60 }
 						step={ 1 }
@@ -935,7 +1071,11 @@ function Editor( {
 				</PanelBody>
 
 				<PanelBody
-					title={ sprintf( __( '%s Colors', 'uplifters-site-builder-blocks' ), deviceLabel ) }
+					title={ sprintf(
+						/* translators: %s: the active responsive device — Desktop, Tablet or Mobile. */
+						__( '%s Colors', 'uplifters-site-builder-blocks' ),
+						deviceLabel
+					) }
 					initialOpen={ false }
 					opened={ openStylesPanel === 'colors' }
 					onToggle={ () => toggleStylesPanel( 'colors' ) }
@@ -956,71 +1096,106 @@ function Editor( {
 				</PanelBody>
 			</InspectorControls>
 
-			{ isChooserOpen && (
-				<Modal
-					title={ __( 'Choose a Footer Layout', 'uplifters-site-builder-blocks' ) }
-					onRequestClose={ () => setIsChooserOpen( false ) }
-					size="fill"
-				>
+			<div { ...innerBlocksWrapperProps }>
+				{ innerBlocksChildren }
+
+				{ /* Columns with no block in them yet: a dashed cell whose plus
+				     opens the inserter for that column. */ }
+				{ Array.from( { length: emptyCount } ).map( ( ignored, index ) => (
 					<div
+						key={ `empty-column-${ index }` }
+						className="uplifters-site-builder-blocks-footer-layout__empty-column"
 						style={ {
-							width: '90vw',
-							maxWidth: '1400px',
-							height: '82vh',
-							maxHeight: '82vh',
-							boxSizing: 'border-box',
-							padding: '28px',
-							overflow: 'hidden',
+							order: getSlotOrder(
+								orderSequence,
+								filledCount + index + 1
+							),
 						} }
 					>
-						<div
-							style={ {
-								display: 'grid',
-								gridTemplateColumns:
-									'repeat(2, minmax(0, 1fr))',
-								gridTemplateRows: 'repeat(2, minmax(180px, 1fr))',
-								columnGap: '36px',
-								rowGap: '36px',
-								width: '100%',
-								height: '100%',
-								boxSizing: 'border-box',
-							} }
-						>
-							{ FOOTER_TEMPLATE_OPTIONS.map( ( option ) => (
-								<div
-									key={ option.key }
-									style={ {
-										width: '100%',
-										height: '100%',
-										boxSizing: 'border-box',
-									} }
-								>
-									<FooterLayoutDemoCard
-										option={ option }
-										onChoose={ chooseTemplate }
-									/>
-								</div>
-							) ) }
-						</div>
+						<Inserter
+							rootClientId={ clientId }
+							isAppender
+							renderToggle={ ( { onToggle, disabled } ) => (
+								<Button
+									className="uplifters-site-builder-blocks-footer-layout__empty-column-add"
+									icon={ plus }
+									label={ __(
+										'Add block',
+										'uplifters-site-builder-blocks'
+									) }
+									onClick={ onToggle }
+									disabled={ disabled }
+								/>
+							) }
+						/>
 					</div>
-				</Modal>
-			) }
+				) ) }
 
-			<div { ...blockProps }>
-				{ innerBlockCount === 0 && (
-					<div className="uplifters-site-builder-blocks-footer-layout-empty-state">
+				{ /* Stacked on mobile there is only one track, so the width
+				     badges and drag handles have nothing to describe. */ }
+				{ ! isMobileStacked && previewWidths.map( ( width, index ) => (
+					<div
+						key={ `column-controls-${ index }` }
+						className="uplifters-site-builder-blocks-footer-layout__column-controls"
+						style={ { left: `${ columnStarts[ index ] + width / 2 }%` } }
+					>
+						<span className="uplifters-site-builder-blocks-footer-layout__percent-badge">
+							{ `${ formatPercent( width ) }%` }
+						</span>
+
+						<Tooltip
+							text={ __(
+								'Delete column',
+								'uplifters-site-builder-blocks'
+							) }
+						>
+							<Button
+								className="uplifters-site-builder-blocks-footer-layout__column-delete"
+								icon={ trash }
+								label={ __(
+									'Delete column',
+									'uplifters-site-builder-blocks'
+								) }
+								disabled={ columnCount <= MIN_COLUMNS }
+								onClick={ () => deleteColumn( index ) }
+							/>
+						</Tooltip>
+					</div>
+				) ) }
+
+				<div className="uplifters-site-builder-blocks-footer-layout__add-column">
+					<Tooltip
+						text={ __( 'Add column', 'uplifters-site-builder-blocks' ) }
+					>
 						<Button
-							variant="primary"
-							onClick={ () => setIsChooserOpen( true ) }
-						>
-							{ __( 'Choose Footer Layout', 'uplifters-site-builder-blocks' ) }
-						</Button>
-					</div>
-				) }
+							className="uplifters-site-builder-blocks-footer-layout__add-column-button"
+							icon={ plus }
+							label={ __(
+								'Add column',
+								'uplifters-site-builder-blocks'
+							) }
+							disabled={ columnCount >= MAX_COLUMNS }
+							onClick={ addColumn }
+						/>
+					</Tooltip>
+				</div>
 
-				<InnerBlocks
-					renderAppender={ InnerBlocks.ButtonBlockAppender }
-				/>
+				{ ! isMobileStacked && handlePositions.map( ( position, index ) => (
+					<button
+						key={ index }
+						type="button"
+						className="uplifters-site-builder-blocks-footer-layout__resize-handle"
+						aria-label={ __(
+							'Resize footer columns',
+							'uplifters-site-builder-blocks'
+						) }
+						onPointerDown={ ( event ) => startResize( event, index ) }
+						onPointerMove={ handleResizeMove }
+						onPointerUp={ handleResizeEnd }
+						onPointerCancel={ handleResizeEnd }
+						style={ { left: `${ position }%` } }
+					/>
+				) ) }
 			</div>
 		</>
 	);
@@ -1029,3 +1204,4 @@ function Editor( {
 export default function Edit( props ) {
 	return props.attributes.preview ? <InserterPreview type="footer-layout" /> : <Editor { ...props } />;
 }
+

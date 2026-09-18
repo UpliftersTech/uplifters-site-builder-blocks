@@ -1,16 +1,19 @@
 .uplifters-site-builder-blocks-row-layout-editor-wrapper {
+	position: relative;
 	display: flex;
 	flex-direction: column;
 	box-sizing: border-box;
 }
 
 /**
- * Rows are laid out with the Divider Gap only. The editor otherwise stacks
- * extra space on top of it: the block margins the editor gives each row and
- * the leading/trailing margins of the blocks placed inside a row.
+ * Each inner block is a row, laid out with the Divider Gap only. The editor
+ * otherwise stacks extra space on top of it: the block margins the editor
+ * gives each row and the block's own leading/trailing margins.
  */
-.uplifters-site-builder-blocks-row-layout-editor-wrapper > *,
-.uplifters-site-builder-blocks-row-layout-editor-wrapper > .uplifters-site-builder-blocks-row-layout-section-outer > .uplifters-site-builder-blocks-row-layout-section {
+.uplifters-site-builder-blocks-row-layout-editor-wrapper > * {
+	box-sizing: border-box;
+	width: 100%;
+	min-width: 0;
 	margin-top: 0;
 	margin-bottom: 0;
 	margin-block-start: 0;
@@ -41,60 +44,96 @@
 	font-weight: 600;
 }
 
-.uplifters-site-builder-blocks-row-layout-section-outer {
-	position: relative;
-	width: 100%;
-}
-
-.uplifters-site-builder-blocks-row-layout-section {
-	box-sizing: border-box;
-	width: 100%;
-	min-width: 0;
-	display: flow-root;
-}
-
-.uplifters-site-builder-blocks-row-layout-editor-wrapper .uplifters-site-builder-blocks-row-layout-section > *:first-child {
-	margin-top: 0;
-	margin-block-start: 0;
-}
-
-.uplifters-site-builder-blocks-row-layout-editor-wrapper .uplifters-site-builder-blocks-row-layout-section > *:last-child {
-	margin-bottom: 0;
-	margin-block-end: 0;
-}
-
-.uplifters-site-builder-blocks-row-layout-editor-wrapper .uplifters-site-builder-blocks-row-layout-section > figure > img {
+.uplifters-site-builder-blocks-row-layout-editor-wrapper > figure > img {
 	display: block;
 }
 
-.uplifters-site-builder-blocks-row-layout-section.is-empty {
+/**
+ * An empty row: a full-width dashed box whose centred plus opens the inserter,
+ * so any block can be dropped in as that row. "Add More" adds another one.
+ *
+ * The plus sits in its own centring layer rather than being centred by the box
+ * itself, so the delete control beside it cannot pull it off centre.
+ */
+.uplifters-site-builder-blocks-row-layout-editor-wrapper > .uplifters-site-builder-blocks-row-layout-empty-row {
+	position: relative;
+	box-sizing: border-box;
 	display: flex;
-	align-items: center;
-	justify-content: center;
+	flex: 0 0 auto;
+	align-self: stretch;
+	width: 100%;
+	max-width: none;
 	min-height: 72px;
+	margin: 0;
 	border: 1px dashed #c3c4c7;
 	border-radius: 6px;
 	background: #f9f9f9;
 }
 
-.uplifters-site-builder-blocks-row-layout-section.is-empty .block-editor-button-block-appender {
-	width: 36px;
-	height: 36px;
+.uplifters-site-builder-blocks-row-layout-empty-row-inserter {
+	display: flex;
+	flex: 1 1 auto;
+	align-items: center;
+	justify-content: center;
+	min-width: 0;
 }
 
-.uplifters-site-builder-blocks-row-layout-section.is-empty .block-editor-button-block-appender svg {
+.uplifters-site-builder-blocks-row-layout-empty-row .uplifters-site-builder-blocks-row-layout-empty-row-add.components-button {
+	width: 36px;
+	height: 36px;
+	min-width: 36px;
+	padding: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 4px;
+	color: #1e1e1e;
+}
+
+.uplifters-site-builder-blocks-row-layout-empty-row .uplifters-site-builder-blocks-row-layout-empty-row-add.components-button:hover {
+	color: var(--wp-admin-theme-color, #3858e9);
+}
+
+.uplifters-site-builder-blocks-row-layout-empty-row .uplifters-site-builder-blocks-row-layout-empty-row-add.components-button svg {
 	width: 24px;
 	height: 24px;
 }
 
-.uplifters-site-builder-blocks-row-layout-section-delete {
+/**
+ * One delete control per row, parked at the row's vertical centre. The layer
+ * itself ignores pointer events so it never blocks editing the rows under it.
+ */
+.uplifters-site-builder-blocks-row-layout-editor-wrapper > .uplifters-site-builder-blocks-row-layout-row-controls {
 	position: absolute;
-	top: 50%;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	z-index: 20;
+	pointer-events: none;
+}
+
+/**
+ * The positioning lives on this plain element, never on the button, so core's
+ * own .components-button rules cannot pull the control back into the flow.
+ */
+.uplifters-site-builder-blocks-row-layout-row-control {
+	position: absolute;
 	right: 8px;
 	transform: translateY(-50%);
+	pointer-events: auto;
+	line-height: 0;
 	z-index: 1;
+}
+
+.uplifters-site-builder-blocks-row-layout-empty-row > .uplifters-site-builder-blocks-row-layout-row-control {
+	top: 50%;
+}
+
+.uplifters-site-builder-blocks-row-layout-row-control .uplifters-site-builder-blocks-row-layout-row-delete.components-button {
 	width: 32px;
 	height: 32px;
+	min-width: 32px;
 	padding: 0;
 	display: flex;
 	align-items: center;
@@ -106,7 +145,7 @@
 	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
 }
 
-.uplifters-site-builder-blocks-row-layout-section-delete:hover {
+.uplifters-site-builder-blocks-row-layout-row-control .uplifters-site-builder-blocks-row-layout-row-delete.components-button:hover {
 	background: #b32d2e;
 	color: #fff;
 }

@@ -14,11 +14,11 @@ import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { defaultBlocks, defaultCategories, BlocksPanel } from './blocks-tab';
 import { OverviewPanel } from './overview-tab';
 import { SettingsPanel } from './settings-tab';
-import { Dashicon, SOFT_EASE, TAB_ORDER } from './dashboard-header';
-import { createIcon as createDashboardBrandIcon } from '../assets-shared/brand-icon/dashboard-brand-icon';
+import { Dashicon, EASE, SOFT_EASE, TAB_ORDER } from './dashboard-header';
+import { createIcon as createDashboardBrandIcon } from '../assets-shared/icon-brand/dashboard-brand-icon';
 
 const fallbackData = {
-	version: '1.0.2',
+	version: '1.0.3',
 	productName: 'Uplifters Website Builder',
 	siteEditorUrl: '#',
 	formAction: '',
@@ -95,9 +95,13 @@ function useRootClass(root, reduceMotion, activeTab) {
 
 		const updateDashboardChrome = () => {
 			const scrollY = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+			// Overview's header sits over the hero until it is well past it. On the
+			// other tabs the header is stuck from the first pixel, so content is
+			// under it (and it needs its scrolled shadow) as soon as the page moves.
+			const scrolledAfter = activeTab === 'overview' ? 72 : 0;
 
 			root.classList.toggle('is-overview-tab', activeTab === 'overview');
-			root.classList.toggle('is-dashboard-scrolled', scrollY > 72);
+			root.classList.toggle('is-dashboard-scrolled', scrollY > scrolledAfter);
 			root.dataset.upliftersSiteBuilderBlocksActiveTab = activeTab;
 		};
 
@@ -148,6 +152,34 @@ function useTabIndicator(activeTab) {
 }
 
 
+/*
+ * Brand hover, driven by Motion like the block cards' whileHover. The button
+ * owns the "rest" / "hover" / "tap" state and the icon shell, its glow and the
+ * product name inherit it as variants, so all three move on one clock.
+ */
+const BRAND_HOVER_TRANSITION = { duration: 0.55, ease: EASE };
+const BRAND_TAP_TRANSITION = { duration: 0.18, ease: EASE };
+
+const brandLiftVariants = {
+	rest: { y: 0, scale: 1, transition: BRAND_HOVER_TRANSITION },
+	hover: { y: -2, scale: 1.06, transition: BRAND_HOVER_TRANSITION },
+	tap: { y: 0, scale: 0.97, transition: BRAND_TAP_TRANSITION },
+};
+
+const brandGlowVariants = {
+	rest: { opacity: 0, transition: BRAND_HOVER_TRANSITION },
+	hover: { opacity: 1, transition: BRAND_HOVER_TRANSITION },
+	tap: { opacity: 1, transition: BRAND_TAP_TRANSITION },
+};
+
+/*
+ * Icon shell background. It runs light at the top-left to a deeper sky blue at
+ * the bottom-right, the same direction as the mark's own cyan-to-blue
+ * gradient, so each part of the mark sits on a tone it contrasts with.
+ */
+const BRAND_ICON_SHELL_COLOR = '#A9E3F4';
+const BRAND_ICON_SHELL_GRADIENT = 'linear-gradient(135deg, #FFFFFF 0%, #D9F5FC 32%, #A9E3F4 66%, #5EC4E6 100%)';
+
 function DashboardBrandIcon() {
 	const shellRef = useRef(null);
 	const iconRef = useRef(null);
@@ -157,10 +189,11 @@ function DashboardBrandIcon() {
 		const container = iconRef.current;
 		if (!shell || !container) return undefined;
 
-		shell.style.setProperty('background-color', '#B5E8F5', 'important');
-		shell.style.setProperty('background-image', 'none', 'important');
+		shell.style.setProperty('background-color', BRAND_ICON_SHELL_COLOR, 'important');
+		shell.style.setProperty('background-image', BRAND_ICON_SHELL_GRADIENT, 'important');
+		shell.style.setProperty('box-shadow', '0 4px 12px rgba(0, 0, 0, 0.16), 0 1px 3px rgba(0, 0, 0, 0.1)', 'important');
 
-		const icon = createDashboardBrandIcon();
+		const icon = createDashboardBrandIcon({ size: 36 });
 		if (!icon) return undefined;
 
 		container.replaceChildren(icon);
@@ -171,22 +204,29 @@ function DashboardBrandIcon() {
 	}, []);
 
 	return (
-		<span
+		<motion.span
 			ref={shellRef}
 			className="uplifters-site-builder-blocks-brand-icon-shell"
+			variants={brandLiftVariants}
 			style={{
+				position: 'relative',
+				isolation: 'isolate',
 				display: 'inline-flex',
 				alignItems: 'center',
 				justifyContent: 'center',
 				padding: '3px',
-				background: '#B5E8F5',
+				background: BRAND_ICON_SHELL_GRADIENT,
 				borderRadius: '10px',
+				boxShadow: '0 4px 12px rgba(0, 0, 0, 0.16), 0 1px 3px rgba(0, 0, 0, 0.1)',
 				boxSizing: 'border-box',
 				lineHeight: 0,
 				flexShrink: 0,
 			}}
 			aria-hidden="true"
 		>
+			{/* The resting shadow above is set !important in the effect, so the
+			    hover shadow is this separate layer, faded in underneath. */}
+			<motion.span className="uplifters-site-builder-blocks-brand-icon-glow" variants={brandGlowVariants} />
 			<span
 				ref={iconRef}
 				style={{
@@ -196,22 +236,32 @@ function DashboardBrandIcon() {
 					lineHeight: 0,
 				}}
 			/>
-		</span>
+		</motion.span>
 	);
 }
 
 function Header({ activeTab, setActiveTab, blockCount, reduceMotion, productName }) {
+	// Keyboard focus shows the hover state. :focus-visible keeps a mouse click,
+	// which also focuses the button, from leaving the brand lifted.
+	const [brandFocusVisible, setBrandFocusVisible] = useState(false);
+
 	return (
 		<header className="uplifters-site-builder-blocks-shellbar">
 			<div className="uplifters-site-builder-blocks-shellbar-main">
-				<button
+				<motion.button
 					type="button"
 					className="uplifters-site-builder-blocks-brand uplifters-site-builder-blocks-brand-button"
 					onClick={() => setActiveTab('overview')}
+					onFocus={(event) => setBrandFocusVisible(event.currentTarget.matches(':focus-visible'))}
+					onBlur={() => setBrandFocusVisible(false)}
+					initial={false}
+					animate={!reduceMotion && brandFocusVisible ? 'hover' : 'rest'}
+					whileHover={reduceMotion ? undefined : 'hover'}
+					whileTap={reduceMotion ? undefined : 'tap'}
 				>
 					<DashboardBrandIcon />
-					<span className="uplifters-site-builder-blocks-brand-name">{productName}</span>
-				</button>
+					<motion.span className="uplifters-site-builder-blocks-brand-name" variants={brandLiftVariants}>{productName}</motion.span>
+				</motion.button>
 			</div>
 			<Tabs activeTab={activeTab} setActiveTab={setActiveTab} blockCount={blockCount} reduceMotion={reduceMotion} productName={productName} />
 		</header>

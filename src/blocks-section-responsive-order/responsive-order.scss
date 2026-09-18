@@ -1,0 +1,63 @@
+/**
+ * Reorder control in the block inspector. One row per slot, listed in the
+ * display order of the active responsive device.
+ */
+.uplifters-site-builder-blocks-responsive-order {
+	margin-bottom: 16px;
+}
+
+.uplifters-site-builder-blocks-responsive-order__label {
+	margin: 0 0 8px;
+	font-weight: 600;
+}
+
+.uplifters-site-builder-blocks-responsive-order__list {
+	margin: 0 0 8px;
+	padding: 0;
+	list-style: none;
+}
+
+.uplifters-site-builder-blocks-responsive-order__item {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	margin: 0 0 4px;
+	padding: 4px 4px 4px 0;
+	border: 1px solid #e0e0e0;
+	border-radius: 4px;
+	background: #fff;
+}
+
+/* The serial the visitor sees on this device. */
+.uplifters-site-builder-blocks-responsive-order__position {
+	flex: 0 0 auto;
+	width: 24px;
+	text-align: center;
+	font-size: 12px;
+	font-weight: 600;
+	color: #757575;
+}
+
+.uplifters-site-builder-blocks-responsive-order__name {
+	flex: 1 1 auto;
+	min-width: 0;
+	overflow: hidden;
+	font-size: 12px;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.uplifters-site-builder-blocks-responsive-order__move.components-button {
+	flex: 0 0 auto;
+	width: 24px;
+	height: 24px;
+	min-width: 24px;
+	padding: 0;
+}
+
+.uplifters-site-builder-blocks-responsive-order__help {
+	margin: 8px 0 0;
+	font-size: 12px;
+	font-style: normal;
+	color: #757575;
+}

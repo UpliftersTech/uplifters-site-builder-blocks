@@ -1,10 +1,27 @@
-import InserterPreview from '../../blocks-inserter-preview/inserter-preview-shared';
+import InserterPreview from '../../blocks-inserter-preview/inserter-preview-register';
+import ResponsiveOrderControl, {
+	getDocumentMove,
+	getNaturalOrder,
+	getSlotOrder,
+	remapSequence,
+	resolveOrder,
+	useChildOrder,
+	withSlotMoved,
+	withSlotRemoved,
+} from '../../blocks-section-responsive-order/responsive-order';
+
+// eslint-disable-next-line import/no-extraneous-dependencies -- provided by WordPress core at runtime, not an npm dependency
+import { useMergeRefs } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
+
+// eslint-disable-next-line import/no-extraneous-dependencies -- provided by WordPress core at runtime, not an npm dependency
+import { getBlockType } from '@wordpress/blocks';
 
 import {
 	useBlockProps,
 	useInnerBlocksProps,
 	InspectorControls,
+	Inserter,
 } from '@wordpress/block-editor';
 
 import {
@@ -13,18 +30,20 @@ import {
 	PanelBody,
 	RangeControl,
 	SelectControl,
+	Tooltip,
 } from '@wordpress/components';
+
+import { plus, trash } from '@wordpress/icons';
 
 import { useEffect, useMemo, useRef, useState } from '@wordpress/element';
 
 // eslint-disable-next-line import/no-extraneous-dependencies -- provided by WordPress core at runtime, not an npm dependency
 import { useSelect, useDispatch } from '@wordpress/data';
 
-// eslint-disable-next-line import/no-extraneous-dependencies -- provided by WordPress core at runtime, not an npm dependency
-import { createBlock } from '@wordpress/blocks';
-
-const CHILD_BLOCK_NAME = 'uplifters-site-builder-blocks/column-section';
 const MIN_COLUMN_WIDTH_PX = 8; // about one alphabet/1ch on most fonts
+const MIN_COLUMNS = 1;
+const MAX_COLUMNS = 6;
+const DEVICES = [ 'desktop', 'tablet', 'mobile' ];
 
 const COLUMN_OPTIONS = [
 	{ label: __( '1 Column', 'uplifters-site-builder-blocks' ), value: 1 },
@@ -108,6 +127,41 @@ const resolveColumnWidths = ( raw, count ) => {
 	// Fallback
 	const eq = getEqualWidths( count );
 	return { desktop: eq, tablet: [ ...eq ], mobile: [ ...eq ] };
+};
+
+/**
+ * Append one column to every device's widths array. The existing columns keep
+ * their relative proportions and give up an equal share to the new one.
+ * @param {Object} widthsObj Per-device widths, already normalised to `count`.
+ * @param {number} count     Current number of columns.
+ */
+const withColumnAdded = ( widthsObj, count ) => {
+	const share = 100 / ( count + 1 );
+
+	return DEVICES.reduce( ( acc, key ) => {
+		const current = normalizeWidths( widthsObj[ key ], count );
+		const scaled = current.map( ( w ) => w * ( 1 - share / 100 ) );
+
+		acc[ key ] = normalizeWidths( [ ...scaled, share ], count + 1 );
+		return acc;
+	}, {} );
+};
+
+/**
+ * Drop one column from every device's widths array. The remaining columns keep
+ * their relative proportions and share the freed space between them.
+ * @param {Object} widthsObj Per-device widths, already normalised to `count`.
+ * @param {number} count     Current number of columns.
+ * @param {number} index     Index of the column being removed.
+ */
+const withColumnRemoved = ( widthsObj, count, index ) => {
+	return DEVICES.reduce( ( acc, key ) => {
+		const current = normalizeWidths( widthsObj[ key ], count );
+		const next = current.filter( ( ignored, i ) => i !== index );
+
+		acc[ key ] = normalizeWidths( next, count - 1 );
+		return acc;
+	}, {} );
 };
 
 /**
@@ -203,83 +257,6 @@ function useGlobalResponsiveDevice() {
 	return device;
 }
 
-// ─── Chooser UI (no layout selected) ─────────────────────────────────────────
-
-function LayoutChooser( { onSelect } ) {
-	return (
-		<div
-			className="column-layout__chooser"
-			style={ {
-				maxWidth: '760px',
-				margin: '0 auto',
-				textAlign: 'center',
-			} }
-		>
-			<h3 style={ { margin: '0 0 8px', fontSize: '18px' } }>
-				{ __(
-					'Choose columns layout',
-					'uplifters-site-builder-blocks'
-				) }
-			</h3>
-
-			<p style={ { margin: '0 0 18px', color: '#646970' } }>
-				{ __(
-					'Select how many columns you want inside this columns layout.',
-					'uplifters-site-builder-blocks'
-				) }
-			</p>
-
-			<div
-				style={ {
-					display: 'grid',
-					gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
-					gap: '10px',
-				} }
-			>
-				{ COLUMN_OPTIONS.map( ( option ) => (
-					<Button
-						key={ option.value }
-						variant="secondary"
-						onClick={ () => onSelect( option.value ) }
-						style={ {
-							display: 'block',
-							width: '100%',
-							height: 'auto',
-							padding: '12px',
-						} }
-					>
-						<span
-							style={ {
-								display: 'grid',
-								gridTemplateColumns: `repeat(${ option.value }, minmax(0, 1fr))`,
-								gap: '4px',
-								height: '36px',
-								marginBottom: '8px',
-							} }
-						>
-							{ Array.from(
-								{ length: option.value },
-								( _, i ) => (
-									<span
-										key={ i }
-										style={ {
-											display: 'block',
-											border: '1px solid #c3c4c7',
-											background: '#f6f7f7',
-											borderRadius: '2px',
-										} }
-									/>
-								)
-							) }
-						</span>
-						<strong>{ option.label }</strong>
-					</Button>
-				) ) }
-			</div>
-		</div>
-	);
-}
-
 // ─── Edit Component ───────────────────────────────────────────────────────────
 
 function Editor( { attributes, setAttributes, clientId } ) {
@@ -290,11 +267,10 @@ function Editor( { attributes, setAttributes, clientId } ) {
 		padding = { desktop: 0, tablet: 0, mobile: 0 },
 		margin = { desktop: 0, tablet: 0, mobile: 0 },
 		backgroundColor = { desktop: '', tablet: '', mobile: '' },
+		childOrder = { desktop: [], tablet: [], mobile: [] },
 	} = attributes;
 
 	const device = useGlobalResponsiveDevice();
-	const columnCount = Number( sections ) || 0;
-	const hasLayout = columnCount > 0;
 
 	const columnsRef = useRef( null );
 	const resizeStateRef = useRef( null );
@@ -307,6 +283,29 @@ function Editor( { attributes, setAttributes, clientId } ) {
 		setOpenSettingsPanel( ( current ) => ( current === key ? null : key ) );
 	const toggleStylesPanel = ( key ) =>
 		setOpenStylesPanel( ( current ) => ( current === key ? null : key ) );
+
+	// ── Columns ───────────────────────────────────────────────────────────────
+	// Every inner block is one column. `sections` can run ahead of the inner
+	// blocks: the surplus columns are the empty ones still waiting for content.
+
+	const innerBlocks = useSelect(
+		( select ) => select( 'core/block-editor' ).getBlocks( clientId ),
+		[ clientId ]
+	);
+
+	const {
+		removeBlock,
+		moveBlocksToPosition,
+		__unstableMarkNextChangeAsNotPersistent,
+	} = useDispatch( 'core/block-editor' );
+
+	const filledCount = innerBlocks.length;
+	const columnCount = Math.max(
+		Number( sections ) || 0,
+		filledCount,
+		MIN_COLUMNS
+	);
+	const emptyCount = columnCount - filledCount;
 
 	// ── Resolve attributes into stable per-device objects ────────────────────
 	// JSON-serialise as memo key so object identity changes only when
@@ -327,9 +326,9 @@ function Editor( { attributes, setAttributes, clientId } ) {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const marginObj = useMemo( () => resolveSpacing( margin ), [ marginKey ] );
 
-	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const backgroundColorObj = useMemo(
 		() => resolveBackgroundColor( backgroundColor ),
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[ backgroundColorKey ]
 	);
 
@@ -338,6 +337,145 @@ function Editor( { attributes, setAttributes, clientId } ) {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[ columnWidthsKey, columnCount ]
 	);
+
+	/*
+	 * Column order for the active device. Every column is one slot, the filled
+	 * ones first and the empty placeholders after them, so a track that has no
+	 * block in it yet still holds a position.
+	 */
+	const orderObject = useMemo(
+		() => resolveOrder( childOrder, columnCount ),
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[ JSON.stringify( childOrder ), columnCount ]
+	);
+
+	const orderSequence = orderObject[ device ];
+
+	const columnLabels = useMemo(
+		() => innerBlocks.map( ( block ) => getBlockType( block.name )?.title || '' ),
+		[ innerBlocks ]
+	);
+
+	/*
+	 * Desktop is the document order itself, so a desktop reorder moves the real
+	 * blocks and leaves childOrder.desktop natural. Only the narrower devices
+	 * keep a saved order of their own.
+	 */
+	const setOrderForDevice = ( nextSequence ) => {
+		if ( 'desktop' !== device ) {
+			setAttributes( {
+				childOrder: { ...orderObject, [ device ]: nextSequence },
+			} );
+
+			return;
+		}
+
+		const move = getDocumentMove(
+			getNaturalOrder( nextSequence.length ),
+			nextSequence
+		);
+
+		if ( ! move ) {
+			return;
+		}
+
+		const movedBlock = innerBlocks[ move.from ];
+
+		if ( movedBlock ) {
+			moveBlocksToPosition(
+				[ movedBlock.clientId ],
+				clientId,
+				clientId,
+				move.to
+			);
+		}
+	};
+
+	/*
+	 * A move in the canvas — Gutenberg's own arrows or drag-and-drop — arrives
+	 * here as a changed block list, with nothing to say which device the person
+	 * was looking at. On desktop the move is the point, so it stands and the
+	 * other devices are renumbered to keep showing what they showed. On tablet
+	 * and mobile the document order has to stay put, so the move is undone and
+	 * recorded as that device's own order instead.
+	 */
+	const documentOrderRef = useRef( null );
+
+	useEffect( () => {
+		const currentIds = innerBlocks.map( ( block ) => block.clientId );
+		const previousIds = documentOrderRef.current;
+
+		documentOrderRef.current = currentIds;
+
+		// First run, or a column was added or removed rather than moved.
+		if ( ! previousIds || previousIds.length !== currentIds.length ) {
+			return;
+		}
+
+		const move = getDocumentMove( previousIds, currentIds );
+
+		if ( ! move ) {
+			return;
+		}
+
+		if ( 'desktop' === device ) {
+			setAttributes( {
+				childOrder: {
+					desktop: getNaturalOrder( currentIds.length ),
+					tablet: remapSequence(
+						orderObject.tablet,
+						previousIds,
+						currentIds
+					),
+					mobile: remapSequence(
+						orderObject.mobile,
+						previousIds,
+						currentIds
+					),
+				},
+			} );
+
+			return;
+		}
+
+		const sequence = orderObject[ device ];
+		const position = sequence.indexOf( move.from + 1 );
+
+		if ( -1 === position ) {
+			return;
+		}
+
+		// The arrows step through the document, so the same step is applied to
+		// what this device shows rather than to the document position.
+		const target = Math.max(
+			0,
+			Math.min(
+				sequence.length - 1,
+				position + ( move.to - move.from )
+			)
+		);
+
+		documentOrderRef.current = previousIds;
+
+		if ( typeof __unstableMarkNextChangeAsNotPersistent === 'function' ) {
+			__unstableMarkNextChangeAsNotPersistent();
+		}
+
+		moveBlocksToPosition(
+			[ move.clientId ],
+			clientId,
+			clientId,
+			move.from
+		);
+
+		setAttributes( {
+			childOrder: {
+				...orderObject,
+				[ device ]: withSlotMoved( sequence, position, target ),
+			},
+		} );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ innerBlocks, device ] );
 
 	// Active-device slices (primitive / stable references)
 	const currentGap = gapObj[ device ] ?? 0;
@@ -353,6 +491,14 @@ function Editor( { attributes, setAttributes, clientId } ) {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[ JSON.stringify( activeWidths ), columnCount ]
 	);
+
+	// The frontend renders `sections` grid tracks, so keep the saved count in
+	// step with what the editor is showing.
+	useEffect( () => {
+		if ( ( Number( sections ) || 0 ) !== columnCount ) {
+			setAttributes( { sections: columnCount } );
+		}
+	}, [ sections, columnCount, setAttributes ] );
 
 	// ── Setters ───────────────────────────────────────────────────────────────
 
@@ -386,92 +532,71 @@ function Editor( { attributes, setAttributes, clientId } ) {
 		} );
 	};
 
-	// ── Column count chooser ──────────────────────────────────────────────────
+	// ── Add / remove columns ──────────────────────────────────────────────────
 
-	const selectColumnLayout = ( value ) => {
-		const next = Number( value ) || 1;
-		const eq = getEqualWidths( next );
+	const addColumn = () => {
+		if ( columnCount >= MAX_COLUMNS ) {
+			return;
+		}
+
 		setAttributes( {
-			sections: next,
-			columnWidths: { desktop: eq, tablet: [ ...eq ], mobile: [ ...eq ] },
+			sections: columnCount + 1,
+			columnWidths: withColumnAdded( columnWidthsObj, columnCount ),
 		} );
 	};
 
-	// ── Inner block sync ──────────────────────────────────────────────────────
-
-	const innerBlocks = useSelect(
-		( select ) => select( 'core/block-editor' ).getBlocks( clientId ),
-		[ clientId ]
-	);
-
-	const { insertBlock, removeBlock } = useDispatch( 'core/block-editor' );
-
-	useEffect( () => {
-		if ( ! hasLayout ) {
+	const deleteColumn = ( index ) => {
+		if ( columnCount <= MIN_COLUMNS ) {
 			return;
 		}
 
-		// Safety net: allowedBlocks + templateLock('all') already stop the
-		// inserter and drag-and-drop from adding foreign blocks, but if one
-		// ever lands here anyway (e.g. paste), strip it out immediately.
-		const invalid = innerBlocks.filter(
-			( b ) => b.name !== CHILD_BLOCK_NAME
+		// A column that still holds a block has to lose the block too; an empty
+		// one only exists as a grid track, so dropping the track is enough.
+		const block = innerBlocks[ index ];
+
+		if ( block ) {
+			removeBlock( block.clientId, false );
+		}
+
+		setAttributes( {
+			sections: columnCount - 1,
+			columnWidths: withColumnRemoved(
+				columnWidthsObj,
+				columnCount,
+				index
+			),
+			childOrder: withSlotRemoved( orderObject, index + 1 ),
+		} );
+	};
+
+	const setColumnCount = ( value ) => {
+		const next = Math.min(
+			MAX_COLUMNS,
+			Math.max( MIN_COLUMNS, Number( value ) || MIN_COLUMNS )
 		);
-		if ( invalid.length ) {
-			invalid.forEach( ( b ) => removeBlock( b.clientId, false ) );
+
+		if ( next === columnCount ) {
 			return;
 		}
 
-		const current = innerBlocks.length;
+		// Columns dropped off the end take their blocks with them.
+		innerBlocks
+			.slice( next )
+			.forEach( ( block ) => removeBlock( block.clientId, false ) );
 
-		if ( current < columnCount ) {
-			for ( let i = current; i < columnCount; i++ ) {
-				insertBlock(
-					createBlock( CHILD_BLOCK_NAME ),
-					i,
-					clientId,
-					false
-				);
-			}
-		} else if ( current > columnCount ) {
-			innerBlocks
-				.slice( columnCount )
-				.forEach( ( b ) => removeBlock( b.clientId, false ) );
-		}
-	}, [
-		hasLayout,
-		columnCount,
-		innerBlocks,
-		clientId,
-		insertBlock,
-		removeBlock,
-	] );
+		const eq = getEqualWidths( next );
+		const naturalOrder = getNaturalOrder( next );
 
-	// Reset device widths to equal whenever the active device has a mismatch
-	// (e.g. first time switching to tablet before any resize was done).
-	useEffect( () => {
-		if ( ! hasLayout ) {
-			return;
-		}
-		if (
-			! Array.isArray( activeWidths ) ||
-			activeWidths.length !== columnCount
-		) {
-			setColumnWidthsForDevice( getEqualWidths( columnCount ) );
-		}
-		// We intentionally exclude setColumnWidthsForDevice from deps to avoid
-		// triggering on every render — the effect only cares about these values.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ hasLayout, columnCount, device, columnWidthsKey ] );
-
-	const template = useMemo( () => {
-		if ( ! hasLayout ) {
-			return [];
-		}
-		return Array.from( { length: columnCount }, () => [
-			CHILD_BLOCK_NAME,
-		] );
-	}, [ hasLayout, columnCount ] );
+		setAttributes( {
+			sections: next,
+			columnWidths: { desktop: eq, tablet: [ ...eq ], mobile: [ ...eq ] },
+			childOrder: {
+				desktop: naturalOrder,
+				tablet: [ ...naturalOrder ],
+				mobile: [ ...naturalOrder ],
+			},
+		} );
+	};
 
 	// ── Resize logic ──────────────────────────────────────────────────────────
 
@@ -620,119 +745,33 @@ function Editor( { attributes, setAttributes, clientId } ) {
 
 	const deviceLabel = device.charAt( 0 ).toUpperCase() + device.slice( 1 );
 
-	const sharedBlockStyle = hasLayout
-		? {
-				display: 'grid',
-				gridTemplateColumns: getGridTemplateColumns(
-					normalizedWidths,
-					columnCount
-				),
-				gap: `${ currentGap }px`,
-				width: '100%',
-				maxWidth: '100%',
-				boxSizing: 'border-box',
-				overflowWrap: 'anywhere',
-				wordBreak: 'break-word',
-				minHeight: '140px',
-				border: '1px dashed #c3c4c7',
-				padding: `${ currentPadding }px`,
-				margin: `${ currentMargin }px`,
-				backgroundColor: currentBackgroundColor || undefined,
-				position: 'relative',
-		  }
-		: {
-				border: '1px dashed #c3c4c7',
-				padding: '18px',
-				minHeight: '150px',
-				background: '#ffffff',
-		  };
-
-	// ── Chooser branch (no layout selected) ──────────────────────────────────
-	// Must use useBlockProps unconditionally (Rules of Hooks).
-	// We call useInnerBlocksProps unconditionally too, then simply don't render
-	// inner blocks in the chooser branch.
+	// Previews the active device's column order in the canvas.
+	const orderRef = useChildOrder( orderSequence );
+	const wrapperRef = useMergeRefs( [ columnsRef, orderRef ] );
 
 	const blockProps = useBlockProps( {
-		ref: columnsRef,
-		className: hasLayout
-			? 'column-layout'
-			: 'column-layout column-layout--choose',
-		style: sharedBlockStyle,
+		ref: wrapperRef,
+		className: 'column-layout column-layout--editor',
+		style: {
+			gridTemplateColumns: getGridTemplateColumns(
+				normalizedWidths,
+				columnCount
+			),
+			gap: `${ currentGap }px`,
+			padding: `${ currentPadding }px`,
+			margin: `${ currentMargin }px`,
+			backgroundColor: currentBackgroundColor || undefined,
+		},
 	} );
 
 	const innerBlocksProps = useInnerBlocksProps( blockProps, {
-		allowedBlocks: [ CHILD_BLOCK_NAME ],
-		template,
-		templateLock: hasLayout ? 'all' : false,
 		renderAppender: false,
 	} );
 
 	const { children: innerBlocksChildren, ...innerBlocksWrapperProps } =
 		innerBlocksProps;
 
-	// ── Shared inspector controls ─────────────────────────────────────────────
-
-	const settingsPanel = (
-		<InspectorControls group="settings">
-			<PanelBody
-				title={ __( 'Structure', 'uplifters-site-builder-blocks' ) }
-				initialOpen={ false }
-				opened={ openSettingsPanel === 'structure' }
-				onToggle={ () => toggleSettingsPanel( 'structure' ) }
-			>
-				<SelectControl
-					label={ __( 'Columns', 'uplifters-site-builder-blocks' ) }
-					value={ columnCount }
-					options={ [
-						...( ! hasLayout
-							? [
-									{
-										label: __(
-											'Choose columns',
-											'uplifters-site-builder-blocks'
-										),
-										value: 0,
-									},
-							  ]
-							: [] ),
-						...COLUMN_OPTIONS.map( ( o ) => ( {
-							label: o.label,
-							value: o.value,
-						} ) ),
-					] }
-					onChange={ selectColumnLayout }
-					help={
-						hasLayout
-							? __(
-									'Changing columns will reset column widths.',
-									'uplifters-site-builder-blocks'
-							  )
-							: undefined
-					}
-				/>
-			</PanelBody>
-		</InspectorControls>
-	);
-
-	// ── Chooser branch ────────────────────────────────────────────────────────
-
-	if ( ! hasLayout ) {
-		return (
-			<>
-				{ settingsPanel }
-
-				<InspectorControls group="styles">
-					<div aria-hidden="true" />
-				</InspectorControls>
-
-				<div { ...blockProps }>
-					<LayoutChooser onSelect={ selectColumnLayout } />
-				</div>
-			</>
-		);
-	}
-
-	// ── Layout active branch ──────────────────────────────────────────────────
+	// ── Column overlay geometry ───────────────────────────────────────────────
 
 	const previewWidths = resizePreview?.widths || normalizedWidths;
 	const handlePositions = getHandlePositions( previewWidths );
@@ -749,7 +788,39 @@ function Editor( { attributes, setAttributes, clientId } ) {
 
 	return (
 		<>
-			{ settingsPanel }
+			<InspectorControls group="settings">
+				<PanelBody
+					title={ __( 'Structure', 'uplifters-site-builder-blocks' ) }
+					initialOpen={ false }
+					opened={ openSettingsPanel === 'structure' }
+					onToggle={ () => toggleSettingsPanel( 'structure' ) }
+				>
+					<SelectControl
+						label={ __( 'Columns', 'uplifters-site-builder-blocks' ) }
+						value={ columnCount }
+						options={ COLUMN_OPTIONS.map( ( o ) => ( {
+							label: o.label,
+							value: o.value,
+						} ) ) }
+						onChange={ setColumnCount }
+						help={ __(
+							'Changing columns will reset column widths and order.',
+							'uplifters-site-builder-blocks'
+						) }
+					/>
+
+					<ResponsiveOrderControl
+						sequence={ orderSequence }
+						labels={ columnLabels }
+						deviceLabel={ deviceLabel }
+						onChange={ setOrderForDevice }
+						help={ __(
+							'Moving a column in the canvas does the same thing. With Tablet or Mobile active the move applies to that device only; on Desktop it moves the column for every device.',
+							'uplifters-site-builder-blocks'
+						) }
+					/>
+				</PanelBody>
+			</InspectorControls>
 
 			<InspectorControls group="styles">
 				<PanelBody
@@ -830,37 +901,97 @@ function Editor( { attributes, setAttributes, clientId } ) {
 			<div { ...innerBlocksWrapperProps }>
 				{ innerBlocksChildren }
 
+				{ /* Columns with no block in them yet: a dashed cell whose plus
+				     opens the inserter for that column. */ }
+				{ Array.from( { length: emptyCount } ).map(
+					( ignored, index ) => (
+						<div
+							key={ `empty-column-${ index }` }
+							className="column-layout__empty-column"
+							style={ {
+								order: getSlotOrder(
+									orderSequence,
+									filledCount + index + 1
+								),
+							} }
+						>
+							<Inserter
+								rootClientId={ clientId }
+								isAppender
+								renderToggle={ ( { onToggle, disabled } ) => (
+									<Button
+										className="column-layout__empty-column-add"
+										icon={ plus }
+										label={ __(
+											'Add block',
+											'uplifters-site-builder-blocks'
+										) }
+										onClick={ onToggle }
+										disabled={ disabled }
+									/>
+								) }
+							/>
+						</div>
+					)
+				) }
+
 				{ previewWidths.map( ( width, index ) => (
-					<span
-						key={ `percent-badge-${ index }` }
-						className="column-layout__percent-badge"
+					<div
+						key={ `column-controls-${ index }` }
+						className="column-layout__column-controls"
 						style={ {
-							position: 'absolute',
 							left: `${ columnStarts[ index ] + width / 2 }%`,
-							// Sit above the block's top edge so the badge does not
-							// cover the column's inserter (plus) icon.
-							top: 0,
-							transform: 'translate(-50%, calc(-100% - 6px))',
-							padding: '3px 8px',
-							borderRadius: '999px',
-							background: 'rgba(30, 30, 30, 0.85)',
-							color: '#ffffff',
-							fontSize: '11px',
-							fontWeight: 600,
-							lineHeight: 1.2,
-							whiteSpace: 'nowrap',
-							pointerEvents: 'none',
-							zIndex: 5,
 						} }
 					>
-						{ `${ formatPercent( width ) }%` }
-					</span>
+						<span className="column-layout__percent-badge">
+							{ `${ formatPercent( width ) }%` }
+						</span>
+
+						<Tooltip
+							text={ __(
+								'Delete column',
+								'uplifters-site-builder-blocks'
+							) }
+						>
+							<Button
+								className="column-layout__column-delete"
+								icon={ trash }
+								label={ __(
+									'Delete column',
+									'uplifters-site-builder-blocks'
+								) }
+								disabled={ columnCount <= MIN_COLUMNS }
+								onClick={ () => deleteColumn( index ) }
+							/>
+						</Tooltip>
+					</div>
 				) ) }
+
+				<div className="column-layout__add-column">
+					<Tooltip
+						text={ __(
+							'Add column',
+							'uplifters-site-builder-blocks'
+						) }
+					>
+						<Button
+							className="column-layout__add-column-button"
+							icon={ plus }
+							label={ __(
+								'Add column',
+								'uplifters-site-builder-blocks'
+							) }
+							disabled={ columnCount >= MAX_COLUMNS }
+							onClick={ addColumn }
+						/>
+					</Tooltip>
+				</div>
 
 				{ handlePositions.map( ( position, index ) => (
 					<button
 						key={ index }
 						type="button"
+						className="column-layout__resize-handle"
 						aria-label={ __(
 							'Resize columns',
 							'uplifters-site-builder-blocks'
@@ -869,23 +1000,7 @@ function Editor( { attributes, setAttributes, clientId } ) {
 						onPointerMove={ handleResizeMove }
 						onPointerUp={ handleResizeEnd }
 						onPointerCancel={ handleResizeEnd }
-						style={ {
-							position: 'absolute',
-							left: `${ position }%`,
-							top: '50%',
-							width: '24px',
-							height: '24px',
-							padding: 0,
-							border: '2px solid #1e1e1e',
-							borderRadius: '999px',
-							background: '#ffffff',
-							boxShadow: '0 1px 4px rgba(0,0,0,0.25)',
-							transform: 'translate(-50%, -50%)',
-							cursor: 'col-resize',
-							zIndex: 999,
-							touchAction: 'none',
-							pointerEvents: 'auto',
-						} }
+						style={ { left: `${ position }%` } }
 					/>
 				) ) }
 			</div>

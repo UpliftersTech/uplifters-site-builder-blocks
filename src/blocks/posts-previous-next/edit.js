@@ -1,4 +1,4 @@
-import InserterPreview from '../../blocks-inserter-preview/inserter-preview-shared';
+import InserterPreview from '../../blocks-inserter-preview/inserter-preview-register';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useState } from '@wordpress/element';
 import { InspectorControls, useBlockProps } from '@wordpress/block-editor';

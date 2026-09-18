@@ -257,8 +257,36 @@ $uplifters_site_builder_blocks_inline_style = implode( '', array(
 	'align-items:stretch;',
 ) );
 
+// Per-device column order. The shared stylesheet below is printed once per
+// page, so the order rules — which differ per block instance — get their own
+// per-instance class instead of riding along on `.column-layout`.
+$uplifters_site_builder_blocks_unique_class = wp_unique_id( 'uplifters-site-builder-blocks-column-layout-' );
+
+$uplifters_site_builder_blocks_order_css = \UpliftersSiteBuilderBlocks\ResponsiveGlobal\ResponsiveOrderCss::device_css(
+	'.column-layout.' . $uplifters_site_builder_blocks_unique_class,
+	$attributes['childOrder'] ?? null,
+	$uplifters_site_builder_blocks_section_count
+);
+
+$uplifters_site_builder_blocks_instance_css = $uplifters_site_builder_blocks_order_css['desktop'];
+
+if ( '' !== $uplifters_site_builder_blocks_order_css['tablet'] ) {
+	$uplifters_site_builder_blocks_instance_css .= '@media (max-width:1024px){' . $uplifters_site_builder_blocks_order_css['tablet'] . '}';
+}
+
+if ( '' !== $uplifters_site_builder_blocks_order_css['mobile'] ) {
+	$uplifters_site_builder_blocks_instance_css .= '@media (max-width:767px){' . $uplifters_site_builder_blocks_order_css['mobile'] . '}';
+}
+
+if ( '' !== $uplifters_site_builder_blocks_instance_css ) {
+	\UpliftersSiteBuilderBlocks\BlocksRoute\BlocksDynamicStyleGenerator::enqueue(
+		$block,
+		$uplifters_site_builder_blocks_instance_css
+	);
+}
+
 $uplifters_site_builder_blocks_wrapper_attributes = get_block_wrapper_attributes( array(
-	'class' => 'column-layout',
+	'class' => 'column-layout ' . $uplifters_site_builder_blocks_unique_class,
 	'style' => $uplifters_site_builder_blocks_inline_style,
 ) );
 ?>
@@ -272,18 +300,29 @@ if ( ! $uplifters_site_builder_blocks_column_layout_style_printed ) :
 ?>
 <?php ob_start(); ?>
 
+	/* Every inner block is one column. Dropping its own leading/trailing
+	   margins keeps the visible space between columns equal to the Gap. */
 	.column-layout > * {
+		width: 100%;
 		min-width: 0 !important;
+		min-inline-size: 0;
 		max-width: 100%;
 		box-sizing: border-box;
+		margin-top: 0;
+		margin-block-start: 0;
+		margin-bottom: 0;
+		margin-block-end: 0;
 		overflow-wrap: anywhere;
 		word-break: break-word;
 	}
 
-	.column-layout > .column-section,
-	.column-layout > .wp-block-column-section {
-		width: 100%;
-		min-inline-size: 0;
+	.column-layout > figure {
+		margin-left: 0;
+		margin-right: 0;
+	}
+
+	.column-layout > figure > img {
+		display: block;
 	}
 
 	@media (max-width: 1024px) {

@@ -1,4 +1,4 @@
-/* Uplifters Website Builder dashboard â€” Overview tab + shared dashboard shell.
+/* Uplifters Website Builder dashboard — Overview tab + shared dashboard shell.
    This file contains shared chrome because all three tab CSS files are enqueued together. */
 
 :root{
@@ -31,7 +31,7 @@ body.toplevel_page_uplifters-site-builder-blocks #wpcontent{padding-left:0;backg
 @media(max-width:640px){.uplifters-site-builder-blocks-shellbar{height:62px}.uplifters-site-builder-blocks-hero{min-height:auto;padding:32px 22px;border-radius:22px}.uplifters-site-builder-blocks-hero h1{font-size:39px}.uplifters-site-builder-blocks-hero-copy>p{font-size:15px}.uplifters-site-builder-blocks-hero-actions,.uplifters-site-builder-blocks-button{width:100%}.uplifters-site-builder-blocks-proof-row{gap:18px}.uplifters-site-builder-blocks-hero-stage{min-height:280px}.uplifters-site-builder-blocks-editor-card{width:96%;transform:none;animation:none}.uplifters-site-builder-blocks-editor-canvas{min-height:220px}.uplifters-site-builder-blocks-float-chip{display:none}.uplifters-site-builder-blocks-tabs{top:10px}.uplifters-site-builder-blocks-tabs button{padding:0 14px}.uplifters-site-builder-blocks-tabs button .dashicons{display:none}.uplifters-site-builder-blocks-panel{padding-top:55px}.uplifters-site-builder-blocks-section-heading h2{font-size:31px}.uplifters-site-builder-blocks-overview-grid{grid-template-columns:1fr}.uplifters-site-builder-blocks-story-featured{grid-column:auto;min-height:420px}.uplifters-site-builder-blocks-block-grid{grid-template-columns:1fr}.uplifters-site-builder-blocks-library-heading .uplifters-site-builder-blocks-search{width:100%}.uplifters-site-builder-blocks-library-bar{align-items:flex-start;flex-direction:column}.uplifters-site-builder-blocks-stage{min-height:420px}.uplifters-site-builder-blocks-device-frame{width:95%;height:350px}.uplifters-site-builder-blocks-device-frame.is-tablet{width:82%;height:360px}.uplifters-site-builder-blocks-device-frame.is-mobile{width:55%;height:370px}.uplifters-site-builder-blocks-demo-site main{padding:40px 24px}.uplifters-site-builder-blocks-demo-site main h3{font-size:30px}.uplifters-site-builder-blocks-footer{gap:14px;flex-direction:column}}
 @media(prefers-reduced-motion:reduce){.uplifters-site-builder-blocks-dashboard-wrap *,.uplifters-site-builder-blocks-dashboard-wrap *:before,.uplifters-site-builder-blocks-dashboard-wrap *:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}.uplifters-site-builder-blocks-story-card,.uplifters-site-builder-blocks-block-card{opacity:1;transform:none}}
 
-/* â”€â”€ Motion Vanilla dashboard layer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ── Motion Vanilla dashboard layer ─────────────────────────────────────── */
 .uplifters-site-builder-blocks-dashboard-wrap{--uplifters-site-builder-blocks-spot-x:70%;--uplifters-site-builder-blocks-spot-y:22%}
 .uplifters-site-builder-blocks-dashboard-wrap.is-motion-powered .uplifters-site-builder-blocks-hero,.uplifters-site-builder-blocks-dashboard-wrap.is-motion-fallback .uplifters-site-builder-blocks-hero{isolation:isolate}
 .uplifters-site-builder-blocks-dashboard-wrap.is-motion-powered .uplifters-site-builder-blocks-hero:after,.uplifters-site-builder-blocks-dashboard-wrap.is-motion-fallback .uplifters-site-builder-blocks-hero:after{content:"";position:absolute;inset:-1px;z-index:1;pointer-events:none;background:radial-gradient(circle at var(--uplifters-site-builder-blocks-spot-x) var(--uplifters-site-builder-blocks-spot-y),rgba(255,255,255,.22),rgba(255,255,255,.07) 18%,transparent 42%);mix-blend-mode:screen;opacity:.9;transition:opacity .25s ease}
@@ -49,7 +49,7 @@ body.toplevel_page_uplifters-site-builder-blocks #wpcontent{padding-left:0;backg
 .uplifters-site-builder-blocks-dashboard-wrap.is-motion-powered .uplifters-site-builder-blocks-preview-box:hover,.uplifters-site-builder-blocks-dashboard-wrap.is-motion-fallback .uplifters-site-builder-blocks-preview-box:hover{border-color:#cfc6ff;box-shadow:0 16px 34px rgba(48,37,98,.08);transform:translateY(-1px)}
 .uplifters-site-builder-blocks-dashboard-wrap.is-reduced-motion .uplifters-site-builder-blocks-story-card,.uplifters-site-builder-blocks-dashboard-wrap.is-reduced-motion .uplifters-site-builder-blocks-block-card,.uplifters-site-builder-blocks-dashboard-wrap.is-reduced-motion .uplifters-site-builder-blocks-settings-card,.uplifters-site-builder-blocks-dashboard-wrap.is-reduced-motion .uplifters-site-builder-blocks-stage{opacity:1!important;transform:none!important;filter:none!important}
 @media(prefers-reduced-motion:reduce){.uplifters-site-builder-blocks-dashboard-wrap .uplifters-site-builder-blocks-hero:after{display:none!important}.uplifters-site-builder-blocks-dashboard-wrap .uplifters-site-builder-blocks-button:before,.uplifters-site-builder-blocks-dashboard-wrap .uplifters-site-builder-blocks-btn-save:before,.uplifters-site-builder-blocks-dashboard-wrap .uplifters-site-builder-blocks-block-card:before,.uplifters-site-builder-blocks-dashboard-wrap .uplifters-site-builder-blocks-story-card:before,.uplifters-site-builder-blocks-dashboard-wrap .uplifters-site-builder-blocks-settings-card:before{display:none!important}}
-/* â”€â”€ React hero: Dynamic Viewport landing focus â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ── React hero: Dynamic Viewport landing focus ─────────────────────────── */
 .uplifters-site-builder-blocks-dashboard-loading{min-height:360px;width:min(1400px,calc(100% - 48px));margin:0 auto;display:flex;align-items:center;justify-content:center;gap:12px;color:var(--uplifters-site-builder-blocks-muted);font-weight:700}
 .uplifters-site-builder-blocks-brand-button{appearance:none;border:0;background:transparent;padding:0;cursor:pointer;text-align:left}
 .uplifters-site-builder-blocks-brand-button:hover{color:var(--uplifters-site-builder-blocks-violet)}
@@ -74,7 +74,7 @@ body.toplevel_page_uplifters-site-builder-blocks #wpcontent{padding-left:0;backg
 @media(max-width:780px){.uplifters-site-builder-blocks-hero-dynamic .uplifters-site-builder-blocks-hero-stage{min-height:390px}.uplifters-site-builder-blocks-hero-viewport{padding:10px;border-radius:22px}.uplifters-site-builder-blocks-hero-viewport-toolbar{height:auto;align-items:flex-start;flex-direction:column}.uplifters-site-builder-blocks-hero-device-controls{width:100%;justify-content:space-between}.uplifters-site-builder-blocks-hero-device-controls button{flex:1}.uplifters-site-builder-blocks-hero-device-wrap{min-height:300px}.uplifters-site-builder-blocks-hero-viewport .uplifters-site-builder-blocks-device-frame{width:96%;height:282px}.uplifters-site-builder-blocks-hero-viewport .uplifters-site-builder-blocks-device-frame.is-tablet{width:76%;height:300px}.uplifters-site-builder-blocks-hero-viewport .uplifters-site-builder-blocks-device-frame.is-mobile{width:50%;height:310px}.uplifters-site-builder-blocks-hero-viewport .uplifters-site-builder-blocks-demo-site main{padding:34px 22px}.uplifters-site-builder-blocks-hero-viewport .uplifters-site-builder-blocks-demo-site main h3{font-size:27px}.uplifters-site-builder-blocks-hero-viewport-chips{display:none}.uplifters-site-builder-blocks-hero-viewport-title{flex-wrap:wrap}.uplifters-site-builder-blocks-hero-viewport-title em{width:100%;padding-left:17px}}
 @media(max-width:520px){.uplifters-site-builder-blocks-hero-viewport .uplifters-site-builder-blocks-device-frame.is-mobile{width:62%}.uplifters-site-builder-blocks-hero-viewport .uplifters-site-builder-blocks-device-frame.is-tablet{width:86%}.uplifters-site-builder-blocks-hero-viewport .uplifters-site-builder-blocks-device-frame{height:260px}.uplifters-site-builder-blocks-hero-viewport .uplifters-site-builder-blocks-device-frame.is-tablet{height:278px}.uplifters-site-builder-blocks-hero-viewport .uplifters-site-builder-blocks-device-frame.is-mobile{height:292px}.uplifters-site-builder-blocks-hero-viewport .uplifters-site-builder-blocks-demo-site nav,.uplifters-site-builder-blocks-hero-viewport .uplifters-site-builder-blocks-demo-site header button{display:none}.uplifters-site-builder-blocks-hero-viewport .uplifters-site-builder-blocks-demo-site header i{display:block}}
 @media(prefers-reduced-motion:reduce){.uplifters-site-builder-blocks-live-dot,.uplifters-site-builder-blocks-hero-viewport-stage .uplifters-site-builder-blocks-orbit,.uplifters-site-builder-blocks-hero-viewport-chips{animation:none!important}}
-/* â”€â”€ Dashboard header / overview hero integration â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ── Dashboard header / overview hero integration ───────────────────────── */
 .uplifters-site-builder-blocks-dashboard-wrap{
 	--uplifters-site-builder-blocks-dashboard-header-overlap:118px;
 	--uplifters-site-builder-blocks-dashboard-header-top:32px;
@@ -130,8 +130,8 @@ body.toplevel_page_uplifters-site-builder-blocks #wpcontent{padding-left:0;backg
 		padding .24s ease;
 }
 .uplifters-site-builder-blocks-brand{
-	font-size:14px;
-	font-weight:780;
+	font-size:18px;
+	font-weight:800;
 	letter-spacing:-.015em;
 	white-space:nowrap;
 	transition:color .24s ease,text-shadow .24s ease,opacity .24s ease;
@@ -311,7 +311,7 @@ body.toplevel_page_uplifters-site-builder-blocks #wpcontent{padding-left:0;backg
 		transition:none!important;
 	}
 }
-/* â”€â”€ Dashboard responsive hardening: desktop / tablet / mobile â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ── Dashboard responsive hardening: desktop / tablet / mobile ───────────── */
 body.toplevel_page_uplifters-site-builder-blocks #wpbody-content{
 	padding-bottom:0;
 	overflow-x:hidden;
@@ -641,7 +641,7 @@ body.toplevel_page_uplifters-site-builder-blocks #wpbody-content{
 		width:min(100% - 16px,1400px);
 	}
 	.uplifters-site-builder-blocks-brand{
-		font-size:13px;
+		font-size:16px;
 	}
 	.uplifters-site-builder-blocks-brand-symbol{
 		width:30px;
@@ -684,7 +684,7 @@ body.toplevel_page_uplifters-site-builder-blocks #wpbody-content{
 	}
 }
 
-/* â”€â”€ Uplifters Website Builder dashboard sticky header + responsive admin hardening â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ── Uplifters Website Builder dashboard sticky header + responsive admin hardening ───────── */
 body.toplevel_page_uplifters-site-builder-blocks #wpbody-content{
 	overflow:visible;
 }
@@ -740,11 +740,13 @@ body.toplevel_page_uplifters-site-builder-blocks #wpcontent{
 		justify-content:flex-start;
 	}
 	.uplifters-site-builder-blocks-brand{
-		width:34px;
-		min-width:34px;
-		max-width:34px;
+		/* 36px icon + 3px shell padding each side. */
+		width:42px;
+		min-width:42px;
+		max-width:42px;
 		gap:0;
-		overflow:hidden;
+		/* Visible, or the icon shell's shadow is cut off square at this box. */
+		overflow:visible;
 	}
 	.uplifters-site-builder-blocks-brand-symbol{
 		width:34px;
@@ -840,7 +842,7 @@ body.toplevel_page_uplifters-site-builder-blocks #wpcontent{
 
 /* new*/
 
-/* â”€â”€ Desktop = monitor (bezel + neck + base) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ── Desktop = monitor (bezel + neck + base) ─────────────────────────────── */
 
 /* Hero viewport-e device wrap-e stand-er jonno jayga rakha hoy */
 .uplifters-site-builder-blocks-hero-viewport .uplifters-site-builder-blocks-hero-device-wrap{
@@ -947,10 +949,10 @@ body.toplevel_page_uplifters-site-builder-blocks #wpcontent{
 		width:92px;
 		height:8px;
 	}
-	/* 520px media query-te header nav hide kora ache â€” desktop-e o mile jabe, thik ache */
+	/* 520px media query-te header nav hide kora ache — desktop-e o mile jabe, thik ache */
 }
 
-/* Reduced motion-e kono extra kichu lage na â€” pseudo element static */
+/* Reduced motion-e kono extra kichu lage na — pseudo element static */
 
 
 
@@ -963,7 +965,7 @@ body.toplevel_page_uplifters-site-builder-blocks #wpcontent{
 	color: #fff !important;
 }
 
-/* â”€â”€ Overview hero feature messaging â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/* ── Overview hero feature messaging ────────────────────────────────────── */
 .uplifters-site-builder-blocks-hero-dynamic .uplifters-site-builder-blocks-hero-feature-title {
 	max-width: 620px;
 	margin: 0 0 18px;
@@ -1672,4 +1674,33 @@ body.toplevel_page_uplifters-site-builder-blocks .wrap.uplifters-site-builder-bl
 	.uplifters-site-builder-blocks-dashboard-wrap.is-overview-tab #uplifters-site-builder-blocks-overview.uplifters-site-builder-blocks-panel > .uplifters-site-builder-blocks-hero{
 		padding-top:calc(68px + var(--uplifters-site-builder-blocks-dashboard-header-overlap));
 	}
+}
+
+
+/* ══ Brand hover ═════════════════════════════════════════════════════════
+   The lift, press and glow fade are animated by Motion in dashboard-controller.js
+   (brandLiftVariants / brandGlowVariants). This file only draws the glow layer
+   and keeps the hover colour change on the same timing as the motion. ──── */
+.uplifters-site-builder-blocks-brand-icon-glow{
+	position:absolute;
+	inset:0;
+	z-index:-1;
+	border-radius:inherit;
+	box-shadow:0 12px 26px rgba(26,147,238,.34),0 4px 10px rgba(0,72,205,.16);
+	opacity:0;
+	pointer-events:none;
+}
+.uplifters-site-builder-blocks-brand-button{
+	transition:color .55s cubic-bezier(.22,1,.36,1),text-shadow .55s cubic-bezier(.22,1,.36,1),opacity .24s ease;
+}
+/* Over the Overview hero the name is white, and that rule outranks the plain
+   :hover colour, so hovering never changed it there. The dashboard violet
+   (#6d4aff) is too dark to read on the hero, so the hover uses a light
+   lavender of the same hue instead. */
+.uplifters-site-builder-blocks-dashboard-wrap.is-overview-tab:not(.is-dashboard-scrolled) .uplifters-site-builder-blocks-brand-button:hover{
+	color:#c4b5ff;
+}
+/* Scaled from its left edge so the name never closes the gap to the icon. */
+.uplifters-site-builder-blocks-brand-name{
+	transform-origin:left center;
 }

@@ -6,7 +6,7 @@
  * only static, instance-independent rules live here — including the rules
  * that used to live in the standalone posts-section/style.scss, now that
  * Posts Section is registered from inside this folder (see posts-section.js
- * and includes/blocks-helper/section-wrapper/posts-section-block-register.php).
+ * and includes/blocks-helper/section-wrapper/posts-section-register.php).
  */
 
 .uplifters-site-builder-blocks-posts-section {
@@ -22,7 +22,7 @@
 	}
 }
 
-/* Fallback-rendered child: Post Title (see posts-section-block-register.php) */
+/* Fallback-rendered child: Post Title (see posts-section-register.php) */
 .uplifters-posts-title {
 	margin: 0;
 	font-size: clamp(32px, 5vw, 56px);
@@ -35,7 +35,7 @@
 	}
 }
 
-/* Fallback-rendered child: Post Featured Image (see posts-section-block-register.php) */
+/* Fallback-rendered child: Post Featured Image (see posts-section-register.php) */
 .uplifters-posts-featured-image {
 	margin-left: 0;
 	margin-right: 0;

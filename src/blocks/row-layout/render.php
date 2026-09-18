@@ -255,34 +255,25 @@ $uplifters_site_builder_blocks_static_css .= 'display:flex;';
 $uplifters_site_builder_blocks_static_css .= 'flex-direction:column;';
 $uplifters_site_builder_blocks_static_css .= '}';
 
-$uplifters_site_builder_blocks_static_css .= '.uplifters-site-builder-blocks-row-layout-section{';
+/* Each inner block is a row. Dropping its own leading/trailing margins keeps
+   the visible space between rows equal to the Divider Gap only. */
+$uplifters_site_builder_blocks_static_css .= '.uplifters-site-builder-blocks-row-layout>*{';
 $uplifters_site_builder_blocks_static_css .= 'width:100%;';
 $uplifters_site_builder_blocks_static_css .= 'min-width:0;';
 $uplifters_site_builder_blocks_static_css .= 'box-sizing:border-box;';
-/* flow-root keeps an inner block's margin from escaping the row and pushing
-   the next row down, so the visible space between rows is the Divider Gap only. */
-$uplifters_site_builder_blocks_static_css .= 'display:flow-root;';
-$uplifters_site_builder_blocks_static_css .= '}';
-
-/* Drop the leading/trailing margins the first and last inner block (paragraph,
-   heading, image figure, ...) would otherwise add inside each row. */
-$uplifters_site_builder_blocks_static_css .= '.uplifters-site-builder-blocks-row-layout-section>*:first-child{';
 $uplifters_site_builder_blocks_static_css .= 'margin-top:0;';
 $uplifters_site_builder_blocks_static_css .= 'margin-block-start:0;';
-$uplifters_site_builder_blocks_static_css .= '}';
-
-$uplifters_site_builder_blocks_static_css .= '.uplifters-site-builder-blocks-row-layout-section>*:last-child{';
 $uplifters_site_builder_blocks_static_css .= 'margin-bottom:0;';
 $uplifters_site_builder_blocks_static_css .= 'margin-block-end:0;';
 $uplifters_site_builder_blocks_static_css .= '}';
 
-/* An image block inside a row should not keep the figure's default bottom gap. */
-$uplifters_site_builder_blocks_static_css .= '.uplifters-site-builder-blocks-row-layout-section>figure{';
+/* An image block used as a row should not keep the figure's default side gap. */
+$uplifters_site_builder_blocks_static_css .= '.uplifters-site-builder-blocks-row-layout>figure{';
 $uplifters_site_builder_blocks_static_css .= 'margin-left:0;';
 $uplifters_site_builder_blocks_static_css .= 'margin-right:0;';
 $uplifters_site_builder_blocks_static_css .= '}';
 
-$uplifters_site_builder_blocks_static_css .= '.uplifters-site-builder-blocks-row-layout-section>figure>img{';
+$uplifters_site_builder_blocks_static_css .= '.uplifters-site-builder-blocks-row-layout>figure>img{';
 $uplifters_site_builder_blocks_static_css .= 'display:block;';
 $uplifters_site_builder_blocks_static_css .= '}';
 
@@ -303,6 +294,16 @@ $uplifters_site_builder_blocks_dynamic_css .= '#' . $uplifters_site_builder_bloc
 $uplifters_site_builder_blocks_dynamic_css .= 'gap:' . $uplifters_site_builder_blocks_desktop_gap . ';';
 $uplifters_site_builder_blocks_dynamic_css .= '}';
 
+/* Per-device row order. save.js wraps the rows in their own flex container, so
+   that container — not the outer wrapper — is what the order rules target. */
+$uplifters_site_builder_blocks_order_css = \UpliftersSiteBuilderBlocks\ResponsiveGlobal\ResponsiveOrderCss::device_css(
+	'#' . $uplifters_site_builder_blocks_unique_id . ' .uplifters-site-builder-blocks-row-layout',
+	$attributes['childOrder'] ?? null,
+	\UpliftersSiteBuilderBlocks\ResponsiveGlobal\ResponsiveOrderCss::count_inner_blocks( $block )
+);
+
+$uplifters_site_builder_blocks_dynamic_css .= $uplifters_site_builder_blocks_order_css['desktop'];
+
 $uplifters_site_builder_blocks_dynamic_css .= '@media (max-width:1024px){';
 
 $uplifters_site_builder_blocks_dynamic_css .= '#' . $uplifters_site_builder_blocks_unique_id . '{';
@@ -319,6 +320,8 @@ $uplifters_site_builder_blocks_dynamic_css .= '}';
 $uplifters_site_builder_blocks_dynamic_css .= '#' . $uplifters_site_builder_blocks_unique_id . ' .uplifters-site-builder-blocks-row-layout{';
 $uplifters_site_builder_blocks_dynamic_css .= 'gap:' . $uplifters_site_builder_blocks_tablet_gap . ';';
 $uplifters_site_builder_blocks_dynamic_css .= '}';
+
+$uplifters_site_builder_blocks_dynamic_css .= $uplifters_site_builder_blocks_order_css['tablet'];
 
 $uplifters_site_builder_blocks_dynamic_css .= '}';
 
@@ -338,6 +341,8 @@ $uplifters_site_builder_blocks_dynamic_css .= '}';
 $uplifters_site_builder_blocks_dynamic_css .= '#' . $uplifters_site_builder_blocks_unique_id . ' .uplifters-site-builder-blocks-row-layout{';
 $uplifters_site_builder_blocks_dynamic_css .= 'gap:' . $uplifters_site_builder_blocks_mobile_gap . ';';
 $uplifters_site_builder_blocks_dynamic_css .= '}';
+
+$uplifters_site_builder_blocks_dynamic_css .= $uplifters_site_builder_blocks_order_css['mobile'];
 
 $uplifters_site_builder_blocks_dynamic_css .= '}';
 

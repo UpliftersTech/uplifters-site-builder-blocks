@@ -1,6 +1,6 @@
 /* Uplifters Website Builder dashboard — All Blocks tab. */
 
-.uplifters-site-builder-blocks-library-heading{align-items:center}.uplifters-site-builder-blocks-search{width:320px;height:46px;padding:0 14px;border:1px solid var(--uplifters-site-builder-blocks-line);border-radius:13px;background:#fff;display:flex;align-items:center;gap:8px}.uplifters-site-builder-blocks-search input{width:100%;border:0!important;box-shadow:none!important;outline:0;background:transparent}.uplifters-site-builder-blocks-search .dashicons{color:#8b8e9d}.uplifters-site-builder-blocks-library-bar{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:20px}.uplifters-site-builder-blocks-filters{display:flex;gap:7px;overflow:auto;padding-bottom:3px}.uplifters-site-builder-blocks-filters button{padding:8px 12px;border:1px solid var(--uplifters-site-builder-blocks-line);border-radius:999px;background:#fff;color:#6b6e7d;cursor:pointer;font-size:12px;font-weight:700;white-space:nowrap}.uplifters-site-builder-blocks-filters button.is-active{background:var(--uplifters-site-builder-blocks-dark);border-color:var(--uplifters-site-builder-blocks-dark);color:#fff}.uplifters-site-builder-blocks-result-count{font-size:12px;color:var(--uplifters-site-builder-blocks-muted);white-space:nowrap}.uplifters-site-builder-blocks-result-count strong{color:var(--uplifters-site-builder-blocks-text)}.uplifters-site-builder-blocks-block-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.uplifters-site-builder-blocks-block-card{position:relative;min-height:176px;padding:20px;border:1px solid var(--uplifters-site-builder-blocks-line);border-radius:18px;background:#fff;display:grid;grid-template-columns:44px 1fr;gap:14px;opacity:0;transform:translateY(12px);transition:.45s ease,box-shadow .2s,transform .2s,border-color .2s}.uplifters-site-builder-blocks-block-card.is-visible{opacity:1;transform:none}.uplifters-site-builder-blocks-block-card:not([hidden]):hover{transform:translateY(-4px);border-color:#cfc6ff;box-shadow:0 16px 34px rgba(48,37,98,.11)}.uplifters-site-builder-blocks-block-card[hidden]{display:none}.uplifters-site-builder-blocks-block-icon{width:44px;height:44px;border-radius:13px;background:var(--uplifters-site-builder-blocks-violet-soft);color:var(--uplifters-site-builder-blocks-violet);display:grid;place-items:center}.uplifters-site-builder-blocks-block-icon .dashicons{font-size:20px;width:20px;height:20px}.uplifters-site-builder-blocks-block-card h3{margin:0 0 7px;font-size:17px}.uplifters-site-builder-blocks-block-card p{margin:0;color:var(--uplifters-site-builder-blocks-muted);font-size:12px;line-height:1.55}.uplifters-site-builder-blocks-card-arrow{position:absolute;right:13px;top:13px;color:#c2c4ce;transform:rotate(45deg);font-size:15px}.uplifters-site-builder-blocks-empty{text-align:center;padding:80px 20px;color:var(--uplifters-site-builder-blocks-muted)}.uplifters-site-builder-blocks-empty .dashicons{font-size:34px;width:34px;height:34px}.uplifters-site-builder-blocks-empty h3{color:var(--uplifters-site-builder-blocks-text);font-size:20px}
+.uplifters-site-builder-blocks-library-heading{align-items:center}.uplifters-site-builder-blocks-search{width:320px;height:46px;padding:0 14px;border:1px solid var(--uplifters-site-builder-blocks-line);border-radius:13px;background:#fff;display:flex;align-items:center;gap:8px}.uplifters-site-builder-blocks-search input{width:100%;border:0!important;box-shadow:none!important;outline:0;background:transparent}.uplifters-site-builder-blocks-search .dashicons{flex:0 0 20px;width:20px;height:20px;font-size:20px;font-weight:400;line-height:1;letter-spacing:0;color:#8b8e9d}.uplifters-site-builder-blocks-library-bar{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:20px}.uplifters-site-builder-blocks-filters{display:flex;gap:7px;overflow:auto;padding-bottom:3px}.uplifters-site-builder-blocks-filters button{padding:8px 12px;border:1px solid var(--uplifters-site-builder-blocks-line);border-radius:999px;background:#fff;color:#6b6e7d;cursor:pointer;font-size:12px;font-weight:700;white-space:nowrap}.uplifters-site-builder-blocks-filters button.is-active{background:var(--uplifters-site-builder-blocks-dark);border-color:var(--uplifters-site-builder-blocks-dark);color:#fff}.uplifters-site-builder-blocks-result-count{font-size:12px;color:var(--uplifters-site-builder-blocks-muted);white-space:nowrap}.uplifters-site-builder-blocks-result-count strong{color:var(--uplifters-site-builder-blocks-text)}.uplifters-site-builder-blocks-block-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.uplifters-site-builder-blocks-block-card{position:relative;min-height:176px;padding:20px;border:1px solid var(--uplifters-site-builder-blocks-line);border-radius:18px;background:#fff;display:grid;grid-template-columns:44px 1fr;gap:14px;opacity:0;transform:translateY(12px);transition:.45s ease,box-shadow .2s,transform .2s,border-color .2s}.uplifters-site-builder-blocks-block-card.is-visible{opacity:1;transform:none}.uplifters-site-builder-blocks-block-card:not([hidden]):hover{transform:translateY(-4px);border-color:#cfc6ff;box-shadow:0 16px 34px rgba(48,37,98,.11)}.uplifters-site-builder-blocks-block-card[hidden]{display:none}.uplifters-site-builder-blocks-block-icon{width:44px;height:44px;border-radius:13px;background:var(--uplifters-site-builder-blocks-violet-soft);color:var(--uplifters-site-builder-blocks-violet);display:grid;place-items:center}.uplifters-site-builder-blocks-block-icon .dashicons{font-size:20px;width:20px;height:20px}.uplifters-site-builder-blocks-block-card h3{margin:0 0 7px;font-size:17px}.uplifters-site-builder-blocks-block-card p{margin:0;color:var(--uplifters-site-builder-blocks-muted);font-size:12px;line-height:1.55}.uplifters-site-builder-blocks-card-arrow{position:absolute;right:13px;top:13px;color:#c2c4ce;transform:rotate(45deg);font-size:15px}.uplifters-site-builder-blocks-empty{text-align:center;padding:80px 20px;color:var(--uplifters-site-builder-blocks-muted)}.uplifters-site-builder-blocks-empty .dashicons{font-size:34px;width:34px;height:34px}.uplifters-site-builder-blocks-empty h3{color:var(--uplifters-site-builder-blocks-text);font-size:20px}
 
 /* All Blocks responsive layout. */
 @media(max-width:1180px){.uplifters-site-builder-blocks-block-grid{grid-template-columns:repeat(3,1fr)}}
@@ -106,6 +106,27 @@
 	}
 }
 
+/* ── Category filters: all six pills stay visible ─────────────────────────
+   They wrap instead of scrolling sideways behind a hidden scrollbar, which
+   also stops the scroll box clipping the buttons' focus outline. Phones get
+   an even 3 × 2 grid instead of a ragged wrap. ─────────────────────────── */
+.uplifters-site-builder-blocks-filters{
+	flex-wrap:wrap;
+	overflow:visible;
+}
+@media(max-width:480px){
+	.uplifters-site-builder-blocks-filters{
+		display:grid;
+		grid-template-columns:repeat(3,minmax(0,1fr));
+	}
+	.uplifters-site-builder-blocks-filters button{
+		min-width:0;
+		overflow:hidden;
+		text-align:center;
+		text-overflow:ellipsis;
+	}
+}
+
 
 /* ── All Blocks / Settings: darker working surface ──────────────────────── */
 .uplifters-site-builder-blocks-dashboard-wrap:not(.is-overview-tab){
@@ -125,4 +146,13 @@ body.toplevel_page_uplifters-site-builder-blocks:has(#uplifters-site-builder-blo
 }
 .uplifters-site-builder-blocks-dashboard-wrap:not(.is-overview-tab) .uplifters-site-builder-blocks-footer{
 	background:transparent;
+}
+
+/* Scrolled: the sticky header is the same colour as the page, so it darkens a
+   step and casts a shadow downward to separate it from the content passing
+   underneath. Only colour and shadow change; sticky positioning is untouched.
+   The shellbar's own transition animates both. */
+.uplifters-site-builder-blocks-dashboard-wrap:not(.is-overview-tab).is-dashboard-scrolled .uplifters-site-builder-blocks-shellbar{
+	background:#d9dce6;
+	box-shadow:0 14px 28px -16px rgba(26,30,52,.32),0 4px 10px -6px rgba(26,30,52,.12);
 }

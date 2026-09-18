@@ -5,56 +5,59 @@
  * examples opt into this component with the private `preview` attribute so the
  * inserter never depends on REST responses, selected media, or editor state.
  *
- * Every block gets its own dedicated preview file in this directory, keyed by
- * the block's folder/slug name, so the inserter panel shows something specific
- * to that block instead of Gutenberg's generic (often blank) default preview.
+ * Every block gets its own dedicated preview file in blocks-inserter-animation/,
+ * keyed by the block's folder/slug name, so the inserter panel shows something
+ * specific to that block instead of Gutenberg's generic (often blank) default
+ * preview.
  *
- * Section blocks that simply wrap their parent layout block (header-section,
- * footer-section, column-section, row-section, posts-section) intentionally
- * have no dedicated preview here and fall through to Gutenberg's default.
+ * The layout blocks no longer have section children — every inner block is a
+ * row or column of the layout itself — so there is nothing here for the
+ * legacy *-section block names, which only exist server-side to keep already
+ * saved pages rendering.
  */
 
-import AccordionIconCustomPreview from './accordion-icon-custom';
-import BlockOnBackgroundPreview from './block-on-background';
-import ButtonSinglePreview from './button-single';
-import ColumnLayoutPreview from './column-layout';
-import CopyrightComponentRearrangePreview from './copyright-component-rearrange';
-import CountdownWithMsgPreview from './countdown-with-msg';
-import CountupAutoAnimatePreview from './countup-auto-animate';
-import FooterLayoutPreview from './footer-layout';
-import HeaderLayoutPreview from './header-layout';
-import HeadingAdvancePreview from './heading-advance';
-import ImageGalleryPreview from './image-gallery';
-import ImageIntervalCoverPreview from './image-interval-cover';
-import ImageMarqueePreview from './image-marquee';
-import ImageSinglePreview from './image-single';
-import LoadingScreenAnimatePreview from './loading-screen-animate';
-import LocationMapPreview from './location-map';
-import PageGridPreview from './page-grid';
-import PageNavPreview from './page-nav';
-import PopupScrollModalPreview from './popup-scroll-modal';
-import PostsCommentFormPreview from './posts-comment-form';
-import PostsCommentListPreview from './posts-comment-list';
-import PostsFeaturedImagePreview from './posts-featured-image';
-import PostsLayoutPreview from './posts-layout';
-import PostsListPreview from './posts-list';
-import PostsMetadataPreview from './posts-metadata';
-import PostsPreviousNextPreview from './posts-previous-next';
-import PostsRelatedPreview from './posts-related';
-import PostsSocialSharePreview from './posts-social-share';
-import PostsTitlePreview from './posts-title';
-import RowLayoutPreview from './row-layout';
-import ScrollToTopPreview from './scroll-to-top';
-import SearchLivePreview from './search-live';
-import ShapeDividerPreview from './shape-divider';
-import SiteLogoPreview from './site-logo';
-import SocialIconPreview from './social-icon';
-import SpaceAroundPreview from './space-around';
-import TeamMemberPreview from './team-member';
-import TestimonialCarouselPreview from './testimonial-carousel';
-import TextListIconPreview from './text-list-icon';
-import VideoEmbedPreview from './video-embed';
-import VideoUploadPreview from './video-upload';
+import AccordionIconCustomPreview from './blocks-inserter-animation/accordion-icon-custom';
+import BlockOnBackgroundPreview from './blocks-inserter-animation/block-on-background';
+import ButtonSinglePreview from './blocks-inserter-animation/button-single';
+import ColumnLayoutPreview from './blocks-inserter-animation/column-layout';
+import CopyrightComponentRearrangePreview from './blocks-inserter-animation/copyright-component-rearrange';
+import CountdownWithMsgPreview from './blocks-inserter-animation/countdown-with-msg';
+import CountupAutoAnimatePreview from './blocks-inserter-animation/countup-auto-animate';
+import FooterLayoutPreview from './blocks-inserter-animation/footer-layout';
+import HeaderLayoutPreview from './blocks-inserter-animation/header-layout';
+import HeadingAdvancePreview from './blocks-inserter-animation/heading-advance';
+import ImageGalleryPreview from './blocks-inserter-animation/image-gallery';
+import ImageIntervalCoverPreview from './blocks-inserter-animation/image-interval-cover';
+import ImageMarqueePreview from './blocks-inserter-animation/image-marquee';
+import ImageSinglePreview from './blocks-inserter-animation/image-single';
+import LoadingScreenAnimatePreview from './blocks-inserter-animation/loading-screen-animate';
+import LocationMapPreview from './blocks-inserter-animation/location-map';
+import PageGridPreview from './blocks-inserter-animation/page-grid';
+import PageNavPreview from './blocks-inserter-animation/page-nav';
+import ParagraphAdvancePreview from './blocks-inserter-animation/paragraph-advance';
+import PopupScrollModalPreview from './blocks-inserter-animation/popup-scroll-modal';
+import PostsCommentFormPreview from './blocks-inserter-animation/posts-comment-form';
+import PostsCommentListPreview from './blocks-inserter-animation/posts-comment-list';
+import PostsFeaturedImagePreview from './blocks-inserter-animation/posts-featured-image';
+import PostsLayoutPreview from './blocks-inserter-animation/posts-layout';
+import PostsListPreview from './blocks-inserter-animation/posts-list';
+import PostsMetadataPreview from './blocks-inserter-animation/posts-metadata';
+import PostsPreviousNextPreview from './blocks-inserter-animation/posts-previous-next';
+import PostsRelatedPreview from './blocks-inserter-animation/posts-related';
+import PostsSocialSharePreview from './blocks-inserter-animation/posts-social-share';
+import PostsTitlePreview from './blocks-inserter-animation/posts-title';
+import RowLayoutPreview from './blocks-inserter-animation/row-layout';
+import ScrollToTopPreview from './blocks-inserter-animation/scroll-to-top';
+import SearchLivePreview from './blocks-inserter-animation/search-live';
+import ShapeDividerPreview from './blocks-inserter-animation/shape-divider';
+import SiteLogoPreview from './blocks-inserter-animation/site-logo';
+import SocialIconPreview from './blocks-inserter-animation/social-icon';
+import SpaceAroundPreview from './blocks-inserter-animation/space-around';
+import TeamMemberPreview from './blocks-inserter-animation/team-member';
+import TestimonialCarouselPreview from './blocks-inserter-animation/testimonial-carousel';
+import TextListIconPreview from './blocks-inserter-animation/text-list-icon';
+import VideoEmbedPreview from './blocks-inserter-animation/video-embed';
+import VideoUploadPreview from './blocks-inserter-animation/video-upload';
 
 const PREVIEWS = {
 	'accordion-icon-custom': AccordionIconCustomPreview,
@@ -75,6 +78,7 @@ const PREVIEWS = {
 	'location-map': LocationMapPreview,
 	'page-grid': PageGridPreview,
 	'page-nav': PageNavPreview,
+	'paragraph-advance': ParagraphAdvancePreview,
 	'popup-scroll-modal': PopupScrollModalPreview,
 	'posts-comment-form': PostsCommentFormPreview,
 	'posts-comment-list': PostsCommentListPreview,

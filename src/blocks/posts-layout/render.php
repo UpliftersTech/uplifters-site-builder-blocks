@@ -2,8 +2,8 @@
 /**
  * Server-side render for the UPLIFTERS_SITE_BUILDER_BLOCKS Posts Layout block.
  *
- * This block saves only InnerBlocks content (a single Posts Section child).
- * The frontend wrapper and responsive CSS are rendered here.
+ * This block saves only InnerBlocks content — every inner block is one row of
+ * the post template. The frontend wrapper and responsive CSS are rendered here.
  *
  * @package uplifters-site-builder-blocks
  */
@@ -106,6 +106,7 @@ if ( ! function_exists( 'uplifters_site_builder_blocks_b_posts_layout_device_css
 	function uplifters_site_builder_blocks_b_posts_layout_device_css( $selector, $device_values ) {
 		$padding          = uplifters_site_builder_blocks_b_posts_layout_number( $device_values['padding'], 0 );
 		$margin           = uplifters_site_builder_blocks_b_posts_layout_number( $device_values['margin'], 0 );
+		$gap              = uplifters_site_builder_blocks_b_posts_layout_number( $device_values['gap'], 18 );
 		$border_radius    = uplifters_site_builder_blocks_b_posts_layout_number( $device_values['borderRadius'], 0 );
 		$shadow           = uplifters_site_builder_blocks_b_posts_layout_number( $device_values['shadow'], 0 );
 		$background_color = uplifters_site_builder_blocks_b_posts_layout_safe_color( $device_values['backgroundColor'] );
@@ -114,11 +115,15 @@ if ( ! function_exists( 'uplifters_site_builder_blocks_b_posts_layout_device_css
 			? 'calc(100% - ' . uplifters_site_builder_blocks_b_posts_layout_css_number( $margin * 2 ) . 'px)'
 			: '100%';
 
+		$gap_css = uplifters_site_builder_blocks_b_posts_layout_css_number( $gap ) . 'px';
+
 		$css  = $selector . '{';
 		$css .= 'width:' . $width . ';';
 		$css .= 'max-width:' . $width . ';';
 		$css .= 'padding:' . uplifters_site_builder_blocks_b_posts_layout_css_number( $padding ) . 'px;';
 		$css .= 'margin:' . uplifters_site_builder_blocks_b_posts_layout_css_number( $margin ) . 'px;';
+		$css .= 'gap:' . $gap_css . ';';
+		$css .= '--wp--style--block-gap:' . $gap_css . ';';
 		$css .= 'border-radius:' . uplifters_site_builder_blocks_b_posts_layout_css_number( $border_radius ) . 'px;';
 
 		if ( '' !== $background_color ) {
@@ -139,10 +144,6 @@ if ( ! function_exists( 'uplifters_site_builder_blocks_b_posts_layout_device_css
 	}
 }
 
-$uplifters_site_builder_blocks_posts_template = isset( $attributes['postsTemplate'] )
-	? sanitize_key( $attributes['postsTemplate'] )
-	: '';
-
 $uplifters_site_builder_blocks_padding_values = uplifters_site_builder_blocks_b_posts_layout_responsive_object(
 	$attributes['padding'] ?? null,
 	0
@@ -151,6 +152,11 @@ $uplifters_site_builder_blocks_padding_values = uplifters_site_builder_blocks_b_
 $uplifters_site_builder_blocks_margin_values = uplifters_site_builder_blocks_b_posts_layout_responsive_object(
 	$attributes['margin'] ?? null,
 	0
+);
+
+$uplifters_site_builder_blocks_gap_values = uplifters_site_builder_blocks_b_posts_layout_responsive_object(
+	$attributes['gap'] ?? null,
+	18
 );
 
 $uplifters_site_builder_blocks_background_color_values = uplifters_site_builder_blocks_b_posts_layout_responsive_object(
@@ -175,6 +181,7 @@ $uplifters_site_builder_blocks_selector = '.uplifters-site-builder-blocks-posts-
 $uplifters_site_builder_blocks_desktop_values = array(
 	'padding'         => $uplifters_site_builder_blocks_padding_values['desktop'],
 	'margin'          => $uplifters_site_builder_blocks_margin_values['desktop'],
+	'gap'             => $uplifters_site_builder_blocks_gap_values['desktop'],
 	'backgroundColor' => $uplifters_site_builder_blocks_background_color_values['desktop'],
 	'borderRadius'    => $uplifters_site_builder_blocks_border_radius_values['desktop'],
 	'shadow'          => $uplifters_site_builder_blocks_shadow_values['desktop'],
@@ -183,6 +190,7 @@ $uplifters_site_builder_blocks_desktop_values = array(
 $uplifters_site_builder_blocks_tablet_values = array(
 	'padding'         => $uplifters_site_builder_blocks_padding_values['tablet'],
 	'margin'          => $uplifters_site_builder_blocks_margin_values['tablet'],
+	'gap'             => $uplifters_site_builder_blocks_gap_values['tablet'],
 	'backgroundColor' => $uplifters_site_builder_blocks_background_color_values['tablet'],
 	'borderRadius'    => $uplifters_site_builder_blocks_border_radius_values['tablet'],
 	'shadow'          => $uplifters_site_builder_blocks_shadow_values['tablet'],
@@ -191,6 +199,7 @@ $uplifters_site_builder_blocks_tablet_values = array(
 $uplifters_site_builder_blocks_mobile_values = array(
 	'padding'         => $uplifters_site_builder_blocks_padding_values['mobile'],
 	'margin'          => $uplifters_site_builder_blocks_margin_values['mobile'],
+	'gap'             => $uplifters_site_builder_blocks_gap_values['mobile'],
 	'backgroundColor' => $uplifters_site_builder_blocks_background_color_values['mobile'],
 	'borderRadius'    => $uplifters_site_builder_blocks_border_radius_values['mobile'],
 	'shadow'          => $uplifters_site_builder_blocks_shadow_values['mobile'],
@@ -203,22 +212,42 @@ $uplifters_site_builder_blocks_css .= 'box-sizing:border-box;';
 $uplifters_site_builder_blocks_css .= 'min-width:0;';
 $uplifters_site_builder_blocks_css .= 'overflow:visible;';
 $uplifters_site_builder_blocks_css .= 'position:relative;';
+// Every inner block is one row of the post template.
 $uplifters_site_builder_blocks_css .= 'display:flex;';
-$uplifters_site_builder_blocks_css .= 'align-items:center;';
+$uplifters_site_builder_blocks_css .= 'flex-direction:column;';
+$uplifters_site_builder_blocks_css .= 'align-items:stretch;';
 $uplifters_site_builder_blocks_css .= 'justify-content:flex-start;';
-$uplifters_site_builder_blocks_css .= '--wp--style--block-gap:0px;';
 $uplifters_site_builder_blocks_css .= '}';
 
-$uplifters_site_builder_blocks_css .= 'body ' . $uplifters_site_builder_blocks_selector . '>*{box-sizing:border-box;}';
+/* Dropping each row's own leading/trailing margins keeps the visible space
+   between rows equal to the Row Gap. */
+$uplifters_site_builder_blocks_css .= 'body ' . $uplifters_site_builder_blocks_selector . '>*{';
+$uplifters_site_builder_blocks_css .= 'box-sizing:border-box;';
+$uplifters_site_builder_blocks_css .= 'width:100%;';
+$uplifters_site_builder_blocks_css .= 'min-width:0;';
+$uplifters_site_builder_blocks_css .= 'max-width:100%;';
+$uplifters_site_builder_blocks_css .= 'margin-top:0;';
+$uplifters_site_builder_blocks_css .= 'margin-block-start:0;';
+$uplifters_site_builder_blocks_css .= 'margin-bottom:0;';
+$uplifters_site_builder_blocks_css .= 'margin-block-end:0;';
+$uplifters_site_builder_blocks_css .= '}';
+
+/* Per-device row order. Every inner block is one row, so a slot number is an
+   nth-child position among the rendered rows. */
+$uplifters_site_builder_blocks_order_css = \UpliftersSiteBuilderBlocks\ResponsiveGlobal\ResponsiveOrderCss::device_css(
+	$uplifters_site_builder_blocks_selector,
+	$attributes['childOrder'] ?? null,
+	\UpliftersSiteBuilderBlocks\ResponsiveGlobal\ResponsiveOrderCss::count_inner_blocks( $block )
+);
 
 $uplifters_site_builder_blocks_css .= uplifters_site_builder_blocks_b_posts_layout_device_css( $uplifters_site_builder_blocks_selector, $uplifters_site_builder_blocks_desktop_values );
-$uplifters_site_builder_blocks_css .= '@media (max-width:1024px){' . uplifters_site_builder_blocks_b_posts_layout_device_css( $uplifters_site_builder_blocks_selector, $uplifters_site_builder_blocks_tablet_values ) . '}';
-$uplifters_site_builder_blocks_css .= '@media (max-width:767px){' . uplifters_site_builder_blocks_b_posts_layout_device_css( $uplifters_site_builder_blocks_selector, $uplifters_site_builder_blocks_mobile_values ) . '}';
+$uplifters_site_builder_blocks_css .= $uplifters_site_builder_blocks_order_css['desktop'];
+$uplifters_site_builder_blocks_css .= '@media (max-width:1024px){' . uplifters_site_builder_blocks_b_posts_layout_device_css( $uplifters_site_builder_blocks_selector, $uplifters_site_builder_blocks_tablet_values ) . $uplifters_site_builder_blocks_order_css['tablet'] . '}';
+$uplifters_site_builder_blocks_css .= '@media (max-width:767px){' . uplifters_site_builder_blocks_b_posts_layout_device_css( $uplifters_site_builder_blocks_selector, $uplifters_site_builder_blocks_mobile_values ) . $uplifters_site_builder_blocks_order_css['mobile'] . '}';
 
 $uplifters_site_builder_blocks_wrapper_attributes = get_block_wrapper_attributes(
 	array(
-		'class'                => 'uplifters-site-builder-blocks-posts-layout ' . $uplifters_site_builder_blocks_unique_class,
-		'data-posts-template'  => $uplifters_site_builder_blocks_posts_template,
+		'class' => 'uplifters-site-builder-blocks-posts-layout ' . $uplifters_site_builder_blocks_unique_class,
 	)
 );
 ?>

@@ -1,4 +1,4 @@
-import InserterPreview from '../../blocks-inserter-preview/inserter-preview-shared';
+import InserterPreview from '../../blocks-inserter-preview/inserter-preview-register';
 import { __ } from '@wordpress/i18n';
 
 import {

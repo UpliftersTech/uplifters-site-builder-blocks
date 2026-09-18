@@ -1,5 +1,176 @@
 /**
- * No editor-only static CSS is needed: the editor preview for this block is
- * styled independently in edit.js. This file only exists to satisfy the
- * block.json "editorStyle" requirement.
+ * Editor chrome for the Column Layout block. Every inner block is one column;
+ * the controls that sit on top of the grid (percentage badge, delete, add
+ * column, resize handles) are positioned against the block, which is why the
+ * wrapper establishes the containing block.
+ *
+ * The per-instance grid values — grid-template-columns, gap, padding, margin,
+ * background — stay inline in edit.js because they are attribute-driven.
  */
+
+.column-layout--editor {
+	position: relative;
+	display: grid;
+	align-items: stretch;
+	box-sizing: border-box;
+	width: 100%;
+	max-width: 100%;
+	min-height: 140px;
+	border: 1px dashed #c3c4c7;
+	overflow-wrap: anywhere;
+	word-break: break-word;
+}
+
+/* Each column is one grid cell: it must not spill past its track. */
+.column-layout--editor > * {
+	box-sizing: border-box;
+	min-width: 0;
+	max-width: 100%;
+	margin-top: 0;
+	margin-bottom: 0;
+	margin-block-start: 0;
+	margin-block-end: 0;
+	overflow-wrap: anywhere;
+	word-break: break-word;
+}
+
+.column-layout--editor > figure > img {
+	display: block;
+}
+
+/**
+ * A column with no block in it yet. Its plus opens the inserter, and whatever
+ * is chosen becomes the content of that column.
+ */
+.column-layout--editor > .column-layout__empty-column {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 72px;
+	border: 1px dashed #c3c4c7;
+	border-radius: 6px;
+	background: #f9f9f9;
+}
+
+.column-layout__empty-column .column-layout__empty-column-add.components-button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 36px;
+	height: 36px;
+	min-width: 36px;
+	padding: 0;
+	border-radius: 4px;
+	color: #1e1e1e;
+}
+
+.column-layout__empty-column .column-layout__empty-column-add.components-button:hover {
+	color: var(--wp-admin-theme-color, #3858e9);
+}
+
+.column-layout__empty-column .column-layout__empty-column-add.components-button svg {
+	width: 24px;
+	height: 24px;
+}
+
+/**
+ * Per-column controls, centred over their column and parked just above the
+ * block's top edge so they never cover the column's own inserter.
+ */
+.column-layout__column-controls {
+	position: absolute;
+	top: 0;
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	transform: translate(-50%, calc(-100% - 6px));
+	white-space: nowrap;
+	z-index: 5;
+}
+
+.column-layout__percent-badge {
+	padding: 3px 8px;
+	border-radius: 999px;
+	background: rgba(30, 30, 30, 0.85);
+	color: #fff;
+	font-size: 11px;
+	font-weight: 600;
+	line-height: 1.2;
+	pointer-events: none;
+}
+
+.column-layout__column-controls .column-layout__column-delete.components-button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 22px;
+	height: 22px;
+	min-width: 22px;
+	padding: 0;
+	border-radius: 999px;
+	background: rgba(30, 30, 30, 0.85);
+	color: #fff;
+}
+
+.column-layout__column-controls .column-layout__column-delete.components-button svg {
+	width: 14px;
+	height: 14px;
+}
+
+.column-layout__column-controls .column-layout__column-delete.components-button:hover:not(:disabled) {
+	background: #b32d2e;
+	color: #fff;
+}
+
+.column-layout__column-controls .column-layout__column-delete.components-button:disabled {
+	opacity: 0.4;
+}
+
+/* Adds one more column to the grid. Sits with the badges, at the right edge. */
+.column-layout__add-column {
+	position: absolute;
+	top: 0;
+	right: 0;
+	transform: translateY(calc(-100% - 6px));
+	z-index: 5;
+}
+
+.column-layout__add-column .column-layout__add-column-button.components-button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 22px;
+	height: 22px;
+	min-width: 22px;
+	padding: 0;
+	border-radius: 999px;
+	background: var(--wp-admin-theme-color, #3858e9);
+	color: #fff;
+}
+
+.column-layout__add-column .column-layout__add-column-button.components-button svg {
+	width: 14px;
+	height: 14px;
+}
+
+.column-layout__add-column .column-layout__add-column-button.components-button:disabled {
+	opacity: 0.4;
+}
+
+/* Drag left/right to change the split between two neighbouring columns. */
+.column-layout__resize-handle {
+	position: absolute;
+	top: 50%;
+	width: 24px;
+	height: 24px;
+	padding: 0;
+	border: 2px solid #1e1e1e;
+	border-radius: 999px;
+	background: #fff;
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+	transform: translate(-50%, -50%);
+	cursor: col-resize;
+	touch-action: none;
+	pointer-events: auto;
+	z-index: 999;
+}

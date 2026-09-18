@@ -1,21 +1,38 @@
 import './editor.scss';
-import InserterPreview from '../../blocks-inserter-preview/inserter-preview-shared';
+import InserterPreview from '../../blocks-inserter-preview/inserter-preview-register';
+import ResponsiveOrderControl, {
+	EDITOR_CHROME_ORDER,
+	getDocumentMove,
+	getNaturalOrder,
+	getSlotOrder,
+	remapSequence,
+	resolveOrder,
+	useChildOrder,
+	withSlotMoved,
+} from '../../blocks-section-responsive-order/responsive-order';
 import { __, sprintf } from '@wordpress/i18n';
 import {
 	InspectorControls,
-	InnerBlocks,
+	Inserter,
 	useBlockProps,
+	useInnerBlocksProps,
 } from '@wordpress/block-editor';
 import {
 	ColorPalette,
 	PanelBody,
 	RangeControl,
 	Button,
-	Modal,
+	Tooltip,
 } from '@wordpress/components';
-import { useEffect, useRef, useState } from '@wordpress/element';
+import { plus, trash } from '@wordpress/icons';
+import {
+	useEffect,
+	useLayoutEffect,
+	useMemo,
+	useRef,
+	useState,
+} from '@wordpress/element';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { createBlocksFromInnerBlocksTemplate } from '@wordpress/blocks';
 
 const DEVICES = [ 'desktop', 'tablet', 'mobile' ];
 const RESPONSIVE_DEVICE_STORAGE_KEY = 'upliftersSiteBuilderBlocksResponsiveDevice';
@@ -23,6 +40,7 @@ const RESPONSIVE_DEVICE_STORAGE_KEY = 'upliftersSiteBuilderBlocksResponsiveDevic
 const RESPONSIVE_DEFAULTS = {
 	padding: 0,
 	margin: 0,
+	gap: 18,
 	backgroundColor: '',
 	borderRadius: 0,
 	shadow: 0,
@@ -33,6 +51,24 @@ const DEVICE_LABELS = {
 	tablet: __( 'Tablet', 'uplifters-site-builder-blocks' ),
 	mobile: __( 'Mobile', 'uplifters-site-builder-blocks' ),
 };
+
+/**
+ * The rows a Posts Layout starts with. They are a starting point, not a
+ * restriction: any of them can be deleted and any other block can be added as
+ * a row. The template is re-applied only when the layout is completely empty.
+ */
+const POSTS_LAYOUT_TEMPLATE = [
+	[ 'uplifters-site-builder-blocks/posts-title', {} ],
+	[ 'uplifters-site-builder-blocks/posts-metadata', {} ],
+	[ 'uplifters-site-builder-blocks/posts-social-share', {} ],
+	[ 'uplifters-site-builder-blocks/posts-featured-image', {} ],
+	[ 'uplifters-site-builder-blocks/paragraph-advance', {} ],
+	[ 'uplifters-site-builder-blocks/social-icon', {} ],
+	[ 'uplifters-site-builder-blocks/posts-previous-next', {} ],
+	[ 'uplifters-site-builder-blocks/posts-related', {} ],
+	[ 'uplifters-site-builder-blocks/posts-comment-form', {} ],
+	[ 'uplifters-site-builder-blocks/posts-comment-list', {} ],
+];
 
 const normalizeDevice = ( value ) => {
 	if ( ! value ) {
@@ -241,344 +277,79 @@ const getResponsiveValue = ( value, device, fallback ) => {
 		: fallback;
 };
 
-const POSTS_TEMPLATE_OPTIONS = [
-	{
-		key: 'full-post-layout',
-		label: __( 'Full Post Layout', 'uplifters-site-builder-blocks' ),
-		demoType: 'full-post-layout',
-		template: [
-			[
-				'uplifters-site-builder-blocks/posts-section',
-				{
-					className:
-						'uplifters-site-builder-blocks-posts-layout__section uplifters-site-builder-blocks-posts-layout__section--full-post-layout',
-				},
-				[
-					[ 'uplifters-site-builder-blocks/posts-title', {} ],
-					[ 'uplifters-site-builder-blocks/posts-metadata', {} ],
-					[ 'uplifters-site-builder-blocks/posts-social-share', {} ],
-					[ 'uplifters-site-builder-blocks/posts-featured-image', {} ],
-					[ 'uplifters-site-builder-blocks/paragraph-advance', {} ],
-					[ 'uplifters-site-builder-blocks/posts-previous-next', {} ],
-					[ 'uplifters-site-builder-blocks/posts-related', {} ],
-					[ 'uplifters-site-builder-blocks/posts-comment-form', {} ],
-					[ 'uplifters-site-builder-blocks/posts-comment-list', {} ],
-				],
-			],
-		],
-	},
-	{
-		key: 'blank',
-		label: __( 'Blank', 'uplifters-site-builder-blocks' ),
-		demoType: 'blank',
-		template: [
-			[
-				'uplifters-site-builder-blocks/posts-section',
-				{
-					className:
-						'uplifters-site-builder-blocks-posts-layout__section uplifters-site-builder-blocks-posts-layout__section--blank',
-				},
-				[],
-			],
-		],
-	},
-];
+/*
+ * Measures the vertical centre of every row so the delete controls layer can
+ * park one button beside each row. The layer is a child of the rows' container,
+ * so its parent is the offset parent every row is measured against.
+ *
+ * `orderKey` changes whenever the active device's row order changes. Reordering
+ * moves the rows without resizing anything, so the ResizeObserver below never
+ * fires for it and the measurement has to be re-run from the dependency list.
+ */
+const useRowCentres = ( overlayRef, rowClientIds, orderKey ) => {
+	const [ centres, setCentres ] = useState( [] );
 
-const topDotStyle = {
-	width: '7px',
-	height: '7px',
-	display: 'block',
-	borderRadius: '50%',
-	background: '#b6b6b8',
+	useLayoutEffect( () => {
+		const overlay = overlayRef.current;
+		const container = overlay?.parentElement;
+
+		if ( ! container ) {
+			setCentres( [] );
+			return undefined;
+		}
+
+		const measure = () => {
+			setCentres(
+				rowClientIds
+					.map( ( rowClientId ) => {
+						const row = container.querySelector(
+							`[data-block="${ rowClientId }"]`
+						);
+
+						if ( ! row ) {
+							return null;
+						}
+
+						return {
+							clientId: rowClientId,
+							centre: row.offsetTop + row.offsetHeight / 2,
+						};
+					} )
+					.filter( Boolean )
+			);
+		};
+
+		measure();
+
+		const view = container.ownerDocument.defaultView;
+
+		if ( ! view || ! view.ResizeObserver ) {
+			return undefined;
+		}
+
+		// A row grows as it is edited, so the buttons follow the rendered
+		// heights rather than a single measurement taken on mount.
+		const observer = new view.ResizeObserver( measure );
+
+		observer.observe( container );
+
+		Array.from( container.children ).forEach( ( child ) => {
+			if ( child !== overlay ) {
+				observer.observe( child );
+			}
+		} );
+
+		return () => observer.disconnect();
+	}, [ overlayRef, rowClientIds, orderKey ] );
+
+	return centres;
 };
 
-function DemoImage( { height = 56 } ) {
-	return (
-		<span
-			aria-hidden="true"
-			style={ {
-				display: 'block',
-				width: '100%',
-				height: `${ height }px`,
-				borderRadius: '8px',
-				background: 'linear-gradient(135deg, #dbeafe 0%, #ede9fe 100%)',
-				boxSizing: 'border-box',
-			} }
-		/>
-	);
-}
-
-function DemoTitleBar( { width = '78%' } ) {
-	return (
-		<span
-			aria-hidden="true"
-			style={ {
-				display: 'block',
-				width,
-				height: '11px',
-				borderRadius: '999px',
-				background: '#1d2327',
-			} }
-		/>
-	);
-}
-
-function DemoMetaLine() {
-	return (
-		<span
-			aria-hidden="true"
-			style={ {
-				display: 'block',
-				width: '48%',
-				height: '6px',
-				borderRadius: '999px',
-				background: '#a5abb1',
-			} }
-		/>
-	);
-}
-
-function DemoParagraphLines( { count = 2 } ) {
-	const widths = [ '100%', '92%', '64%' ].slice( 0, count );
-
-	return (
-		<span
-			aria-hidden="true"
-			style={ {
-				display: 'flex',
-				flexDirection: 'column',
-				gap: '5px',
-				width: '100%',
-			} }
-		>
-			{ widths.map( ( width, index ) => (
-				<span
-					key={ index }
-					style={ {
-						display: 'block',
-						width,
-						height: '5px',
-						borderRadius: '999px',
-						background: '#c0c5ca',
-					} }
-				/>
-			) ) }
-		</span>
-	);
-}
-
-function DemoSocialRow() {
-	return (
-		<span
-			aria-hidden="true"
-			style={ {
-				display: 'flex',
-				alignItems: 'center',
-				gap: '6px',
-			} }
-		>
-			{ [ 'f', '𝕏', 'in' ].map( ( label ) => (
-				<span
-					key={ label }
-					style={ {
-						width: '18px',
-						height: '18px',
-						borderRadius: '50%',
-						background: '#1d2327',
-						color: '#fff',
-						display: 'inline-flex',
-						alignItems: 'center',
-						justifyContent: 'center',
-						fontSize: '8px',
-						fontWeight: 700,
-					} }
-				>
-					{ label }
-				</span>
-			) ) }
-		</span>
-	);
-}
-
-function DemoCommentBubbles() {
-	return (
-		<span
-			aria-hidden="true"
-			style={ {
-				display: 'flex',
-				flexDirection: 'column',
-				gap: '4px',
-				width: '100%',
-			} }
-		>
-			<span
-				style={ {
-					display: 'block',
-					width: '100%',
-					height: '16px',
-					borderRadius: '8px',
-					border: '1px solid #d7dce1',
-					background: '#f8fafc',
-				} }
-			/>
-			<span
-				style={ {
-					display: 'block',
-					width: '70%',
-					height: '10px',
-					borderRadius: '6px',
-					background: '#eef2f6',
-				} }
-			/>
-		</span>
-	);
-}
-
-function DemoNavRow() {
-	return (
-		<span
-			aria-hidden="true"
-			style={ {
-				display: 'flex',
-				alignItems: 'center',
-				justifyContent: 'space-between',
-				width: '100%',
-			} }
-		>
-			<span
-				style={ {
-					padding: '4px 10px',
-					borderRadius: '999px',
-					border: '1px solid #d1d5db',
-					fontSize: '9px',
-					color: '#475569',
-				} }
-			>
-				&#8592; Prev
-			</span>
-			<span
-				style={ {
-					padding: '4px 10px',
-					borderRadius: '999px',
-					border: '1px solid #d1d5db',
-					fontSize: '9px',
-					color: '#475569',
-				} }
-			>
-				Next &#8594;
-			</span>
-		</span>
-	);
-}
-
-function PostsLayoutDemoCard( { option, onChoose } ) {
-	const { demoType } = option;
-
-	return (
-		<button
-			type="button"
-			onClick={ () => onChoose( option ) }
-			aria-label={ option.label }
-			style={ {
-				display: 'block',
-				width: '100%',
-				height: '100%',
-				minHeight: '190px',
-				padding: 0,
-				margin: 0,
-				border: '1px solid #d9d9d9',
-				borderRadius: '12px',
-				background: '#ffffff',
-				cursor: 'pointer',
-				boxSizing: 'border-box',
-				overflow: 'hidden',
-				boxShadow: '0 1px 1px rgba(0,0,0,0.04)',
-				textAlign: 'left',
-			} }
-			onMouseEnter={ ( event ) => {
-				event.currentTarget.style.borderColor = '#007cba';
-				event.currentTarget.style.boxShadow =
-					'0 0 0 1px #007cba, 0 8px 20px rgba(0,0,0,0.10)';
-			} }
-			onMouseLeave={ ( event ) => {
-				event.currentTarget.style.borderColor = '#d9d9d9';
-				event.currentTarget.style.boxShadow =
-					'0 1px 1px rgba(0,0,0,0.04)';
-			} }
-		>
-			<div
-				style={ {
-					height: '28px',
-					display: 'flex',
-					alignItems: 'center',
-					gap: '4px',
-					padding: '0 12px',
-					background: '#eeeeef',
-					borderBottom: '1px solid #d8d8d8',
-					boxSizing: 'border-box',
-				} }
-			>
-				<span style={ topDotStyle } />
-				<span style={ topDotStyle } />
-				<span style={ topDotStyle } />
-			</div>
-
-			<div
-				style={ {
-					display: 'flex',
-					flexDirection: 'column',
-					gap: '10px',
-					padding: '16px',
-					background:
-						'linear-gradient(180deg, #ffffff 0%, #fbfbfb 100%)',
-					boxSizing: 'border-box',
-				} }
-			>
-				{ demoType === 'full-post-layout' && (
-					<>
-						<DemoTitleBar width="82%" />
-						<DemoMetaLine />
-						<DemoSocialRow />
-						<DemoImage height={ 54 } />
-						<DemoParagraphLines count={ 2 } />
-						<DemoNavRow />
-						<DemoCommentBubbles />
-					</>
-				) }
-
-				{ demoType === 'blank' && (
-					<span
-						aria-hidden="true"
-						style={ {
-							display: 'flex',
-							alignItems: 'center',
-							justifyContent: 'center',
-							height: '100%',
-							minHeight: '110px',
-							border: '1px dashed #c4c9cf',
-							borderRadius: '8px',
-							color: '#8c8f94',
-							fontSize: '12px',
-						} }
-					>
-						{ __( 'Empty Posts Section', 'uplifters-site-builder-blocks' ) }
-					</span>
-				) }
-			</div>
-		</button>
-	);
-}
-
-function Editor( {
-	attributes,
-	setAttributes,
-	clientId,
-	isSelected,
-} ) {
+function Editor( { attributes, setAttributes, clientId } ) {
 	const {
-		postsTemplate = '',
 		padding,
 		margin,
+		gap,
 		backgroundColor,
 		borderRadius,
 		shadow,
@@ -597,6 +368,12 @@ function Editor( {
 		margin,
 		device,
 		RESPONSIVE_DEFAULTS.margin
+	);
+
+	const activeGap = getResponsiveValue(
+		gap,
+		device,
+		RESPONSIVE_DEFAULTS.gap
 	);
 
 	const activeBackgroundColor = getResponsiveValue(
@@ -633,55 +410,226 @@ function Editor( {
 		} );
 	};
 
-	const [ isChooserOpen, setIsChooserOpen ] = useState( false );
-	const hasOpenedInitialChooser = useRef( false );
-
-	const [ openSettingsPanel, setOpenSettingsPanel ] = useState( null );
 	const [ openStylesPanel, setOpenStylesPanel ] = useState( null );
-	const toggleSettingsPanel = ( key ) => setOpenSettingsPanel( ( current ) => ( current === key ? null : key ) );
 	const toggleStylesPanel = ( key ) => setOpenStylesPanel( ( current ) => ( current === key ? null : key ) );
 
-	const { replaceInnerBlocks, selectBlock } = useDispatch(
-		'core/block-editor'
+	const {
+		removeBlock,
+		moveBlocksToPosition,
+		__unstableMarkNextChangeAsNotPersistent,
+	} = useDispatch( 'core/block-editor' );
+
+	// Every inner block is one row of the post template.
+	const rowClientIds = useSelect(
+		( select ) => select( 'core/block-editor' ).getBlockOrder( clientId ),
+		[ clientId ]
 	);
 
-	const innerBlockCount = useSelect(
+	const innerBlockCount = rowClientIds.length;
+
+	/*
+	 * Row labels for the reorder control. Joined into one string so the mapped
+	 * value compares by value: an array would be a new reference on every store
+	 * change and re-render the block each time.
+	 */
+	const rowLabelKey = useSelect(
 		( select ) => {
-			const block = select( 'core/block-editor' ).getBlock( clientId );
-			return block?.innerBlocks?.length || 0;
+			const { getBlockOrder, getBlockName } = select( 'core/block-editor' );
+			const { getBlockType } = select( 'core/blocks' );
+
+			return getBlockOrder( clientId )
+				.map(
+					( rowClientId ) =>
+						getBlockType( getBlockName( rowClientId ) )?.title || ''
+				)
+				.join( '\n' );
 		},
 		[ clientId ]
 	);
 
+	const rowLabels = useMemo(
+		() => ( rowLabelKey === '' ? [] : rowLabelKey.split( '\n' ) ),
+		[ rowLabelKey ]
+	);
+
+	const rowControlsRef = useRef( null );
+
+	/**
+	 * Empty rows waiting to be filled. They are editor-only placeholders, not
+	 * blocks, so an unused one never reaches the saved content.
+	 */
+	const [ emptyRows, setEmptyRows ] = useState( 0 );
+	const filledRowCount = useRef( innerBlockCount );
+
 	useEffect( () => {
-		if (
-			isSelected &&
-			! hasOpenedInitialChooser.current &&
-			! postsTemplate &&
-			innerBlockCount === 0
-		) {
-			hasOpenedInitialChooser.current = true;
-			setIsChooserOpen( true );
+		const added = innerBlockCount - filledRowCount.current;
+
+		filledRowCount.current = innerBlockCount;
+
+		if ( innerBlockCount === 0 ) {
+			// A layout with nothing in it always offers one empty row.
+			setEmptyRows( ( count ) => ( count === 0 ? 1 : count ) );
+			return;
 		}
-	}, [ isSelected, postsTemplate, innerBlockCount ] );
+
+		if ( added > 0 ) {
+			// Each block that lands in the layout consumes one empty row.
+			setEmptyRows( ( count ) => Math.max( 0, count - added ) );
+		}
+	}, [ innerBlockCount ] );
+
+	/*
+	 * Row order for the active device. Every row is one slot, filled rows first
+	 * and the empty placeholders after them, so a slot the visitor will never
+	 * see keeps a position in the editor all the same.
+	 */
+	const slotCount = innerBlockCount + emptyRows;
+
+	const orderObject = useMemo(
+		() => resolveOrder( attributes.childOrder, slotCount ),
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[ JSON.stringify( attributes.childOrder ), slotCount ]
+	);
+
+	const orderSequence = orderObject[ device ];
+
+	/*
+	 * Desktop is the document order itself, so a desktop reorder moves the real
+	 * blocks and leaves childOrder.desktop natural. Only the narrower devices
+	 * keep a saved order of their own.
+	 */
+	const setOrderForDevice = ( nextSequence ) => {
+		if ( 'desktop' !== device ) {
+			setAttributes( {
+				childOrder: { ...orderObject, [ device ]: nextSequence },
+			} );
+
+			return;
+		}
+
+		const move = getDocumentMove(
+			getNaturalOrder( nextSequence.length ),
+			nextSequence
+		);
+
+		// An empty row is a placeholder, not a block, so it cannot be moved in
+		// the document; only the filled rows have something to reorder.
+		if (
+			! move ||
+			! rowClientIds[ move.from ] ||
+			move.to >= rowClientIds.length
+		) {
+			return;
+		}
+
+		moveBlocksToPosition(
+			[ rowClientIds[ move.from ] ],
+			clientId,
+			clientId,
+			move.to
+		);
+	};
+
+	/*
+	 * A move in the canvas — Gutenberg's own arrows or drag-and-drop — arrives
+	 * here as a changed block list, with nothing to say which device the person
+	 * was looking at. On desktop the move is the point, so it stands and the
+	 * other devices are renumbered to keep showing what they showed. On tablet
+	 * and mobile the document order has to stay put, so the move is undone and
+	 * recorded as that device's own order instead.
+	 */
+	const documentOrderRef = useRef( null );
+
+	useEffect( () => {
+		const currentIds = rowClientIds;
+		const previousIds = documentOrderRef.current;
+
+		documentOrderRef.current = currentIds;
+
+		// First run, or a row was added or removed rather than moved.
+		if ( ! previousIds || previousIds.length !== currentIds.length ) {
+			return;
+		}
+
+		const move = getDocumentMove( previousIds, currentIds );
+
+		if ( ! move ) {
+			return;
+		}
+
+		if ( 'desktop' === device ) {
+			setAttributes( {
+				childOrder: {
+					desktop: getNaturalOrder( slotCount ),
+					tablet: remapSequence(
+						orderObject.tablet,
+						previousIds,
+						currentIds
+					),
+					mobile: remapSequence(
+						orderObject.mobile,
+						previousIds,
+						currentIds
+					),
+				},
+			} );
+
+			return;
+		}
+
+		const sequence = orderObject[ device ];
+		const position = sequence.indexOf( move.from + 1 );
+
+		if ( -1 === position ) {
+			return;
+		}
+
+		// The arrows step through the document, so the same step is applied to
+		// what this device shows rather than to the document position.
+		const target = Math.max(
+			0,
+			Math.min(
+				sequence.length - 1,
+				position + ( move.to - move.from )
+			)
+		);
+
+		documentOrderRef.current = previousIds;
+
+		if ( typeof __unstableMarkNextChangeAsNotPersistent === 'function' ) {
+			__unstableMarkNextChangeAsNotPersistent();
+		}
+
+		moveBlocksToPosition(
+			[ move.clientId ],
+			clientId,
+			clientId,
+			move.from
+		);
+
+		setAttributes( {
+			childOrder: {
+				...orderObject,
+				[ device ]: withSlotMoved( sequence, position, target ),
+			},
+		} );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ rowClientIds, device ] );
+
+	const rowCentres = useRowCentres(
+		rowControlsRef,
+		rowClientIds,
+		orderSequence.join( ',' )
+	);
+
+	// Previews the active device's row order in the canvas.
+	const orderRef = useChildOrder( orderSequence );
 
 	const wrapperWidth =
 		activeMargin > 0 ? `calc(100% - ${ activeMargin * 2 }px)` : '100%';
 
-	const chooseTemplate = ( option ) => {
-		const blocks = createBlocksFromInnerBlocksTemplate( option.template );
-
-		replaceInnerBlocks( clientId, blocks, false );
-
-		setAttributes( {
-			postsTemplate: option.key,
-		} );
-
-		setIsChooserOpen( false );
-		selectBlock( clientId );
-	};
-
 	const blockProps = useBlockProps( {
+		ref: orderRef,
 		className: [
 			'uplifters-site-builder-blocks-posts-layout',
 			'uplifters-site-builder-blocks-posts-layout-editor',
@@ -691,26 +639,26 @@ function Editor( {
 		style: {
 			width: wrapperWidth,
 			maxWidth: wrapperWidth,
-			minWidth: '0',
 
 			padding: `${ activePadding }px`,
 			margin: `${ activeMargin }px`,
+			gap: `${ activeGap }px`,
 			backgroundColor: activeBackgroundColor || undefined,
 			borderRadius: `${ activeBorderRadius }px`,
 			boxShadow: activeShadow
 				? `0 ${ activeShadow }px ${ activeShadow * 3 }px rgba(0,0,0,0.18)`
 				: 'none',
 
-			boxSizing: 'border-box',
-			overflow: 'visible',
-			position: 'relative',
-
-			display: 'flex',
-			alignItems: 'center',
-			justifyContent: 'flex-start',
-
-			'--wp--style--block-gap': '0px',
+			'--wp--style--block-gap': `${ activeGap }px`,
 		},
+	} );
+
+	// The empty rows below replace the default appender.
+	const innerBlocksProps = useInnerBlocksProps( blockProps, {
+		template: POSTS_LAYOUT_TEMPLATE,
+		templateLock: false,
+		renderAppender: false,
+		orientation: 'vertical',
 	} );
 
 	return (
@@ -719,23 +667,27 @@ function Editor( {
 				<PanelBody
 					title={ __( 'Structure', 'uplifters-site-builder-blocks' ) }
 					initialOpen={ false }
-					opened={ openSettingsPanel === 'structure' }
-					onToggle={ () => toggleSettingsPanel( 'structure' ) }
 				>
-					<Button
-						variant="secondary"
-						onClick={ () => setIsChooserOpen( true ) }
-					>
-						{ innerBlockCount > 0
-							? __( 'Change Post Layout', 'uplifters-site-builder-blocks' )
-							: __( 'Choose a Post Layout', 'uplifters-site-builder-blocks' ) }
-					</Button>
+					<ResponsiveOrderControl
+						sequence={ orderSequence }
+						labels={ rowLabels }
+						deviceLabel={ deviceLabel }
+						onChange={ setOrderForDevice }
+						help={ __(
+							'Moving a row in the canvas does the same thing. With Tablet or Mobile active the move applies to that device only; on Desktop it moves the row for every device.',
+							'uplifters-site-builder-blocks'
+						) }
+					/>
 				</PanelBody>
 			</InspectorControls>
 
 			<InspectorControls group="styles">
 				<PanelBody
-					title={ sprintf( __( '%s Spacing', 'uplifters-site-builder-blocks' ), deviceLabel ) }
+					title={ sprintf(
+						/* translators: %s: the active responsive device — Desktop, Tablet or Mobile. */
+						__( '%s Spacing', 'uplifters-site-builder-blocks' ),
+						deviceLabel
+					) }
 					initialOpen={ false }
 					opened={ openStylesPanel === 'spacing' }
 					onToggle={ () => toggleStylesPanel( 'spacing' ) }
@@ -770,7 +722,11 @@ function Editor( {
 				</PanelBody>
 
 				<PanelBody
-					title={ sprintf( __( '%s Layout Spacing', 'uplifters-site-builder-blocks' ), deviceLabel ) }
+					title={ sprintf(
+						/* translators: %s: the active responsive device — Desktop, Tablet or Mobile. */
+						__( '%s Layout Spacing', 'uplifters-site-builder-blocks' ),
+						deviceLabel
+					) }
 					initialOpen={ false }
 					opened={ openStylesPanel === 'layoutSpacing' }
 					onToggle={ () => toggleStylesPanel( 'layoutSpacing' ) }
@@ -792,6 +748,22 @@ function Editor( {
 					/>
 
 					<RangeControl
+						label={ __( 'Row Gap', 'uplifters-site-builder-blocks' ) }
+						value={ activeGap }
+						onChange={ ( value ) =>
+							setResponsiveAttribute( 'gap', value || 0 )
+						}
+						min={ 0 }
+						max={ 120 }
+						step={ 1 }
+						help={ __(
+							'Space between each row in this layout.',
+							'uplifters-site-builder-blocks'
+						) }
+						__nextHasNoMarginBottom
+					/>
+
+					<RangeControl
 						label={ __( 'Background Shadow', 'uplifters-site-builder-blocks' ) }
 						value={ activeShadow }
 						onChange={ ( value ) =>
@@ -805,7 +777,11 @@ function Editor( {
 				</PanelBody>
 
 				<PanelBody
-					title={ sprintf( __( '%s Colors', 'uplifters-site-builder-blocks' ), deviceLabel ) }
+					title={ sprintf(
+						/* translators: %s: the active responsive device — Desktop, Tablet or Mobile. */
+						__( '%s Colors', 'uplifters-site-builder-blocks' ),
+						deviceLabel
+					) }
 					initialOpen={ false }
 					opened={ openStylesPanel === 'colors' }
 					onToggle={ () => toggleStylesPanel( 'colors' ) }
@@ -826,67 +802,116 @@ function Editor( {
 				</PanelBody>
 			</InspectorControls>
 
-			{ isChooserOpen && (
-				<Modal
-					title={ __( 'Choose a Post Layout', 'uplifters-site-builder-blocks' ) }
-					onRequestClose={ () => setIsChooserOpen( false ) }
-					size="fill"
-				>
-					<div
-						style={ {
-							width: '90vw',
-							maxWidth: '900px',
-							boxSizing: 'border-box',
-							padding: '28px',
-							overflow: 'hidden',
-						} }
-					>
-						<div
-							style={ {
-								display: 'grid',
-								gridTemplateColumns:
-									'repeat(2, minmax(0, 1fr))',
-								gridTemplateRows: 'minmax(220px, 1fr)',
-								columnGap: '36px',
-								width: '100%',
-								boxSizing: 'border-box',
-							} }
-						>
-							{ POSTS_TEMPLATE_OPTIONS.map( ( option ) => (
-								<div
-									key={ option.key }
-									style={ {
-										width: '100%',
-										height: '100%',
-										boxSizing: 'border-box',
-									} }
-								>
-									<PostsLayoutDemoCard
-										option={ option }
-										onChoose={ chooseTemplate }
-									/>
-								</div>
-							) ) }
-						</div>
-					</div>
-				</Modal>
-			) }
+			<div { ...innerBlocksProps }>
+				{ innerBlocksProps.children }
 
-			<div { ...blockProps }>
-				{ innerBlockCount === 0 && (
-					<div className="uplifters-site-builder-blocks-posts-layout-empty-state">
-						<Button
-							variant="primary"
-							onClick={ () => setIsChooserOpen( true ) }
-						>
-							{ __( 'Choose a Post Layout', 'uplifters-site-builder-blocks' ) }
-						</Button>
+				{ innerBlockCount > 0 && (
+					<div
+						className="uplifters-site-builder-blocks-posts-layout-row-controls"
+						ref={ rowControlsRef }
+					>
+						{ rowCentres.map( ( { clientId: rowClientId, centre } ) => (
+							<div
+								key={ rowClientId }
+								className="uplifters-site-builder-blocks-posts-layout-row-control"
+								style={ { top: `${ centre }px` } }
+							>
+								<Tooltip
+									text={ __(
+										'Delete row',
+										'uplifters-site-builder-blocks'
+									) }
+								>
+									<Button
+										className="uplifters-site-builder-blocks-posts-layout-row-delete"
+										icon={ trash }
+										label={ __(
+											'Delete row',
+											'uplifters-site-builder-blocks'
+										) }
+										onClick={ () =>
+											removeBlock( rowClientId )
+										}
+									/>
+								</Tooltip>
+							</div>
+						) ) }
 					</div>
 				) }
 
-				<InnerBlocks
-					renderAppender={ InnerBlocks.ButtonBlockAppender }
-				/>
+				{ Array.from( { length: emptyRows } ).map(
+					( ignored, index ) => (
+						<div
+							key={ index }
+							className="uplifters-site-builder-blocks-posts-layout-empty-row"
+							style={ {
+								order: getSlotOrder(
+									orderSequence,
+									innerBlockCount + index + 1
+								),
+							} }
+						>
+							<div className="uplifters-site-builder-blocks-posts-layout-empty-row-inserter">
+								<Inserter
+									rootClientId={ clientId }
+									isAppender
+									renderToggle={ ( {
+										onToggle,
+										disabled,
+									} ) => (
+										<Button
+											className="uplifters-site-builder-blocks-posts-layout-empty-row-add"
+											icon={ plus }
+											label={ __(
+												'Add block',
+												'uplifters-site-builder-blocks'
+											) }
+											onClick={ onToggle }
+											disabled={ disabled }
+										/>
+									) }
+								/>
+							</div>
+
+							<div className="uplifters-site-builder-blocks-posts-layout-row-control">
+								<Tooltip
+									text={ __(
+										'Delete row',
+										'uplifters-site-builder-blocks'
+									) }
+								>
+									<Button
+										className="uplifters-site-builder-blocks-posts-layout-row-delete"
+										icon={ trash }
+										label={ __(
+											'Delete row',
+											'uplifters-site-builder-blocks'
+										) }
+										onClick={ () =>
+											setEmptyRows( ( count ) =>
+												Math.max( 0, count - 1 )
+											)
+										}
+									/>
+								</Tooltip>
+							</div>
+						</div>
+					)
+				) }
+
+				<div
+					className="uplifters-site-builder-blocks-posts-layout-add-more"
+					style={ { order: EDITOR_CHROME_ORDER } }
+				>
+					<Button
+						variant="secondary"
+						onClick={ () =>
+							setEmptyRows( ( count ) => count + 1 )
+						}
+					>
+						{ __( 'Add More', 'uplifters-site-builder-blocks' ) }
+					</Button>
+				</div>
 			</div>
 		</>
 	);

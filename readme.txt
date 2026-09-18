@@ -4,7 +4,7 @@ Tags: gutenberg blocks, header footer builder, theme builder, responsive, block 
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.2
+Stable tag: 1.0.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -29,6 +29,7 @@ Blocks load their styles and scripts only when they appear on a page, the bundle
 * Choose from several visual showcase experiences: Image Marquee, Testimonial Carousel, Cover Image Interval, and Image Gallery.
 * Create custom single-post designs with dedicated controls for post titles, featured images, metadata, post lists, related posts, and previous/next navigation.
 * Assemble flexible page structures with header, footer, column, row, spacer, and shape-divider layouts in the native block editor and Site Editor.
+* Wrap any section in Block On Background: a container with a background image, color, or gradient, a darkening overlay, and adjustable width, height, and padding.
 * Customize typography with responsive font controls and locally hosted Gravitas One and Oswald fonts, without making a Google Fonts request to display them.
 * Find blocks quickly in five dedicated inserter categories: Uplifters Wrapper, Uplifters Text, Uplifters Essentials, Uplifters Media, and Uplifters Post.
 * Add buttons, headings, text, images, video embeds, uploaded videos, a live map, icon lists, a countdown, animated counters, an accordion, a scroll popup, an animated loading screen, page menus, live search, social tools, team members, and more.
@@ -39,7 +40,7 @@ Blocks load their styles and scripts only when they appear on a page, the bundle
 
 = Block library =
 
-The plugin includes 42 blocks, grouped in the block inserter into five categories. Header, Footer, Column, Row, and Posts Layout manage their own inner sections, so there are no separate section blocks to insert.
+The plugin includes 42 blocks, grouped in the block inserter into five categories. Header, Footer, Column, Row, and Posts Layout hold their columns and rows directly, so there are no separate section blocks to insert.
 
 * Uplifters Wrapper: Header Layout, Footer Layout, Column Layout, Row Layout, and Block On Background.
 * Uplifters Text: Advance Heading, Advance Text, Accordion, and Text List Icon.
@@ -108,10 +109,19 @@ You may also contact Uplifters LLC at upliftersllc.us@gmail.com.
 
 == Changelog ==
 
+= 1.0.3 =
+* New: Header, Footer, Column, Row, and Posts Layout can order their items differently on tablet and mobile.
+* New: Header and Footer Layout offer 1 to 6 resizable columns with gap, height, and alignment controls. Footer Layout adds Stack on Mobile, and Posts Layout adds a row gap.
+* Changed: Layout blocks no longer use section blocks or starter templates. Add, remove, and fill columns and rows directly.
+* Changed: Row Layout rebuilt. Each block is its own row, with an Add More button and a delete button on every row.
+* Improved: The dashboard filters blocks by inserter category, with a refreshed header and a better fit on small screens.
+* Fixed: Garbled text in the dashboard search and the Post Metadata description, and clipped letters in the editor toolbar title.
+
 = 1.0.2 =
 * New: Advance Text block for responsive paragraphs, with typography, color, spacing, and inline formatting controls.
 * New: Blocks are grouped into five inserter categories: Uplifters Wrapper, Uplifters Text, Uplifters Essentials, Uplifters Media, and Uplifters Post.
 * New: Refreshed Uplifters logo, with a subtle animation on the dashboard, the editor toolbar, and the block inserter. It follows the reduced-motion setting.
+* Changed: Block On Background now sits with the layout blocks in Uplifters Wrapper, ready to wrap any section in a background image, color, or gradient.
 * Changed: "Heading & Text" is now "Advance Heading" and covers H1 to H6. Paragraph text moved to the new Advance Text block.
 * Changed: Video Embed and Upload Video each show a single full-width video, with padding, margin, and border radius controls.
 * Changed: Row Layout rebuilt around stacked rows you can add and remove, with responsive divider gap, spacing, border radius, and background color.

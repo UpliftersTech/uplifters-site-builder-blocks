@@ -1,69 +1,151 @@
+/**
+ * Editor chrome for the Posts Layout block. Every inner block is one row of
+ * the post template, stacked vertically with the Row Gap between them.
+ *
+ * The per-instance values — padding, margin, gap, radius, shadow, background —
+ * stay inline in edit.js because they are attribute-driven.
+ */
+
 .editor-styles-wrapper .uplifters-site-builder-blocks-posts-layout-editor {
-	min-width: 0 !important;
-	box-sizing: border-box !important;
-	overflow: visible !important;
-	border: 1px solid #005c73 !important;
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	justify-content: flex-start;
+	box-sizing: border-box;
+	min-width: 0;
+	overflow: visible;
+	border: 1px solid #005c73;
 }
 
-.editor-styles-wrapper .uplifters-site-builder-blocks-posts-layout-editor > .block-editor-inner-blocks {
-	width: 100% !important;
-	min-width: 0 !important;
-	max-width: 100% !important;
-	min-height: 42px !important;
-	box-sizing: border-box !important;
-	display: flex !important;
-	align-items: center !important;
-	justify-content: inherit !important;
-}
-
-.editor-styles-wrapper .uplifters-site-builder-blocks-posts-layout-editor > .block-editor-inner-blocks > .block-editor-block-list__layout {
-	width: 100% !important;
-	min-width: 0 !important;
-	max-width: 100% !important;
-	min-height: 42px !important;
-	box-sizing: border-box !important;
-	overflow: visible !important;
-	display: flex !important;
-	align-items: center !important;
-	justify-content: inherit !important;
-}
-
-.editor-styles-wrapper .uplifters-site-builder-blocks-posts-layout-editor > .block-editor-inner-blocks > .block-editor-block-list__layout > .wp-block {
-	width: 100% !important;
-	min-width: 0 !important;
-	max-width: 100% !important;
-	box-sizing: border-box !important;
-}
-
-.editor-styles-wrapper .uplifters-site-builder-blocks-posts-layout-editor .block-list-appender {
-	width: auto !important;
-	margin: 0 !important;
-	padding: 0 !important;
-}
-
-.editor-styles-wrapper .uplifters-site-builder-blocks-posts-layout-editor .block-editor-a-button-block-appender {
-	width: 32px !important;
-	height: 32px !important;
-	min-width: 32px !important;
-	padding: 0 !important;
-	display: inline-flex !important;
-	align-items: center !important;
-	justify-content: center !important;
-	box-shadow: none !important;
-}
-
-.uplifters-site-builder-blocks-posts-layout-empty-state {
+/**
+ * Each row is laid out with the Row Gap only. The editor otherwise stacks
+ * extra space on top of it: the block margins the editor gives each row and
+ * the block's own leading/trailing margins.
+ */
+.editor-styles-wrapper .uplifters-site-builder-blocks-posts-layout-editor > * {
+	box-sizing: border-box;
 	width: 100%;
-	min-height: 90px;
+	min-width: 0;
+	max-width: 100%;
+	margin-top: 0;
+	margin-bottom: 0;
+	margin-block-start: 0;
+	margin-block-end: 0;
+}
+
+.editor-styles-wrapper .uplifters-site-builder-blocks-posts-layout-editor > figure > img {
+	display: block;
+}
+
+/**
+ * An empty row: a full-width dashed box whose centred plus opens the inserter,
+ * so any block can be dropped in as that row. "Add More" adds another one.
+ *
+ * The plus sits in its own centring layer rather than being centred by the box
+ * itself, so the delete control beside it cannot pull it off centre.
+ */
+.editor-styles-wrapper .uplifters-site-builder-blocks-posts-layout-editor > .uplifters-site-builder-blocks-posts-layout-empty-row {
+	position: relative;
+	box-sizing: border-box;
+	display: flex;
+	flex: 0 0 auto;
+	align-self: stretch;
+	width: 100%;
+	max-width: none;
+	min-height: 72px;
+	margin: 0;
 	border: 1px dashed #8c8f94;
 	border-radius: 8px;
+	background: rgba(255, 255, 255, 0.72);
+}
+
+.uplifters-site-builder-blocks-posts-layout-empty-row-inserter {
+	display: flex;
+	flex: 1 1 auto;
+	align-items: center;
+	justify-content: center;
+	min-width: 0;
+}
+
+.uplifters-site-builder-blocks-posts-layout-empty-row .uplifters-site-builder-blocks-posts-layout-empty-row-add.components-button {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	gap: 12px;
-	padding: 16px;
-	box-sizing: border-box;
-	background: rgba(255, 255, 255, 0.72);
+	width: 36px;
+	height: 36px;
+	min-width: 36px;
+	padding: 0;
+	border-radius: 4px;
+	color: #1e1e1e;
+}
+
+.uplifters-site-builder-blocks-posts-layout-empty-row .uplifters-site-builder-blocks-posts-layout-empty-row-add.components-button:hover {
+	color: var(--wp-admin-theme-color, #3858e9);
+}
+
+.uplifters-site-builder-blocks-posts-layout-empty-row .uplifters-site-builder-blocks-posts-layout-empty-row-add.components-button svg {
+	width: 24px;
+	height: 24px;
+}
+
+/**
+ * One delete control per row, parked at the row's vertical centre. The layer
+ * itself ignores pointer events so it never blocks editing the rows under it.
+ */
+.editor-styles-wrapper .uplifters-site-builder-blocks-posts-layout-editor > .uplifters-site-builder-blocks-posts-layout-row-controls {
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	z-index: 20;
+	pointer-events: none;
+}
+
+/**
+ * The positioning lives on this plain element, never on the button, so core's
+ * own .components-button rules cannot pull the control back into the flow.
+ */
+.uplifters-site-builder-blocks-posts-layout-row-control {
+	position: absolute;
+	right: 8px;
+	transform: translateY(-50%);
+	pointer-events: auto;
+	line-height: 0;
+	z-index: 1;
+}
+
+.uplifters-site-builder-blocks-posts-layout-empty-row > .uplifters-site-builder-blocks-posts-layout-row-control {
+	top: 50%;
+}
+
+.uplifters-site-builder-blocks-posts-layout-row-control .uplifters-site-builder-blocks-posts-layout-row-delete.components-button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	min-width: 32px;
+	padding: 0;
+	border-radius: 50%;
+	background: #fff;
+	border: 1px solid #e0e0e0;
+	color: #b32d2e;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+.uplifters-site-builder-blocks-posts-layout-row-control .uplifters-site-builder-blocks-posts-layout-row-delete.components-button:hover {
+	background: #b32d2e;
+	color: #fff;
+}
+
+.uplifters-site-builder-blocks-posts-layout-add-more {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	margin-top: 8px;
 }
 
 .uplifters-site-builder-blocks-responsive-device-badge {
